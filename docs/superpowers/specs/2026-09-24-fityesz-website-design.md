@@ -319,10 +319,11 @@ The flag rail is `accent` / `paper2` / `second` in equal thirds, 6px, at the top
 | Surface | `paper` | `paper2`, with a 32px ruled-paper texture |
 | Display tracking | `1` | `.74` |
 
-All four faces are Google Fonts. **Diacritic coverage is a hard requirement** — `á é í ó ö ő ú ü ű`
-must all render, or the wordmark itself breaks. Antonio, Public Sans and IBM Plex Mono all carry
-Latin Extended-A. **Saira Stencil One must be verified for `ő` and `ű` before it ships** (§9); if it
-fails, the dossier display face is replaced and this table updated.
+All four faces are Google Fonts. **Diacritic coverage was a hard requirement** — `á é í ó ö ő ú ü ű`
+must all render, or the wordmark itself breaks. All four were checked directly against their font
+binaries' `cmap` tables, upper and lower case: **Antonio, Public Sans, IBM Plex Mono and Saira
+Stencil One all carry every Hungarian diacritic, including `ő` `ű` `Ő` `Ű`.** No substitution
+needed.
 
 ### 6.3 Not looking like a template
 
@@ -435,6 +436,6 @@ it is last.
 
 1. **Ko-fi profile.** Zsombor is creating it. Once it exists the site needs only `NEXT_PUBLIC_KOFI_URL` set; no code change.
 2. **Domain.** `fityeszthegame.com` — to be registered and pointed at Vercel.
-3. **Saira Stencil One diacritics.** Verify `ő` and `ű` render before committing it as the dossier
-   display face (§6.2). If not, choose a replacement stencil face that does.
+3. ~~**Saira Stencil One diacritics.**~~ Closed 2026-09-24 — all four faces verified against their
+   font binaries; see §6.2.
 4. **Code-signing certificates.** Deferred; see §7.3.
