@@ -1,4 +1,4 @@
-# Fityész Krónika — Website Design
+# Fityesz Krónika — Website Design
 
 **Date:** 2026-09-24
 **Authors:** Zsombor Kukucska ([@Frezzard2](https://github.com/Frezzard2)), Zea Dajka ([@djkzea](https://github.com/djkzea))
@@ -9,7 +9,7 @@
 
 ## 1. What we are building
 
-A bilingual (Hungarian/English) website for *Fityész Krónika*, a Java console text-adventure about
+A bilingual (Hungarian/English) website for *Fityesz Krónika*, a Java console text-adventure about
 clawing your way to the top of a political party. The site introduces the game, its characters and
 its world; lets anyone play the Prologue and Chapter 1 in the browser; asks them — without forcing
 them — to register so their decisions are kept; gives registered players native installers for the
@@ -24,11 +24,10 @@ Facts taken from the source, not assumed:
 | Structure | Prologue (*A mélyPont*) + 7 chapters |
 | Chapters | 1 *A Toborzás* · 2 *Az első gyűlés* · 3 *A Kongresszusi Próba* · 4 *Az Országos Választmány Árnyai* · 5 *A Parlamenti Útvesztő* · 6 *Az Országos Elnökség Kapujában* · 7 *Az Elnökség Trónján* |
 | Tracked state | `xp` (int), `lebukas` (int, exposure), `szint` (int, level), 7 item booleans, player name |
-| Fail state | `lebukas >= 100` → `LEBUKTÁL!`, run ends immediately (`lebukasEllenorzes()`) |
-| Win state | `TE LETTÉL A PÁRTELNÖK!` |
-| Named ranks | Exactly one today: `HELYI PÁRTTAG` (set when `szint` becomes 2 in Chapter 3) |
+| Outcomes | **Three, all real.** Reach the top → `TE LETTÉL A PÁRTELNÖK!` · exposure reaches 100 → `LEBUKTÁL!` (`lebukasEllenorzes()`) · quit after losing a bossfight → `UI.vereseg()` then `fight.gameover` |
+| Level up | `if (xp >= 50)` sets `szint` to 2 and grants `HELYI PÁRTTAG` — the only named rank today, checked in Chapter 3 |
 | Characters | Lipóti Dezső · Lakatos Ervin · Dr. Péteri Katalin · Molnár Gábor · Kapzs Imre · Ismeretlen hang |
-| Boss fights | 3 — Lakatos (ch3), Dr. Péteri (ch5), Kapzs (ch7), turn-based with HP |
+| Boss fights | 3 — Lakatos (ch3), Dr. Péteri (ch5), Kapzs (ch7), turn-based with HP; award `+50`, `+80`, `+120` XP |
 | Items | ELSŐ BORÍTÉK · KIS BORÍTÉK · LAKATOS AKTÁJA · OFFSHORE SZÁMLA BELÉPÉSI KÓD · PÉTERI DOSSZIÉ · FŐNÖK BIZALMA · PARLAMENTI TÖBBSÉG KULCSA |
 | Languages | Already fully bilingual — `Lang.java` stores every string as `p(key, magyar, angol)` |
 | Current save | Appends chosen option numbers to `valasztasok.txt` |
@@ -36,7 +35,9 @@ Facts taken from the source, not assumed:
 ### 1.2 Explicitly out of scope
 
 - **Per-character relationship tracking.** The game has no trust value per NPC, and we decided not to
-  invent one. The dashboard shows XP / Exposure / Rank / Items only.
+  invent one. The dashboard shows XP / Exposure / Rank / Items only. The design prototype contains a
+  finished *Kapcsolatok* panel with four trust states; it is deliberately left unbuilt, and stays in
+  the file for whenever the game gains real trust values.
 - **Chapters 2–7 in the browser.** The web demo stops at the end of Chapter 1.
 - **A `.jar` download.** Native installers only.
 - **Code-signing certificates.** Deferred; see §7.3.
@@ -55,8 +56,10 @@ Facts taken from the source, not assumed:
 | Packaging | Native installers for Windows, macOS (Intel + Apple Silicon), Linux |
 | Desktop continuation | The downloaded game signs in and loads the web save |
 | Play presentation | Visual novel — dialogue boxes with typographic nameplates, no portrait art |
-| Visual direction | Campaign propaganda × terminal (billboard slogans for marketing, console for gameplay) |
-| Palette | **Pártvörös** (§6.1) |
+| Visual direction | **Campaign propaganda** on Landing, Szereplők, Letöltés, Támogatás, Vezérlőpult; **Leaked dossier** on Lexikon and Játék |
+| Palette | **Tricolour** (§6.1), site-wide, both directions |
+| Flag rail | The red/white/green rail stays visible on every page, including the dossier pages, overriding the prototype's `--cF:none` |
+| Design source | The prototype in `Fityesz Chronicles Website Design/` is the visual source of truth (§6) |
 | Domain | `fityeszthegame.com` |
 | Crowd statistics | "% of players who chose this" hidden until a choice point has ≥ 30 responses |
 | Ko-fi | Profile being created by Zsombor; section is config-driven, so it ships with or without it |
@@ -170,13 +173,14 @@ device_codes      (device_code text pk, user_code text unique, user_id uuid null
 
 **`endings` seed — the two outcomes the game actually has today:**
 
-| id | name_hu | name_en | condition |
-|---|---|---|---|
-| `president` | AZ ELNÖK | THE PRESIDENT | Finish Chapter 7 |
-| `exposed` | A LEBUKÁS | EXPOSED | Reach `lebukas >= 100` |
+| id | sort | hint (HU) | hint (EN) | condition in the game |
+|---|---|---|---|---|
+| `president` | 1 | Érj fel a csúcsra. | Reach the very top. | Finish Chapter 7 |
+| `exposed` | 2 | Hagyd, hogy a sajtó mindent kiderítsen. | Let the press uncover everything. | `lebukas >= 100` |
+| `gaveup` | 3 | Add fel egy elvesztett bossfight után. | Give up after losing a bossfight. | Lose a bossfight, then choose quit (`fight.gameover`) |
 
-Locked ending slots appear on the dashboard only as more endings are authored in the game. We do not
-display placeholder endings that do not exist.
+The dashboard reads `%n/3 feloldva`. Unlocked endings are named; locked ones show only the hint
+above, never the name. These three are the outcomes the game actually has — no placeholders.
 
 **Row-level security.** Every user-owned table restricts `select`/`insert`/`update` to
 `auth.uid() = user_id`. `choice_stats` is never read directly; a view applies the threshold in SQL:
@@ -205,8 +209,8 @@ All nine are responsive; "mobile" is not a separate build.
 | Route (HU) | Purpose |
 |---|---|
 | `/` | Landing — poster hero, the hook, chapter descent, character roster, play + download CTAs |
-| `/karakterek` | Characters — typographic cards: name, party title, signature quote |
-| `/lore` | World codex — the party, the seven chapters, the items glossary, spoiler-gated entries |
+| `/szereplok` | Szereplők — typographic cards: initials, name, party title, signature quote, first chapter |
+| `/lexikon` | Lexikon — five tabs: A párt · Fejezetek · Helyszínek · Tárgyak · Játékszabályok (dossier direction) |
 | `/jatek` | Play the Prologue + Chapter 1 |
 | `/belepes`, `/regisztracio` | Auth |
 | `/vezerlopult` | Player dashboard |
@@ -239,8 +243,10 @@ dashboard.
 Six panels: **Continue** (resume card with the 7-chapter progress strip) · **Save slots** (three,
 with desktop sync status) · **Status readout** (XP, Exposure with its `/100` ceiling, Rank, Items
 2/7) · **Decision timeline** (each entry showing the choice, its XP/exposure cost, and the crowd
-percentage where ≥ 30 responses exist) · **Endings** (unlocked named; locked shown as redacted bars
-with their unlock hint).
+percentage where ≥ 30 responses exist) · **Endings** (`%n/3 feloldva` — unlocked ones named, locked
+ones showing only their hint, never their name).
+
+The *Kapcsolatok* panel from the prototype is not built (§1.2).
 
 ### 4.4 Support the creators
 
@@ -274,27 +280,49 @@ redirects to the GitHub release asset. The page reads the latest release through
 
 ## 6. Visual design
 
-### 6.1 Palette — Pártvörös
+### 6.0 The design file is the source of truth
+
+`Fityesz Chronicles Website Design/Fityesz Chronicles.dc.html` is a working bilingual prototype of
+all eight pages plus the register-prompt overlay, built in Claude Design. Where this document and
+that file disagree about how something looks, **the file wins** and this document is corrected. The
+tokens below are read out of it, not invented here.
+
+It ships two art directions and four palettes as switchable props. We use a fixed subset (§2), but
+the other palettes stay in the file as future options.
+
+### 6.1 Palette — Tricolour
 
 | Token | Hex | Use |
 |---|---|---|
-| `--ink` | `#100E0C` | page background |
-| `--surface` | `#1A1714` | panels, cards |
-| `--line` | `#2C2723` | borders, rules |
-| `--red` | `#D01F33` | primary action, the party, exposure meter |
-| `--gold` | `#E8C14A` | XP, items acquired |
-| `--green` | `#2E7D32` | the nemzeti stripe, console accents |
-| `--bone` | `#F2EEE6` | primary text |
-| `--muted` | `#9A9188` | secondary text |
+| `paper` | `#F4EFE6` | page background (campaign) |
+| `paper2` | `#E8DFD0` | page background (dossier), rails, wells |
+| `sheet` | `#FBF8F2` | cards, dialogue boxes |
+| `ink` | `#161616` | text, borders |
+| `inkSoft` | `#4A4640` | secondary text |
+| `line` | `#CFC6B6` | hairlines |
+| `accent` / `danger` | `#C8102E` | primary action, the party, exposure meter |
+| `accentText` | `#B10E28` | accent colour on paper, where `accent` fails contrast |
+| `onAccent` | `#FFF8F0` | text on accent |
+| `second` / `good` | `#1F6B3A` | flag rail, positive states |
+| `onInk` | `#F4EFE6` | text on ink |
 
-### 6.2 Type
+The flag rail is `accent` / `paper2` / `second` in equal thirds, 6px, at the top of every page.
 
-Headlines: a heavy condensed display face. **Diacritic coverage is a hard requirement** — many
-condensed faces ship without `ő` and `ű`, which would break the word *FITYÉSZ KRÓNIKA* itself. Every
-candidate is verified for `á é í ó ö ő ú ü ű` before selection; looks alone do not decide it.
+### 6.2 Type and print treatment
 
-Body: a humanist sans with full Latin Extended-A. Game text, stats, items and choice numbers: a
-monospace face, also diacritic-verified.
+| | Campaign propaganda | Leaked dossier |
+|---|---|---|
+| Display | Antonio 700 | Saira Stencil One 400 |
+| Body / label | Public Sans | IBM Plex Mono |
+| Border width | `3px` | `1px` |
+| Shadow | `6px 6px 0 ink` (hard offset) | soft, long, low-opacity |
+| Surface | `paper` | `paper2`, with a 32px ruled-paper texture |
+| Display tracking | `1` | `.74` |
+
+All four faces are Google Fonts. **Diacritic coverage is a hard requirement** — `á é í ó ö ő ú ü ű`
+must all render, or the wordmark itself breaks. Antonio, Public Sans and IBM Plex Mono all carry
+Latin Extended-A. **Saira Stencil One must be verified for `ő` and `ű` before it ships** (§9); if it
+fails, the dossier display face is replaced and this table updated.
 
 ### 6.3 Not looking like a template
 
@@ -356,8 +384,10 @@ pointing at GitHub releases. Complete and useful with nothing else built.
 ### 7.2 Phase 2 — Installers
 
 A GitHub Actions workflow **in the game repo**, matrix across `windows-latest`, `macos-13` (Intel),
-`macos-14` (Apple Silicon) and `ubuntu-latest`. `jlink` trims a runtime; `jpackage` produces `.msi`,
-two `.dmg`, `.deb` and `.rpm`, attached to a GitHub Release.
+`macos-14` (Apple Silicon) and `ubuntu-latest`. `jlink` trims a runtime; `jpackage` produces `.exe`,
+two `.dmg` (Intel and Apple Silicon), `.deb` and `.rpm`, attached to a GitHub Release. AppImage is
+not produced — `jpackage` cannot make one, and adding a second packaging tool was judged not worth
+the extra build step.
 
 ### 7.3 Unsigned builds
 
@@ -405,5 +435,6 @@ it is last.
 
 1. **Ko-fi profile.** Zsombor is creating it. Once it exists the site needs only `NEXT_PUBLIC_KOFI_URL` set; no code change.
 2. **Domain.** `fityeszthegame.com` — to be registered and pointed at Vercel.
-3. **Display font.** Chosen during implementation against the diacritic requirement in §6.2.
+3. **Saira Stencil One diacritics.** Verify `ő` and `ű` render before committing it as the dossier
+   display face (§6.2). If not, choose a replacement stencil face that does.
 4. **Code-signing certificates.** Deferred; see §7.3.
