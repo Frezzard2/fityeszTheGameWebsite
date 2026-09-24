@@ -1,0 +1,1864 @@
+# Fityesz Krónika Website — Phase 1 Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Ship the bilingual Fityesz Krónika website — marketing pages, a browser-playable Prologue and Chapter 1, accounts, a save dashboard, an account-gated download page and a Ko-fi section.
+
+**Architecture:** One Next.js 15 App Router application on Vercel, with Supabase for Postgres, Auth and row-level security. The game's own `Lang.java` is the single source of truth for story text: a script extracts it into JSON that the site renders through a pure, framework-free reducer. The visual layer is ported from the committed Claude Design prototype, which is authoritative for anything visual.
+
+**Tech Stack:** Next.js 15 (App Router), TypeScript (strict), Tailwind CSS v4, next-intl, Supabase (`@supabase/ssr`), Vitest, Playwright, GitHub Actions.
+
+**Spec:** `docs/superpowers/specs/2026-09-24-fityesz-website-design.md`
+
+**Design prototype:** `Fityesz Chronicles Website Design/Fityesz Chronicles.dc.html` — referred to below as **the prototype**. Line references are to that file.
+
+## Global Constraints
+
+- **Title spelling is `Fityesz Krónika`** (HU) / `The Fityesz Chronicle` (EN). No accent on the first word. Matches `ui.title` in `Lang.java`. Never write "Fityész".
+- **Two locales only:** `hu` (default, unprefixed) and `en` (at `/en/...`). Every user-facing string exists in both.
+- **The prototype wins on anything visual.** Where this plan and the prototype disagree about appearance, port the prototype and correct the plan.
+- **Palette is Tricolour**, site-wide: `paper #F4EFE6` · `paper2 #E8DFD0` · `sheet #FBF8F2` · `ink #161616` · `inkSoft #4A4640` · `line #CFC6B6` · `accent #C8102E` · `accentText #B10E28` · `onAccent #FFF8F0` · `second #1F6B3A` · `onInk #F4EFE6`.
+- **Two directions:** `campaign` on Landing, Szereplők, Letöltés, Támogatás, Vezérlőpult. `dossier` on Lexikon and Játék.
+- **The flag rail (`accent`/`paper2`/`second`, 6px, equal thirds) is visible on every page in both directions.** This overrides the prototype's `--cF:none` for dossier.
+- **Fonts:** Antonio 700 (campaign display), Public Sans (campaign body/label), Saira Stencil One 400 (dossier display), IBM Plex Mono (dossier body/label). All four are verified to carry `á é í ó ö ő ú ü ű Ő Ű`.
+- **Border radius is `0`.** Any exception must be argued in the PR description.
+- **Routes (HU):** `/`, `/szereplok`, `/lexikon`, `/jatek`, `/belepes`, `/regisztracio`, `/vezerlopult`, `/letoltes`, `/tamogatas`, `/eszkoz`.
+- **Crowd percentages are hidden below 30 responses per choice point**, enforced in SQL, never in the client.
+- **Relationship / trust tracking is out of scope.** Do not build the prototype's *Kapcsolatok* panel.
+- **Three endings** — `president`, `exposed`, `gaveup`. No placeholder endings.
+- **Node 22 LTS.** Package manager: `npm`.
+- **Every commit message ends with:** `Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>`
+
+---
+
+## File Structure
+
+| Path | Responsibility |
+|---|---|
+| `app/[locale]/layout.tsx` | Locale shell, fonts, direction attribute, flag rail, header, footer |
+| `app/[locale]/page.tsx` | Landing |
+| `app/[locale]/szereplok/page.tsx` | Character cards |
+| `app/[locale]/lexikon/page.tsx` | Five-tab codex (dossier) |
+| `app/[locale]/jatek/page.tsx` | Play Prologue + Chapter 1 (dossier) |
+| `app/[locale]/belepes/page.tsx`, `regisztracio/page.tsx` | Auth |
+| `app/[locale]/vezerlopult/page.tsx` | Dashboard |
+| `app/[locale]/letoltes/page.tsx` | Download |
+| `app/[locale]/tamogatas/page.tsx` | Ko-fi + creators |
+| `app/api/saves/route.ts` | GET/PUT saves |
+| `app/api/decisions/route.ts` | POST a decision |
+| `app/api/download/[platform]/route.ts` | Gated redirect + logging |
+| `lib/story/types.ts` | `Beat`, `ChoiceOption`, `PlayerState`, ids |
+| `lib/story/engine.ts` | `applyChoice`, `initialState`, `advance` — pure |
+| `lib/story/content/*.json` | Generated story data |
+| `lib/design/tokens.css` | Tricolour tokens + direction tokens |
+| `lib/design/characters.ts` | Character roster (from the prototype's `CHARS`) |
+| `lib/supabase/{client,server}.ts` | Supabase clients |
+| `scripts/extract-lang.ts` | `Lang.java` → story JSON |
+| `supabase/migrations/*.sql` | Schema, RLS, trigger, threshold view |
+| `tests/unit/*`, `tests/integration/*`, `tests/e2e/*` | Vitest + Playwright |
+
+---
+
+## Task 1: Project scaffold, tooling and CI
+
+**Files:**
+- Create: `package.json`, `tsconfig.json`, `next.config.ts`, `app/layout.tsx`, `app/page.tsx`, `vitest.config.ts`, `.github/workflows/ci.yml`, `.nvmrc`
+- Test: `tests/unit/smoke.test.ts`
+
+**Interfaces:**
+- Consumes: nothing.
+- Produces: `npm test` (vitest), `npm run build` (next build), `npm run lint`. Every later task relies on these three commands.
+
+- [ ] **Step 1: Scaffold the app**
+
+```bash
+npx create-next-app@latest . --typescript --tailwind --app --eslint \
+  --src-dir=false --import-alias "@/*" --use-npm --no-turbopack
+echo "22" > .nvmrc
+```
+
+Answer "No" to any prompt offering extra examples. `create-next-app` refuses a non-empty directory — if it does, run it in `/tmp/fz` and copy the generated files across, keeping the existing `README.md`, `docs/`, `.gitignore` and the design folder.
+
+- [ ] **Step 2: Add test tooling**
+
+```bash
+npm i -D vitest @vitejs/plugin-react jsdom @testing-library/react @testing-library/jest-dom
+```
+
+Create `vitest.config.ts`:
+
+```ts
+import { defineConfig } from 'vitest/config'
+import react from '@vitejs/plugin-react'
+import path from 'node:path'
+
+export default defineConfig({
+  plugins: [react()],
+  test: { environment: 'jsdom', globals: true, include: ['tests/**/*.test.{ts,tsx}'] },
+  resolve: { alias: { '@': path.resolve(__dirname, '.') } },
+})
+```
+
+Add to `package.json` scripts: `"test": "vitest run"`, `"test:watch": "vitest"`.
+
+- [ ] **Step 3: Write the failing smoke test**
+
+```ts
+// tests/unit/smoke.test.ts
+import { describe, it, expect } from 'vitest'
+import { SITE_TITLE } from '@/lib/constants'
+
+describe('site constants', () => {
+  it('spells the title without an accent on the first word', () => {
+    expect(SITE_TITLE.hu).toBe('Fityesz Krónika')
+    expect(SITE_TITLE.en).toBe('The Fityesz Chronicle')
+  })
+})
+```
+
+- [ ] **Step 4: Run it and watch it fail**
+
+Run: `npm test`
+Expected: FAIL — `Failed to resolve import "@/lib/constants"`.
+
+- [ ] **Step 5: Add the minimal implementation**
+
+```ts
+// lib/constants.ts
+export const SITE_TITLE = { hu: 'Fityesz Krónika', en: 'The Fityesz Chronicle' } as const
+export const LOCALES = ['hu', 'en'] as const
+export type Locale = (typeof LOCALES)[number]
+export const DEFAULT_LOCALE: Locale = 'hu'
+```
+
+- [ ] **Step 6: Run it and watch it pass**
+
+Run: `npm test`
+Expected: PASS, 1 test.
+
+- [ ] **Step 7: Add CI**
+
+```yaml
+# .github/workflows/ci.yml
+name: CI
+on: [push, pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: 'npm' }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+```
+
+- [ ] **Step 8: Verify the build passes locally**
+
+Run: `npm run lint && npm test && npm run build`
+Expected: all three succeed.
+
+- [ ] **Step 9: Commit**
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Scaffold Next.js app with vitest and CI
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Task 2: Design tokens, fonts and the direction system
+
+**Files:**
+- Create: `lib/design/tokens.css`, `lib/design/direction.ts`, `components/FlagRail.tsx`, `components/DirectionScope.tsx`
+- Modify: `app/globals.css`, `app/layout.tsx`
+- Test: `tests/unit/direction.test.tsx`
+
+**Interfaces:**
+- Consumes: nothing.
+- Produces:
+  - `type DirectionName = 'campaign' | 'dossier'` (in `lib/design/direction.ts`)
+  - `<DirectionScope value={DirectionName}>{children}</DirectionScope>` — renders a `<div data-direction={value}>` that sets the direction's CSS custom properties on its subtree. The type and the component have distinct names on purpose; do not merge them.
+  - `<FlagRail />` — a 6px `accent`/`paper2`/`second` bar. Renders identically in both directions.
+  - CSS custom properties available everywhere: `--paper --paper2 --sheet --ink --inkSoft --line --accent --accentText --onAccent --second --onInk --fD --fB --fL --dW --dS --bw --sh --shS --desk --tex`.
+
+- [ ] **Step 1: Write the failing test**
+
+```tsx
+// tests/unit/direction.test.tsx
+import { describe, it, expect } from 'vitest'
+import { render } from '@testing-library/react'
+import { DirectionScope } from '@/components/DirectionScope'
+import { FlagRail } from '@/components/FlagRail'
+
+describe('DirectionScope', () => {
+  it('marks the subtree with the direction name', () => {
+    const { container } = render(<DirectionScope value="dossier"><p>x</p></DirectionScope>)
+    expect(container.querySelector('[data-direction="dossier"]')).not.toBeNull()
+  })
+})
+
+describe('FlagRail', () => {
+  it('renders three equal bands in both directions', () => {
+    for (const d of ['campaign', 'dossier'] as const) {
+      const { container } = render(<DirectionScope value={d}><FlagRail /></DirectionScope>)
+      const rail = container.querySelector('[data-flag-rail]')
+      expect(rail, `flag rail missing in ${d}`).not.toBeNull()
+      expect(rail!.children).toHaveLength(3)
+    }
+  })
+})
+```
+
+The second test is the guard for the global constraint that the rail survives the dossier direction — the prototype hides it there via `--cF:none`.
+
+- [ ] **Step 2: Run it and watch it fail**
+
+Run: `npm test tests/unit/direction.test.tsx`
+Expected: FAIL — cannot resolve `@/components/DirectionScope`.
+
+- [ ] **Step 3: Write the tokens**
+
+```css
+/* lib/design/tokens.css */
+:root {
+  --paper: #F4EFE6;  --paper2: #E8DFD0;  --sheet: #FBF8F2;
+  --ink: #161616;    --inkSoft: #4A4640; --line: #CFC6B6;
+  --accent: #C8102E; --accentText: #B10E28; --onAccent: #FFF8F0;
+  --second: #1F6B3A; --onInk: #F4EFE6;
+}
+[data-direction='campaign'] {
+  --fD: 'Antonio', 'Arial Narrow', sans-serif;
+  --fB: 'Public Sans', system-ui, sans-serif;
+  --fL: 'Public Sans', system-ui, sans-serif;
+  --dW: 700; --dS: 1; --bw: 3px;
+  --sh: 6px 6px 0 var(--ink); --shS: 4px 4px 0 var(--ink);
+  --desk: var(--paper); --tex: none;
+}
+[data-direction='dossier'] {
+  --fD: 'Saira Stencil One', sans-serif;
+  --fB: 'IBM Plex Mono', ui-monospace, monospace;
+  --fL: 'IBM Plex Mono', ui-monospace, monospace;
+  --dW: 400; --dS: .74; --bw: 1px;
+  --sh: 0 1px 0 rgba(0,0,0,.05), 0 22px 44px -26px rgba(0,0,0,.6);
+  --shS: 0 12px 26px -18px rgba(0,0,0,.55);
+  --desk: var(--paper2);
+  --tex: repeating-linear-gradient(0deg, transparent 0 31px,
+         color-mix(in srgb, var(--line) 60%, transparent) 31px 32px);
+}
+* { border-radius: 0; }
+```
+
+- [ ] **Step 4: Write the components**
+
+```ts
+// lib/design/direction.ts
+export type DirectionName = 'campaign' | 'dossier'
+```
+
+```tsx
+// components/DirectionScope.tsx
+import type { DirectionName } from '@/lib/design/direction'
+export function DirectionScope({ value, children }: { value: DirectionName; children: React.ReactNode }) {
+  return <div data-direction={value} style={{ background: 'var(--desk)', color: 'var(--ink)', fontFamily: 'var(--fB)' }}>{children}</div>
+}
+```
+
+```tsx
+// components/FlagRail.tsx
+export function FlagRail() {
+  return (
+    <div data-flag-rail aria-hidden="true" style={{ display: 'flex', height: 6 }}>
+      <div style={{ flex: 1, background: 'var(--accent)' }} />
+      <div style={{ flex: 1, background: 'var(--paper2)' }} />
+      <div style={{ flex: 1, background: 'var(--second)' }} />
+    </div>
+  )
+}
+```
+
+Note `display:flex` is hard-coded, not `var(--cF)` — that is the deliberate override.
+
+- [ ] **Step 5: Load the fonts**
+
+In `app/layout.tsx`, add to `<head>`:
+
+```tsx
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;600;700&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Saira+Stencil+One&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" />
+```
+
+Import `lib/design/tokens.css` from `app/globals.css`.
+
+- [ ] **Step 6: Run the tests and watch them pass**
+
+Run: `npm test tests/unit/direction.test.tsx`
+Expected: PASS, 2 tests.
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Add Tricolour tokens, direction system and flag rail
+
+The flag rail renders in both directions, overriding the prototype's
+--cF:none, because it is the element the creators specifically asked to
+keep everywhere.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Task 3: Locale routing and the language toggle
+
+**Files:**
+- Create: `i18n/routing.ts`, `i18n/request.ts`, `messages/hu.json`, `messages/en.json`, `middleware.ts`, `app/[locale]/layout.tsx`, `components/LocaleToggle.tsx`
+- Delete: `app/page.tsx` (replaced by `app/[locale]/page.tsx`)
+- Test: `tests/unit/locale.test.ts`
+
+**Interfaces:**
+- Consumes: `Locale`, `LOCALES`, `DEFAULT_LOCALE` from Task 1.
+- Produces:
+  - `otherLocale(l: Locale): Locale`
+  - `localePath(path: string, l: Locale): string` — `('/jatek','hu') → '/jatek'`, `('/jatek','en') → '/en/jatek'`
+  - `<LocaleToggle current={Locale} path={string} />`
+
+- [ ] **Step 1: Install next-intl**
+
+```bash
+npm i next-intl
+```
+
+- [ ] **Step 2: Write the failing test**
+
+```ts
+// tests/unit/locale.test.ts
+import { describe, it, expect } from 'vitest'
+import { otherLocale, localePath } from '@/i18n/routing'
+
+describe('locale helpers', () => {
+  it('toggles between the two locales', () => {
+    expect(otherLocale('hu')).toBe('en')
+    expect(otherLocale('en')).toBe('hu')
+  })
+  it('leaves Hungarian paths unprefixed and prefixes English ones', () => {
+    expect(localePath('/jatek', 'hu')).toBe('/jatek')
+    expect(localePath('/jatek', 'en')).toBe('/en/jatek')
+    expect(localePath('/', 'en')).toBe('/en')
+    expect(localePath('/', 'hu')).toBe('/')
+  })
+})
+```
+
+- [ ] **Step 3: Run it and watch it fail**
+
+Run: `npm test tests/unit/locale.test.ts`
+Expected: FAIL — cannot resolve `@/i18n/routing`.
+
+- [ ] **Step 4: Implement**
+
+```ts
+// i18n/routing.ts
+import { defineRouting } from 'next-intl/routing'
+import { LOCALES, DEFAULT_LOCALE, type Locale } from '@/lib/constants'
+
+export const routing = defineRouting({
+  locales: LOCALES,
+  defaultLocale: DEFAULT_LOCALE,
+  localePrefix: 'as-needed',
+})
+
+export function otherLocale(l: Locale): Locale {
+  return l === 'hu' ? 'en' : 'hu'
+}
+
+export function localePath(path: string, l: Locale): string {
+  if (l === DEFAULT_LOCALE) return path
+  return path === '/' ? '/en' : `/en${path}`
+}
+```
+
+Add `i18n/request.ts` and `middleware.ts` following next-intl's App Router setup, with `matcher: ['/', '/(hu|en)/:path*', '/((?!api|_next|_vercel|.*\\..*).*)']`.
+
+- [ ] **Step 5: Seed the message catalogues**
+
+Create `messages/hu.json` and `messages/en.json`. Port every key from the prototype's `static S = {...}` block (line 985 onwards): the HU string is element `[0]` of each pair, the EN string element `[1]`. Keep the prototype's key names exactly — `heroKicker`, `slogan1`, `gateTitle`, `dlWin`, and so on — so the two files stay diffable against the prototype.
+
+- [ ] **Step 6: Build the locale layout and toggle**
+
+`app/[locale]/layout.tsx` renders `<html lang={locale}>`, the font links, `<NextIntlClientProvider>`, `<FlagRail />`, the header and the footer. Port header markup from the prototype lines 31–75, replacing `{{ n.go }}` handlers with `next/link` hrefs built via `localePath`.
+
+`<LocaleToggle>` renders `HU / EN` per the prototype line 50's bordered pair, linking to `localePath(currentPath, otherLocale(current))`.
+
+- [ ] **Step 7: Run the tests and watch them pass**
+
+Run: `npm test tests/unit/locale.test.ts`
+Expected: PASS, 2 tests.
+
+- [ ] **Step 8: Verify both locales render**
+
+Run: `npm run dev`, then open `http://localhost:3000/` and `http://localhost:3000/en`.
+Expected: Hungarian at `/`, English at `/en`, flag rail visible on both, toggle switches between them.
+
+- [ ] **Step 9: Commit**
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Add hu/en locale routing with next-intl and a language toggle
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Task 4: Extract story text from Lang.java
+
+**Files:**
+- Create: `scripts/extract-lang.ts`, `lib/story/content/prologus.json`, `lib/story/content/fejezet-01.json`
+- Modify: `.github/workflows/ci.yml`
+- Test: `tests/unit/extract-lang.test.ts`, `tests/fixtures/Lang.sample.java`
+
+**Interfaces:**
+- Consumes: nothing.
+- Produces:
+  - `parseLangJava(src: string): Record<string, { hu: string; en: string }>`
+  - `npm run extract:story` — writes the two JSON files.
+  - Story JSON shape (consumed by Task 5):
+
+```json
+{
+  "id": "fejezet-01",
+  "chapter": 1,
+  "beats": [
+    { "kind": "chapterCard", "number": 1, "title": {"hu":"…","en":"…"},
+      "quote": {"hu":"…","en":"…"}, "place": {"hu":"…","en":"…"} },
+    { "kind": "dialogue", "speaker": "lipoti", "text": {"hu":"…","en":"…"} },
+    { "kind": "choice", "id": "ch1.q1", "prompt": {"hu":"…","en":"…"},
+      "options": [
+        { "text": {"hu":"…","en":"…"}, "xp": 15, "lebukas": 10,
+          "response": [ { "kind": "dialogue", "speaker": "lipoti", "text": {"hu":"…","en":"…"} } ] }
+      ] }
+  ]
+}
+```
+
+- [ ] **Step 1: Create the test fixture**
+
+```java
+// tests/fixtures/Lang.sample.java
+public final class Lang {
+    private static void seed() {
+        p("pro.title",     "Prológus: A mélyPont", "Prologue: Rock Bottom");
+        p("pro.youAre",    "Te %s vagy.", "You are %s.");
+        p("ch1.q2.opt3",   "Nem kérem.", "I won't take it.");
+        p("item.envelope1","ELSŐ BORÍTÉK", "FIRST ENVELOPE");
+    }
+}
+```
+
+- [ ] **Step 2: Write the failing test**
+
+```ts
+// tests/unit/extract-lang.test.ts
+import { describe, it, expect } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { parseLangJava } from '@/scripts/extract-lang'
+
+const src = readFileSync('tests/fixtures/Lang.sample.java', 'utf8')
+
+describe('parseLangJava', () => {
+  const keys = parseLangJava(src)
+
+  it('pairs each key with both languages', () => {
+    expect(keys['pro.title']).toEqual({ hu: 'Prológus: A mélyPont', en: 'Prologue: Rock Bottom' })
+  })
+  it('preserves %s placeholders untouched', () => {
+    expect(keys['pro.youAre'].hu).toBe('Te %s vagy.')
+  })
+  it('handles dotted keys with numeric suffixes', () => {
+    expect(keys['ch1.q2.opt3'].en).toBe("I won't take it.")
+  })
+  it('extracts every key present in the source', () => {
+    expect(Object.keys(keys).sort()).toEqual(
+      ['ch1.q2.opt3', 'item.envelope1', 'pro.title', 'pro.youAre'])
+  })
+})
+```
+
+- [ ] **Step 3: Run it and watch it fail**
+
+Run: `npm test tests/unit/extract-lang.test.ts`
+Expected: FAIL — cannot resolve `@/scripts/extract-lang`.
+
+- [ ] **Step 4: Implement the parser**
+
+```ts
+// scripts/extract-lang.ts
+export type Bilingual = { hu: string; en: string }
+
+const CALL = /p\(\s*"((?:[^"\\]|\\.)*)"\s*,\s*"((?:[^"\\]|\\.)*)"\s*,\s*"((?:[^"\\]|\\.)*)"\s*\)/gs
+
+function unescapeJava(s: string): string {
+  return s.replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\"/g, '"').replace(/\\\\/g, '\\')
+}
+
+export function parseLangJava(src: string): Record<string, Bilingual> {
+  const out: Record<string, Bilingual> = {}
+  for (const m of src.matchAll(CALL)) {
+    const [, key, hu, en] = m
+    if (out[key]) throw new Error(`duplicate key: ${key}`)
+    out[key] = { hu: unescapeJava(hu), en: unescapeJava(en) }
+  }
+  return out
+}
+```
+
+Note: `Lang.java` concatenates some long strings across lines with `+`. Handle that by collapsing `"\s*\+\s*"` to nothing **before** running `CALL`, i.e. `src.replace(/"\s*\+\s*"/g, '')`.
+
+- [ ] **Step 5: Run the tests and watch them pass**
+
+Run: `npm test tests/unit/extract-lang.test.ts`
+Expected: PASS, 4 tests.
+
+- [ ] **Step 6: Write the story assembler**
+
+Add to `scripts/extract-lang.ts` a `main()` that fetches the two source files from the game repo and writes the JSON:
+
+```ts
+const RAW = 'https://raw.githubusercontent.com/djkzea/fityeszthegame/main/src'
+
+async function main() {
+  const lang = parseLangJava(await (await fetch(`${RAW}/Lang.java`)).text())
+  const t = (k: string) => {
+    const v = lang[k]
+    if (!v) throw new Error(`missing key: ${k}`)
+    return v
+  }
+  // …assemble and write lib/story/content/prologus.json and fejezet-01.json
+}
+```
+
+The beat order and the XP/exposure numbers are transcribed from `fityesz1_0.java` lines 51–150 and hard-coded in this script — the Java control flow is not parsed. The exact sequence:
+
+**`prologus.json`** — `pro.title`, `pro.quote`, name prompt, `pro.youAre`, `pro.teacher`, `pro.salary`, `pro.assets`, `pro.bank`, `pro.politician`, `pro.phone` (narration), then `npc.unknown` speaking `pro.call`.
+
+**`fejezet-01.json`** — chapterCard (`ch1.title`, `ch1.quote`, `ch1.place`), `npc.lipoti` says `ch1.lipoti1` then `ch1.lipoti2`, choice `ch1.q1` with options `ch1.q1.opt1..3` and responses `ch1.q1.ans1..3`, then `ch1.lipoti3`, narration `ch1.envelope`, `ch1.lipoti4`, choice `ch1.q2` with options `ch1.q2.opt1..3` and responses `ch1.q2.ans1..3`.
+
+The choice values, copied from the Java:
+
+| Choice | Option | xp | lebukas | item |
+|---|---|---|---|---|
+| `ch1.q1` | 1 | 15 | 10 | — |
+| `ch1.q1` | 2 | 10 | 5 | — |
+| `ch1.q1` | 3 | 5 | 0 | — |
+| `ch1.q2` | 1 | 20 | 15 | `envelope1` |
+| `ch1.q2` | 2 | 10 | 5 | — |
+| `ch1.q2` | 3 | 0 | −10 | — |
+
+- [ ] **Step 7: Generate and inspect the output**
+
+Run: `npm run extract:story && cat lib/story/content/fejezet-01.json | head -40`
+Expected: valid JSON containing Hungarian text with correct diacritics and the numbers above.
+
+- [ ] **Step 8: Add the drift check to CI**
+
+Append to `.github/workflows/ci.yml`, in the `check` job after `npm ci`:
+
+```yaml
+      - name: Story JSON is up to date with the game repo
+        run: |
+          npm run extract:story
+          git diff --exit-code lib/story/content/ \
+            || (echo "::error::Lang.java changed upstream. Run npm run extract:story and commit." && exit 1)
+```
+
+- [ ] **Step 9: Commit**
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Extract Prologue and Chapter 1 text from the game's Lang.java
+
+The game repo stays the single source of truth for its own words; CI
+fails if Lang.java changes upstream without the JSON being regenerated.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Task 5: The story engine
+
+**Files:**
+- Create: `lib/story/types.ts`, `lib/story/engine.ts`
+- Test: `tests/unit/engine.test.ts`
+
+**Interfaces:**
+- Consumes: the JSON shape from Task 4.
+- Produces — every later task uses these exact names:
+
+```ts
+// Locale is NOT redefined here — import it from '@/lib/constants' (Task 1).
+export type Bilingual = { hu: string; en: string }
+export type ItemId = 'envelope1' | 'envelopeSmall' | 'lakatosFile' | 'offshore'
+                   | 'peteriDossier' | 'bossTrust' | 'parliamentKey'
+export type CharacterId = 'you' | 'lipoti' | 'lakatos' | 'kapzs' | 'peteri' | 'molnar' | 'unknown'
+export type ChoicePointId = string
+export type RunStatus = 'playing' | 'exposed' | 'demoComplete'
+
+export type Beat =
+  | { kind: 'narration';   text: Bilingual }
+  | { kind: 'dialogue';    speaker: CharacterId; text: Bilingual }
+  | { kind: 'chapterCard'; number: number; title: Bilingual; quote: Bilingual; place: Bilingual }
+  | { kind: 'item';        item: ItemId }
+  | { kind: 'statScreen' }
+  | { kind: 'choice';      id: ChoicePointId; prompt: Bilingual; options: ChoiceOption[] }
+
+export type ChoiceOption = {
+  text: Bilingual
+  xp: number
+  lebukas: number
+  grantsItem?: ItemId
+  response: Beat[]
+}
+
+export type PlayerState = {
+  name: string
+  xp: number
+  lebukas: number
+  szint: number
+  items: ItemId[]
+  history: { choicePointId: ChoicePointId; optionIndex: number }[]
+  status: RunStatus
+}
+
+export function initialState(name: string): PlayerState
+export function applyChoice(s: PlayerState, choicePointId: ChoicePointId,
+                            optionIndex: number, option: ChoiceOption): PlayerState
+export const EXPOSURE_LIMIT = 100
+export const LEVEL_UP_XP = 50
+```
+
+- [ ] **Step 1: Write the failing tests**
+
+```ts
+// tests/unit/engine.test.ts
+import { describe, it, expect } from 'vitest'
+import { initialState, applyChoice, EXPOSURE_LIMIT, LEVEL_UP_XP } from '@/lib/story/engine'
+import type { ChoiceOption } from '@/lib/story/types'
+
+const opt = (xp: number, lebukas: number, grantsItem?: any): ChoiceOption =>
+  ({ text: { hu: '', en: '' }, xp, lebukas, grantsItem, response: [] })
+
+describe('applyChoice', () => {
+  it('adds xp and exposure', () => {
+    const s = applyChoice(initialState('Anna'), 'ch1.q1', 0, opt(15, 10))
+    expect(s.xp).toBe(15)
+    expect(s.lebukas).toBe(10)
+  })
+
+  it('grants an item exactly once', () => {
+    let s = applyChoice(initialState('Anna'), 'ch1.q2', 0, opt(20, 15, 'envelope1'))
+    s = applyChoice(s, 'ch1.q2', 0, opt(20, 15, 'envelope1'))
+    expect(s.items).toEqual(['envelope1'])
+  })
+
+  it('lets a careful choice lower exposure', () => {
+    let s = applyChoice(initialState('Anna'), 'ch1.q1', 0, opt(15, 10))
+    s = applyChoice(s, 'ch1.q2', 2, opt(0, -10))
+    expect(s.lebukas).toBe(0)
+  })
+
+  it('never drops exposure below zero', () => {
+    const s = applyChoice(initialState('Anna'), 'ch1.q2', 2, opt(0, -10))
+    expect(s.lebukas).toBe(0)
+  })
+
+  it('ends the run when exposure reaches the limit', () => {
+    const s = applyChoice(initialState('Anna'), 'ch1.q1', 0, opt(0, EXPOSURE_LIMIT))
+    expect(s.status).toBe('exposed')
+  })
+
+  it('does not end the run one short of the limit', () => {
+    const s = applyChoice(initialState('Anna'), 'ch1.q1', 0, opt(0, EXPOSURE_LIMIT - 1))
+    expect(s.status).toBe('playing')
+  })
+
+  it('levels up at the xp threshold and not before', () => {
+    const below = applyChoice(initialState('Anna'), 'ch1.q1', 0, opt(LEVEL_UP_XP - 1, 0))
+    expect(below.szint).toBe(1)
+    const at = applyChoice(initialState('Anna'), 'ch1.q1', 0, opt(LEVEL_UP_XP, 0))
+    expect(at.szint).toBe(2)
+  })
+
+  it('records every decision in order', () => {
+    let s = applyChoice(initialState('Anna'), 'ch1.q1', 1, opt(10, 5))
+    s = applyChoice(s, 'ch1.q2', 2, opt(0, -10))
+    expect(s.history).toEqual([
+      { choicePointId: 'ch1.q1', optionIndex: 1 },
+      { choicePointId: 'ch1.q2', optionIndex: 2 },
+    ])
+  })
+
+  it('does not mutate the state it is given', () => {
+    const before = initialState('Anna')
+    const snapshot = JSON.stringify(before)
+    applyChoice(before, 'ch1.q1', 0, opt(15, 10))
+    expect(JSON.stringify(before)).toBe(snapshot)
+  })
+
+  it('reproduces the full Chapter 1 greedy path from the Java', () => {
+    let s = initialState('Anna')
+    s = applyChoice(s, 'ch1.q1', 0, opt(15, 10))
+    s = applyChoice(s, 'ch1.q2', 0, opt(20, 15, 'envelope1'))
+    expect(s).toMatchObject({ xp: 35, lebukas: 25, szint: 1, items: ['envelope1'], status: 'playing' })
+  })
+})
+```
+
+- [ ] **Step 2: Run them and watch them fail**
+
+Run: `npm test tests/unit/engine.test.ts`
+Expected: FAIL — cannot resolve `@/lib/story/engine`.
+
+- [ ] **Step 3: Implement**
+
+```ts
+// lib/story/engine.ts
+import type { ChoiceOption, ChoicePointId, PlayerState } from './types'
+
+export const EXPOSURE_LIMIT = 100
+export const LEVEL_UP_XP = 50
+
+export function initialState(name: string): PlayerState {
+  return { name, xp: 0, lebukas: 0, szint: 1, items: [], history: [], status: 'playing' }
+}
+
+export function applyChoice(
+  s: PlayerState, choicePointId: ChoicePointId, optionIndex: number, option: ChoiceOption,
+): PlayerState {
+  const xp = s.xp + option.xp
+  const lebukas = Math.max(0, s.lebukas + option.lebukas)
+  const items = option.grantsItem && !s.items.includes(option.grantsItem)
+    ? [...s.items, option.grantsItem]
+    : s.items
+  return {
+    ...s,
+    xp,
+    lebukas,
+    szint: xp >= LEVEL_UP_XP ? 2 : s.szint,
+    items,
+    history: [...s.history, { choicePointId, optionIndex }],
+    status: lebukas >= EXPOSURE_LIMIT ? 'exposed' : s.status,
+  }
+}
+```
+
+- [ ] **Step 4: Run them and watch them pass**
+
+Run: `npm test tests/unit/engine.test.ts`
+Expected: PASS, 10 tests.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Add the pure story engine with Chapter 1 values from the Java source
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Task 6: The play screen
+
+**Files:**
+- Create: `app/[locale]/jatek/page.tsx`, `components/play/StoryPlayer.tsx`, `components/play/DialogueBox.tsx`, `components/play/ChoiceList.tsx`, `components/play/StatusBar.tsx`, `lib/story/localSave.ts`
+- Test: `tests/unit/localSave.test.ts`, `tests/unit/storyPlayer.test.tsx`
+
+**Interfaces:**
+- Consumes: `PlayerState`, `applyChoice`, `initialState` (Task 5); story JSON (Task 4); `DirectionScope` (Task 2).
+- Produces:
+  - `loadLocalSave(): PlayerState | null`
+  - `saveLocalSave(s: PlayerState): void`
+  - `clearLocalSave(): void`
+  - `LOCAL_SAVE_KEY = 'fityesz.save.v1'`
+  - `<StoryPlayer locale={Locale} startName={string} startAt?={ChoicePointId} />` — `startAt` jumps to a named choice point and exists for tests; production never passes it.
+
+- [ ] **Step 1: Write the failing localSave test**
+
+```ts
+// tests/unit/localSave.test.ts
+import { describe, it, expect, beforeEach } from 'vitest'
+import { loadLocalSave, saveLocalSave, clearLocalSave } from '@/lib/story/localSave'
+import { initialState } from '@/lib/story/engine'
+
+beforeEach(() => localStorage.clear())
+
+describe('local save', () => {
+  it('returns null when nothing is stored', () => {
+    expect(loadLocalSave()).toBeNull()
+  })
+  it('round-trips a state', () => {
+    const s = initialState('Anna')
+    saveLocalSave(s)
+    expect(loadLocalSave()).toEqual(s)
+  })
+  it('returns null rather than throwing on corrupt data', () => {
+    localStorage.setItem('fityesz.save.v1', '{not json')
+    expect(loadLocalSave()).toBeNull()
+  })
+  it('clears', () => {
+    saveLocalSave(initialState('Anna'))
+    clearLocalSave()
+    expect(loadLocalSave()).toBeNull()
+  })
+})
+```
+
+- [ ] **Step 2: Run it and watch it fail**
+
+Run: `npm test tests/unit/localSave.test.ts`
+Expected: FAIL — cannot resolve `@/lib/story/localSave`.
+
+- [ ] **Step 3: Implement localSave**
+
+```ts
+// lib/story/localSave.ts
+import type { PlayerState } from './types'
+export const LOCAL_SAVE_KEY = 'fityesz.save.v1'
+
+export function loadLocalSave(): PlayerState | null {
+  try {
+    const raw = localStorage.getItem(LOCAL_SAVE_KEY)
+    return raw ? (JSON.parse(raw) as PlayerState) : null
+  } catch { return null }
+}
+export function saveLocalSave(s: PlayerState): void {
+  try { localStorage.setItem(LOCAL_SAVE_KEY, JSON.stringify(s)) } catch { /* private mode */ }
+}
+export function clearLocalSave(): void {
+  try { localStorage.removeItem(LOCAL_SAVE_KEY) } catch { /* private mode */ }
+}
+```
+
+- [ ] **Step 4: Run it and watch it pass**
+
+Run: `npm test tests/unit/localSave.test.ts`
+Expected: PASS, 4 tests.
+
+- [ ] **Step 5: Write the failing player test**
+
+```tsx
+// tests/unit/storyPlayer.test.tsx
+import { describe, it, expect, beforeEach } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { StoryPlayer } from '@/components/play/StoryPlayer'
+import { loadLocalSave } from '@/lib/story/localSave'
+
+beforeEach(() => localStorage.clear())
+
+describe('StoryPlayer', () => {
+  it('advances a beat when Enter is pressed', () => {
+    render(<StoryPlayer locale="hu" startName="Anna" />)
+    const first = screen.getByTestId('beat').textContent
+    fireEvent.keyDown(window, { key: 'Enter' })
+    expect(screen.getByTestId('beat').textContent).not.toBe(first)
+  })
+
+  it('selects a choice with the number keys', () => {
+    render(<StoryPlayer locale="hu" startName="Anna" startAt="ch1.q1" />)
+    fireEvent.keyDown(window, { key: '2' })
+    expect(loadLocalSave()!.history).toEqual([{ choicePointId: 'ch1.q1', optionIndex: 1 }])
+  })
+
+  it('autosaves after every choice', () => {
+    render(<StoryPlayer locale="hu" startName="Anna" startAt="ch1.q1" />)
+    fireEvent.keyDown(window, { key: '1' })
+    expect(loadLocalSave()!.xp).toBe(15)
+  })
+
+  it('ignores number keys that have no matching option', () => {
+    render(<StoryPlayer locale="hu" startName="Anna" startAt="ch1.q1" />)
+    fireEvent.keyDown(window, { key: '9' })
+    expect(loadLocalSave()).toBeNull()
+  })
+})
+```
+
+- [ ] **Step 6: Run it and watch it fail**
+
+Run: `npm test tests/unit/storyPlayer.test.tsx`
+Expected: FAIL — cannot resolve `@/components/play/StoryPlayer`.
+
+- [ ] **Step 7: Implement the player**
+
+`StoryPlayer` holds `{ state, beatIndex }`, renders the current beat, and binds a `keydown` listener: `Enter` / click advances; `1`–`3` pick an option when the current beat is a `choice`, calling `applyChoice` then `saveLocalSave`. A `narration` beat renders with a typewriter reveal, skipped entirely when `window.matchMedia('(prefers-reduced-motion: reduce)').matches`; a click completes the current line immediately.
+
+Port the visual treatment from the prototype lines 437–597: the `sheet`-coloured dialogue box, the nameplate above it, the numbered choice rows, and the status bar. Wrap the page in `<DirectionScope value="dossier">`.
+
+`app/[locale]/jatek/page.tsx` renders the name prompt (prototype's `namePh`, `confirm`, `nameNote`) and then `<StoryPlayer>`.
+
+- [ ] **Step 8: Run all tests and watch them pass**
+
+Run: `npm test`
+Expected: PASS, all suites.
+
+- [ ] **Step 9: Verify by playing it**
+
+Run: `npm run dev`, open `/jatek`, enter a name, play to the end of Chapter 1 with the keyboard only.
+Expected: reaches the end-of-chapter beat; reloading the page resumes where you left off.
+
+- [ ] **Step 10: Commit**
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Add the playable Prologue and Chapter 1 with local autosave
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Task 7: The skippable register prompt
+
+**Files:**
+- Create: `components/play/RegisterGate.tsx`
+- Modify: `components/play/StoryPlayer.tsx`
+- Test: `tests/unit/registerGate.test.tsx`
+
+**Interfaces:**
+- Consumes: `PlayerState` (Task 5), `loadLocalSave` (Task 6).
+- Produces: `<RegisterGate state={PlayerState} onSkip={() => void} locale={Locale} />`, and `GATE_DISMISSED_KEY = 'fityesz.gate.dismissed.v1'`.
+
+- [ ] **Step 1: Write the failing test**
+
+```tsx
+// tests/unit/registerGate.test.tsx
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { RegisterGate } from '@/components/play/RegisterGate'
+import { initialState } from '@/lib/story/engine'
+import { loadLocalSave, saveLocalSave } from '@/lib/story/localSave'
+
+beforeEach(() => localStorage.clear())
+
+describe('RegisterGate', () => {
+  it('offers a skip', () => {
+    render(<RegisterGate state={initialState('Anna')} onSkip={() => {}} locale="hu" />)
+    expect(screen.getByTestId('gate-skip')).toBeTruthy()
+  })
+
+  it('calls onSkip when skipped', () => {
+    const onSkip = vi.fn()
+    render(<RegisterGate state={initialState('Anna')} onSkip={onSkip} locale="hu" />)
+    fireEvent.click(screen.getByTestId('gate-skip'))
+    expect(onSkip).toHaveBeenCalledOnce()
+  })
+
+  it('keeps the local save after skipping, so a later registration inherits it', () => {
+    const s = initialState('Anna')
+    saveLocalSave(s)
+    render(<RegisterGate state={s} onSkip={() => {}} locale="hu" />)
+    fireEvent.click(screen.getByTestId('gate-skip'))
+    expect(loadLocalSave()).toEqual(s)
+  })
+
+  it('does not reappear once dismissed', () => {
+    const { unmount } = render(<RegisterGate state={initialState('Anna')} onSkip={() => {}} locale="hu" />)
+    fireEvent.click(screen.getByTestId('gate-skip'))
+    unmount()
+    const { queryByTestId } = render(<RegisterGate state={initialState('Anna')} onSkip={() => {}} locale="hu" />)
+    expect(queryByTestId('gate-skip')).toBeNull()
+  })
+})
+```
+
+The third test is the guard for the spec's promise that skipping costs the player nothing.
+
+- [ ] **Step 2: Run it and watch it fail**
+
+Run: `npm test tests/unit/registerGate.test.tsx`
+Expected: FAIL — cannot resolve `@/components/play/RegisterGate`.
+
+- [ ] **Step 3: Implement**
+
+Port the overlay from the prototype lines 921–943. It uses `gateKicker`, `gateTitle`, `gateSub`, `gateCta`, `gateLogin`, `gateSkip`, `gateSkipNote`. The skip control carries `data-testid="gate-skip"`, writes `GATE_DISMISSED_KEY` to `localStorage`, and **must not** touch the save key. Render it from `StoryPlayer` when `status === 'demoComplete'` and the dismissal key is absent.
+
+- [ ] **Step 4: Run it and watch it pass**
+
+Run: `npm test tests/unit/registerGate.test.tsx`
+Expected: PASS, 4 tests.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Add the skippable end-of-chapter register prompt
+
+Skipping preserves the local save so a later registration still inherits
+the player's Chapter 1 decisions.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Task 8: Database schema, RLS and the crowd-statistics threshold
+
+**Files:**
+- Create: `supabase/migrations/0001_schema.sql`, `supabase/migrations/0002_rls.sql`, `supabase/migrations/0003_choice_stats.sql`, `lib/supabase/client.ts`, `lib/supabase/server.ts`
+- Test: `tests/integration/rls.test.ts`
+
+**Interfaces:**
+- Consumes: nothing.
+- Produces: the tables in spec §3.4, plus `choice_stats_public(choice_point_id, option_index, count, pct)`.
+
+- [ ] **Step 1: Start Supabase locally**
+
+```bash
+npm i -D supabase
+npx supabase init
+npx supabase start
+```
+
+Record the printed anon key, service-role key and API URL into `.env.local`. Add `.env*.local` to `.gitignore`.
+
+- [ ] **Step 2: Write the schema migration**
+
+`0001_schema.sql` creates `profiles`, `saves`, `decisions`, `choice_stats`, `endings`, `unlocked_endings`, `downloads` and `device_codes` exactly as spec §3.4 lists them. Seed `endings` with the three real rows:
+
+```sql
+insert into endings (id, sort, name_hu, name_en, hint_hu, hint_en) values
+  ('president', 1, 'Az elnök',   'The president', 'Érj fel a csúcsra.', 'Reach the very top.'),
+  ('exposed',   2, 'A lebukás',  'Exposed',       'Hagyd, hogy a sajtó mindent kiderítsen.', 'Let the press uncover everything.'),
+  ('gaveup',    3, 'A feladás',  'Giving up',     'Add fel egy elvesztett bossfight után.', 'Give up after losing a bossfight.');
+```
+
+- [ ] **Step 3: Write the failing RLS test**
+
+```ts
+// tests/integration/rls.test.ts
+import { describe, it, expect, beforeAll } from 'vitest'
+import { createClient } from '@supabase/supabase-js'
+
+const url = process.env.SUPABASE_URL!
+const anon = process.env.SUPABASE_ANON_KEY!
+let alice: any, bob: any, aliceSaveId: string
+
+beforeAll(async () => {
+  alice = createClient(url, anon); bob = createClient(url, anon)
+  await alice.auth.signUp({ email: 'alice@test.local', password: 'password123' })
+  await bob.auth.signUp({ email: 'bob@test.local', password: 'password123' })
+  const { data } = await alice.from('saves').insert({ slot: 1, chapter: 1, xp: 35, lebukas: 25, szint: 1, items: ['envelope1'], player_name: 'Alice', source: 'web' }).select().single()
+  aliceSaveId = data.id
+})
+
+describe('row-level security', () => {
+  it('lets a user read their own save', async () => {
+    const { data } = await alice.from('saves').select().eq('id', aliceSaveId)
+    expect(data).toHaveLength(1)
+  })
+  it('hides one user\'s saves from another', async () => {
+    const { data } = await bob.from('saves').select().eq('id', aliceSaveId)
+    expect(data).toHaveLength(0)
+  })
+  it('refuses a cross-user update', async () => {
+    const { error } = await bob.from('saves').update({ xp: 9999 }).eq('id', aliceSaveId)
+    const { data } = await alice.from('saves').select('xp').eq('id', aliceSaveId).single()
+    expect(data.xp).toBe(35)
+  })
+  it('refuses direct writes to choice_stats', async () => {
+    const { error } = await alice.from('choice_stats').insert({ choice_point_id: 'ch1.q1', option_index: 0, count: 500 })
+    expect(error).not.toBeNull()
+  })
+})
+```
+
+- [ ] **Step 4: Run it and watch it fail**
+
+Run: `npm test tests/integration/rls.test.ts`
+Expected: FAIL — relations do not exist.
+
+- [ ] **Step 5: Write the RLS migration**
+
+`0002_rls.sql` enables RLS on every user-owned table and adds, for each of `profiles`, `saves`, `decisions`, `unlocked_endings`, `downloads`:
+
+```sql
+alter table saves enable row level security;
+create policy saves_own on saves for all
+  using (auth.uid() = user_id) with check (auth.uid() = user_id);
+```
+
+`choice_stats` gets RLS enabled with **no policy at all**, so no client can read or write it directly.
+
+- [ ] **Step 6: Run it and watch it pass**
+
+Run: `npx supabase db reset && npm test tests/integration/rls.test.ts`
+Expected: PASS, 4 tests.
+
+- [ ] **Step 7: Write the failing threshold test**
+
+```ts
+// append to tests/integration/rls.test.ts
+describe('crowd statistics threshold', () => {
+  it('shows nothing at 29 responses and percentages at 30', async () => {
+    const admin = createClient(url, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+    for (let i = 0; i < 29; i++) {
+      await admin.from('decisions').insert({ user_id: null, choice_point_id: 'ch3.x', option_index: 0, chapter: 3 })
+    }
+    let { data } = await alice.from('choice_stats_public').select().eq('choice_point_id', 'ch3.x')
+    expect(data).toHaveLength(0)
+
+    await admin.from('decisions').insert({ user_id: null, choice_point_id: 'ch3.x', option_index: 0, chapter: 3 })
+    ;({ data } = await alice.from('choice_stats_public').select().eq('choice_point_id', 'ch3.x'))
+    expect(data).toHaveLength(1)
+    expect(data![0].pct).toBe(100)
+  })
+})
+```
+
+- [ ] **Step 8: Run it and watch it fail**
+
+Run: `npm test tests/integration/rls.test.ts`
+Expected: FAIL — `choice_stats_public` does not exist.
+
+- [ ] **Step 9: Write the trigger and the view**
+
+```sql
+-- supabase/migrations/0003_choice_stats.sql
+create or replace function bump_choice_stats() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  insert into choice_stats (choice_point_id, option_index, count)
+  values (new.choice_point_id, new.option_index, 1)
+  on conflict (choice_point_id, option_index)
+  do update set count = choice_stats.count + 1;
+  return new;
+end $$;
+
+create trigger decisions_bump_stats after insert on decisions
+  for each row execute function bump_choice_stats();
+
+create view choice_stats_public
+with (security_invoker = off) as
+select cs.choice_point_id, cs.option_index, cs.count,
+       round(100.0 * cs.count / t.total) as pct
+from choice_stats cs
+join (select choice_point_id, sum(count) as total
+      from choice_stats group by choice_point_id) t
+  on t.choice_point_id = cs.choice_point_id
+where t.total >= 30;
+
+grant select on choice_stats_public to anon, authenticated;
+```
+
+- [ ] **Step 10: Run it and watch it pass**
+
+Run: `npx supabase db reset && npm test tests/integration/rls.test.ts`
+Expected: PASS, 5 tests.
+
+- [ ] **Step 11: Commit**
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Add schema, row-level security and the 30-response statistics threshold
+
+The threshold lives in SQL, so no client can request crowd percentages
+before a choice point has enough responses to be meaningful.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Task 9: Auth, the Pártigazolvány, and save migration
+
+**Files:**
+- Create: `app/[locale]/regisztracio/page.tsx`, `app/[locale]/belepes/page.tsx`, `components/auth/AuthForm.tsx`, `components/auth/PartyCard.tsx`, `lib/saves/migrate.ts`, `app/api/saves/route.ts`
+- Test: `tests/unit/migrate.test.ts`, `tests/integration/saves-api.test.ts`
+
+**Interfaces:**
+- Consumes: `PlayerState` (Task 5), `loadLocalSave`/`clearLocalSave` (Task 6), Supabase clients (Task 8).
+- Produces:
+  - `toSaveRow(s: PlayerState, userId: string, slot: number): SaveRow`
+  - `fromSaveRow(r: SaveRow): PlayerState`
+  - `POST /api/saves` accepts `{ state: PlayerState, slot: number }`, upserts the row and inserts one `decisions` row per `history` entry.
+
+- [ ] **Step 1: Write the failing migration test**
+
+```ts
+// tests/unit/migrate.test.ts
+import { describe, it, expect } from 'vitest'
+import { toSaveRow, fromSaveRow } from '@/lib/saves/migrate'
+import { initialState, applyChoice } from '@/lib/story/engine'
+
+const played = applyChoice(initialState('Anna'), 'ch1.q2', 0,
+  { text: { hu: '', en: '' }, xp: 20, lebukas: 15, grantsItem: 'envelope1', response: [] })
+
+describe('save mapping', () => {
+  it('round-trips a played state', () => {
+    expect(fromSaveRow(toSaveRow(played, 'user-1', 1))).toEqual(played)
+  })
+  it('carries the player name onto the row', () => {
+    expect(toSaveRow(played, 'user-1', 1).player_name).toBe('Anna')
+  })
+  it('marks web-originated saves', () => {
+    expect(toSaveRow(played, 'user-1', 1).source).toBe('web')
+  })
+  it('rejects a slot outside 1-3', () => {
+    expect(() => toSaveRow(played, 'user-1', 4)).toThrow()
+  })
+})
+```
+
+- [ ] **Step 2: Run it and watch it fail**
+
+Run: `npm test tests/unit/migrate.test.ts`
+Expected: FAIL — cannot resolve `@/lib/saves/migrate`.
+
+- [ ] **Step 3: Implement the mapping**
+
+Map `PlayerState` ↔ the `saves` row columns, storing `history` in `decisions` rather than on the row. Throw `RangeError` for a slot outside `1..3`.
+
+- [ ] **Step 4: Run it and watch it pass**
+
+Run: `npm test tests/unit/migrate.test.ts`
+Expected: PASS, 4 tests.
+
+- [ ] **Step 5: Build the auth pages**
+
+Port the prototype lines 598–647. Registration takes username, email and password (`fUser`, `fEmail`, `fPass`); login takes `fId` and `fPass`. Both use `@supabase/ssr` browser clients. The *Pártigazolvány* card (`cardTitle`, `cardNo`, `cardName`, `cardRank`, `cardJoined`, `cardNote`) renders beside the form.
+
+When a local save exists, show `saveMove` with the decision count substituted, and after a successful sign-up call `POST /api/saves` with it, then `clearLocalSave()`.
+
+Include the `authSkip` link — registration is never forced.
+
+- [ ] **Step 6: Verify the flow end to end by hand**
+
+Run: `npm run dev`. Play `/jatek` to the end of Chapter 1, skip the gate, then register.
+Expected: the dashboard shows the run in slot 1 with both Chapter 1 decisions.
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Add registration, login and local-save migration into the account
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Task 10: The dashboard
+
+**Files:**
+- Create: `app/[locale]/vezerlopult/page.tsx`, `components/dash/ContinueCard.tsx`, `components/dash/SaveSlots.tsx`, `components/dash/StatsPanel.tsx`, `components/dash/DecisionTimeline.tsx`, `components/dash/EndingsPanel.tsx`
+- Test: `tests/unit/statsPanel.test.tsx`, `tests/unit/endingsPanel.test.tsx`
+
+**Interfaces:**
+- Consumes: `PlayerState` (Task 5), `fromSaveRow` (Task 9), `choice_stats_public` (Task 8).
+- Produces: nothing consumed later.
+
+- [ ] **Step 1: Write the failing tests**
+
+```tsx
+// tests/unit/endingsPanel.test.tsx
+import { describe, it, expect } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { EndingsPanel } from '@/components/dash/EndingsPanel'
+
+const endings = [
+  { id: 'president', sort: 1, name: 'Az elnök',  hint: 'Érj fel a csúcsra.' },
+  { id: 'exposed',   sort: 2, name: 'A lebukás', hint: 'Hagyd, hogy a sajtó mindent kiderítsen.' },
+  { id: 'gaveup',    sort: 3, name: 'A feladás', hint: 'Add fel egy elvesztett bossfight után.' },
+]
+
+describe('EndingsPanel', () => {
+  it('counts out of three', () => {
+    render(<EndingsPanel endings={endings} unlocked={['president']} locale="hu" />)
+    expect(screen.getByTestId('endings-count').textContent).toContain('1/3')
+  })
+  it('names an unlocked ending', () => {
+    render(<EndingsPanel endings={endings} unlocked={['president']} locale="hu" />)
+    expect(screen.getByText('Az elnök')).toBeTruthy()
+  })
+  it('never names a locked ending, only its hint', () => {
+    render(<EndingsPanel endings={endings} unlocked={['president']} locale="hu" />)
+    expect(screen.queryByText('A lebukás')).toBeNull()
+    expect(screen.getByText('Hagyd, hogy a sajtó mindent kiderítsen.')).toBeTruthy()
+  })
+})
+```
+
+```tsx
+// tests/unit/statsPanel.test.tsx
+import { describe, it, expect } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { StatsPanel } from '@/components/dash/StatsPanel'
+import { initialState } from '@/lib/story/engine'
+
+describe('StatsPanel', () => {
+  it('shows exposure against its ceiling', () => {
+    render(<StatsPanel state={{ ...initialState('Anna'), lebukas: 25 }} locale="hu" />)
+    expect(screen.getByTestId('exposure').textContent).toContain('25')
+    expect(screen.getByTestId('exposure').textContent).toContain('100')
+  })
+  it('reports no rank before the level-up threshold', () => {
+    render(<StatsPanel state={{ ...initialState('Anna'), xp: 49 }} locale="hu" />)
+    expect(screen.getByTestId('rank').textContent).toContain('Még nincs')
+  })
+  it('reports the local party member rank at the threshold', () => {
+    render(<StatsPanel state={{ ...initialState('Anna'), xp: 50, szint: 2 }} locale="hu" />)
+    expect(screen.getByTestId('rank').textContent).toContain('Helyi párttag')
+  })
+  it('does not render a relationships panel', () => {
+    const { container } = render(<StatsPanel state={initialState('Anna')} locale="hu" />)
+    expect(container.textContent).not.toContain('Kapcsolatok')
+  })
+})
+```
+
+The last test is the guard for the out-of-scope decision — the prototype has that panel and it must not get ported by accident.
+
+- [ ] **Step 2: Run them and watch them fail**
+
+Run: `npm test tests/unit/endingsPanel.test.tsx tests/unit/statsPanel.test.tsx`
+Expected: FAIL — components do not resolve.
+
+- [ ] **Step 3: Implement the panels**
+
+Port the prototype lines 648–817, **omitting the `relT` / `relSub` / `trustHi` block entirely**. Panels: `ContinueCard` (`dashContinue`, `nextCh2`, `contNoteDone`, seven-chapter progress strip), `SaveSlots` (three, `slotDone` / `slotProg` / `emptySlot`), `StatsPanel`, `DecisionTimeline` (each entry showing the choice, its XP/exposure cost, and `samePct` where `choice_stats_public` returns a row), `EndingsPanel`.
+
+Handle the two empty states the prototype defines: `dashOutT`/`dashOutD` when signed out, `dashEmptyT`/`dashEmptyD` when signed in with no decisions.
+
+- [ ] **Step 4: Run them and watch them pass**
+
+Run: `npm test`
+Expected: PASS, all suites.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Add the player dashboard
+
+The prototype's Kapcsolatok panel is deliberately not ported; a test
+guards against it reappearing.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Task 11: Landing and Szereplők
+
+**Files:**
+- Create: `app/[locale]/page.tsx`, `app/[locale]/szereplok/page.tsx`, `lib/design/characters.ts`, `components/CharacterCard.tsx`
+- Test: `tests/unit/characters.test.ts`
+
+**Interfaces:**
+- Consumes: `DirectionScope`, `FlagRail` (Task 2), messages (Task 3).
+- Produces: `CHARACTERS: Character[]` where `Character = { id: CharacterId; initials: string; name: Bilingual; title: Bilingual; quote: Bilingual; chapter: number; boss: boolean }`.
+
+- [ ] **Step 1: Write the failing test**
+
+```ts
+// tests/unit/characters.test.ts
+import { describe, it, expect } from 'vitest'
+import { CHARACTERS } from '@/lib/design/characters'
+
+describe('character roster', () => {
+  it('has all six from the prototype', () => {
+    expect(CHARACTERS.map(c => c.id)).toEqual(['you','lipoti','lakatos','kapzs','peteri','molnar'])
+  })
+  it('marks exactly the three bosses', () => {
+    expect(CHARACTERS.filter(c => c.boss).map(c => c.id)).toEqual(['lakatos','kapzs','peteri'])
+  })
+  it('gives every character both languages for name, title and quote', () => {
+    for (const c of CHARACTERS) {
+      for (const f of ['name','title','quote'] as const) {
+        expect(c[f].hu, `${c.id}.${f}.hu`).toBeTruthy()
+        expect(c[f].en, `${c.id}.${f}.en`).toBeTruthy()
+      }
+    }
+  })
+})
+```
+
+- [ ] **Step 2: Run it and watch it fail**
+
+Run: `npm test tests/unit/characters.test.ts`
+Expected: FAIL — cannot resolve `@/lib/design/characters`.
+
+- [ ] **Step 3: Port the roster**
+
+Transcribe the prototype's `static CHARS` block (line 969 onwards) into `lib/design/characters.ts`, converting `name:['hu','en']` pairs into `{ hu, en }` objects and `ch:` into `chapter`.
+
+- [ ] **Step 4: Run it and watch it pass**
+
+Run: `npm test tests/unit/characters.test.ts`
+Expected: PASS, 3 tests.
+
+- [ ] **Step 5: Build the pages**
+
+Landing: port prototype lines 77–104 (campaign) — kicker, the `slogan1`/`slogan2` poster headline, `heroSub`, the two CTAs, `heroNote`, the halftone dot field, the starting-position poster (`posterTitle`, `rolls`, `cash`, `debt`, `bank`), the cast strip and the `howTitle` three-step explainer.
+
+Szereplők: port lines 275–309 — typographic cards with initials, name, title, quote, `firstSeen`, `noPhoto`, `fileNo`.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Add the landing page and the character roster
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Task 12: Lexikon
+
+**Files:**
+- Create: `app/[locale]/lexikon/page.tsx`, `components/lore/Tabs.tsx`
+- Test: `tests/unit/loreTabs.test.tsx`
+
+**Interfaces:**
+- Consumes: `DirectionScope` (Task 2), `CHARACTERS` (Task 11).
+- Produces: nothing consumed later.
+
+- [ ] **Step 1: Write the failing test**
+
+```tsx
+// tests/unit/loreTabs.test.tsx
+import { describe, it, expect } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { LoreTabs } from '@/components/lore/Tabs'
+
+describe('LoreTabs', () => {
+  it('renders all five tabs', () => {
+    render(<LoreTabs locale="hu" />)
+    for (const label of ['A párt','Fejezetek','Helyszínek','Tárgyak','Játékszabályok'])
+      expect(screen.getByRole('tab', { name: label })).toBeTruthy()
+  })
+  it('shows one panel at a time', () => {
+    render(<LoreTabs locale="hu" />)
+    fireEvent.click(screen.getByRole('tab', { name: 'Tárgyak' }))
+    expect(screen.getAllByRole('tabpanel')).toHaveLength(1)
+  })
+  it('censors chapters beyond the free demo', () => {
+    render(<LoreTabs locale="hu" />)
+    fireEvent.click(screen.getByRole('tab', { name: 'Fejezetek' }))
+    expect(screen.getAllByText('Cenzúrázva').length).toBeGreaterThan(0)
+  })
+})
+```
+
+- [ ] **Step 2: Run it and watch it fail**
+
+Run: `npm test tests/unit/loreTabs.test.tsx`
+Expected: FAIL — cannot resolve `@/components/lore/Tabs`.
+
+- [ ] **Step 3: Implement**
+
+Port prototype lines 310–436, wrapped in `<DirectionScope value="dossier">`. Tabs use the ARIA tab pattern with arrow-key navigation. Content: `A párt` (the Kapzs portrait caption, `leaderLabel`, `mottoLabel`, the four `rule1..4` with `rulesBy`, the `familyQuote`), `Fejezetek` (all seven, with chapters 2–7 marked `censored` and 1 marked `inBrowser`), `Helyszínek`, `Tárgyak` (all seven items, `found` / `notFound`), `Játékszabályok` (`xpD`, `expD`, `rankT`/`rankD`, `bossT`/`bossD`).
+
+- [ ] **Step 4: Run it and watch it pass**
+
+Run: `npm test tests/unit/loreTabs.test.tsx`
+Expected: PASS, 3 tests.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Add the Lexikon codex in the dossier direction
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Task 13: Download page
+
+**Files:**
+- Create: `app/[locale]/letoltes/page.tsx`, `app/api/download/[platform]/route.ts`, `lib/releases.ts`
+- Test: `tests/unit/releases.test.ts`, `tests/integration/download-gate.test.ts`
+
+**Interfaces:**
+- Consumes: Supabase server client (Task 8).
+- Produces:
+  - `type Platform = 'windows' | 'macos-arm' | 'macos-intel' | 'linux-deb' | 'linux-rpm'`
+  - `assetFor(release: GithubRelease, p: Platform): { url: string; size: number } | null`
+  - `GET /api/download/:platform` → 302 to the asset, or 401 when signed out.
+
+- [ ] **Step 1: Write the failing test**
+
+```ts
+// tests/unit/releases.test.ts
+import { describe, it, expect } from 'vitest'
+import { assetFor } from '@/lib/releases'
+
+const release = { tag_name: 'v1.0.0', assets: [
+  { name: 'FityeszKronika-1.0.0.exe',        browser_download_url: 'u/exe',   size: 1 },
+  { name: 'FityeszKronika-1.0.0-arm64.dmg',  browser_download_url: 'u/arm',   size: 2 },
+  { name: 'FityeszKronika-1.0.0-x86_64.dmg', browser_download_url: 'u/intel', size: 3 },
+  { name: 'fityesz-kronika_1.0.0_amd64.deb', browser_download_url: 'u/deb',   size: 4 },
+  { name: 'fityesz-kronika-1.0.0.x86_64.rpm',browser_download_url: 'u/rpm',   size: 5 },
+] }
+
+describe('assetFor', () => {
+  it('picks the Windows installer', () => expect(assetFor(release,'windows')!.url).toBe('u/exe'))
+  it('distinguishes the two macOS builds', () => {
+    expect(assetFor(release,'macos-arm')!.url).toBe('u/arm')
+    expect(assetFor(release,'macos-intel')!.url).toBe('u/intel')
+  })
+  it('picks each Linux package', () => {
+    expect(assetFor(release,'linux-deb')!.url).toBe('u/deb')
+    expect(assetFor(release,'linux-rpm')!.url).toBe('u/rpm')
+  })
+  it('returns null when a platform is missing from the release', () => {
+    expect(assetFor({ tag_name:'v1', assets: [] }, 'windows')).toBeNull()
+  })
+})
+```
+
+- [ ] **Step 2: Run it and watch it fail**
+
+Run: `npm test tests/unit/releases.test.ts`
+Expected: FAIL — cannot resolve `@/lib/releases`.
+
+- [ ] **Step 3: Implement**
+
+`fetchLatestRelease()` calls `https://api.github.com/repos/djkzea/fityeszthegame/releases/latest` with `next: { revalidate: 3600 }`. `assetFor` matches by suffix and, for `.dmg`, by the `arm64` / `x86_64` infix.
+
+The route handler checks the Supabase session, returns 401 when absent, inserts a `downloads` row, then 302s to the asset URL.
+
+- [ ] **Step 4: Run it and watch it pass**
+
+Run: `npm test tests/unit/releases.test.ts`
+Expected: PASS, 4 tests.
+
+- [ ] **Step 5: Build the page**
+
+Port prototype lines 818–858: `dlKicker`, `dlTitle`, `dlSub`, the platform buttons, `dlLockedT`/`dlLockedD`/`dlLockedBtn` when signed out, `signedAs` when signed in, and the three-step `dlHowT` explainer.
+
+**Change from the prototype:** its Linux button says `AppImage`. Replace with two buttons, `.deb` and `.rpm`, per the global constraints. Add a short per-platform first-launch note covering the SmartScreen and Gatekeeper warnings on unsigned builds (spec §7.3).
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Add the account-gated download page backed by GitHub releases
+
+Linux ships .deb and .rpm rather than the prototype's AppImage, since
+jpackage cannot produce an AppImage.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Task 14: Támogatás
+
+**Files:**
+- Create: `app/[locale]/tamogatas/page.tsx`, `lib/creators.ts`
+- Test: `tests/unit/support.test.tsx`
+
+**Interfaces:**
+- Consumes: messages (Task 3).
+- Produces: `CREATORS` and `kofiUrl(): string | null` reading `process.env.NEXT_PUBLIC_KOFI_URL`.
+
+- [ ] **Step 1: Write the failing test**
+
+```tsx
+// tests/unit/support.test.tsx
+import { describe, it, expect, afterEach } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { SupportSection } from '@/app/[locale]/tamogatas/SupportSection'
+
+afterEach(() => { delete process.env.NEXT_PUBLIC_KOFI_URL })
+
+describe('SupportSection', () => {
+  it('shows a coming-soon state with no Ko-fi url configured', () => {
+    render(<SupportSection locale="hu" />)
+    expect(screen.getByTestId('kofi').textContent).toContain('hamarosan')
+    expect(screen.queryByRole('link', { name: /Ko-fi/ })).toBeNull()
+  })
+  it('links to Ko-fi once the url is configured', () => {
+    process.env.NEXT_PUBLIC_KOFI_URL = 'https://ko-fi.com/fityesz'
+    render(<SupportSection locale="hu" />)
+    expect(screen.getByRole('link', { name: /Ko-fi/ }).getAttribute('href'))
+      .toBe('https://ko-fi.com/fityesz')
+  })
+  it('credits both creators with their GitHub profiles', () => {
+    render(<SupportSection locale="hu" />)
+    expect(screen.getByRole('link', { name: /Frezzard2/ }).getAttribute('href'))
+      .toBe('https://github.com/Frezzard2')
+    expect(screen.getByRole('link', { name: /djkzea/ }).getAttribute('href'))
+      .toBe('https://github.com/djkzea')
+  })
+})
+```
+
+- [ ] **Step 2: Run it and watch it fail**
+
+Run: `npm test tests/unit/support.test.tsx`
+Expected: FAIL — cannot resolve the component.
+
+- [ ] **Step 3: Implement**
+
+Port prototype lines 859–920. `CREATORS` comes from the prototype's `static CREATORS`: Kukucska Zsombor (`Frezzard2`) and Dajka Zea (`djkzea`). Use `kofiSoon` and `kofiNote` when unset, `kofi` and `kofiCardT`/`kofiCardD` when set. The Ko-fi link is a plain `<a>` — no third-party widget script.
+
+- [ ] **Step 4: Run it and watch it pass**
+
+Run: `npm test tests/unit/support.test.tsx`
+Expected: PASS, 3 tests.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Add the support page, config-driven so it ships before Ko-fi exists
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Task 15: Responsive, accessibility and end-to-end
+
+**Files:**
+- Create: `tests/e2e/play-register.spec.ts`, `tests/e2e/a11y.spec.ts`, `playwright.config.ts`
+- Modify: `.github/workflows/ci.yml`
+- Test: the two specs above
+
+**Interfaces:**
+- Consumes: everything.
+- Produces: `npm run test:e2e`.
+
+- [ ] **Step 1: Install Playwright**
+
+```bash
+npm i -D @playwright/test @axe-core/playwright
+npx playwright install --with-deps chromium
+```
+
+- [ ] **Step 2: Write the failing e2e test**
+
+```ts
+// tests/e2e/play-register.spec.ts
+import { test, expect } from '@playwright/test'
+
+test('a visitor can play Chapter 1, skip the gate, and register later keeping their decisions', async ({ page }) => {
+  await page.goto('/jatek')
+  await page.getByTestId('name-input').fill('Anna')
+  await page.getByTestId('name-confirm').click()
+
+  for (let i = 0; i < 40 && !(await page.getByTestId('gate-skip').isVisible().catch(() => false)); i++) {
+    const choice = page.getByTestId('choice-1')
+    if (await choice.isVisible().catch(() => false)) await choice.click()
+    else await page.keyboard.press('Enter')
+  }
+
+  await page.getByTestId('gate-skip').click()
+  await page.reload()
+  await expect(page.getByTestId('status-xp')).toContainText('35')
+
+  await page.goto('/regisztracio')
+  await page.getByTestId('reg-user').fill('anna')
+  await page.getByTestId('reg-email').fill(`anna+${Date.now()}@test.local`)
+  await page.getByTestId('reg-pass').fill('password123')
+  await page.getByTestId('reg-submit').click()
+
+  await page.waitForURL('**/vezerlopult')
+  await expect(page.getByTestId('timeline')).toContainText('ch1.q1')
+  await expect(page.getByTestId('timeline')).toContainText('ch1.q2')
+})
+```
+
+```ts
+// tests/e2e/a11y.spec.ts
+import { test, expect } from '@playwright/test'
+import AxeBuilder from '@axe-core/playwright'
+
+for (const path of ['/', '/szereplok', '/lexikon', '/jatek', '/letoltes', '/tamogatas']) {
+  test(`${path} has no serious accessibility violations`, async ({ page }) => {
+    await page.goto(path)
+    const { violations } = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa']).analyze()
+    expect(violations.filter(v => ['serious','critical'].includes(v.impact!))).toEqual([])
+  })
+
+  test(`${path} does not scroll horizontally at 375px`, async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 800 })
+    await page.goto(path)
+    const overflow = await page.evaluate(() =>
+      document.documentElement.scrollWidth - document.documentElement.clientWidth)
+    expect(overflow).toBeLessThanOrEqual(0)
+  })
+}
+```
+
+- [ ] **Step 3: Run them and watch them fail**
+
+Run: `npm run test:e2e`
+Expected: FAIL — missing test ids, contrast violations, or mobile overflow.
+
+- [ ] **Step 4: Fix what the tests find**
+
+Add the missing `data-testid` attributes. Fix contrast by using `--accentText` rather than `--accent` for accent-coloured text on paper. Fix overflow with a 16px gutter and `overflow-wrap`.
+
+- [ ] **Step 5: Run them and watch them pass**
+
+Run: `npm run test:e2e`
+Expected: PASS, all specs.
+
+- [ ] **Step 6: Run the template smell test from spec §6.3**
+
+For each of `/`, `/szereplok`, `/lexikon`, `/jatek`, `/letoltes`, `/tamogatas`, check by eye and fix
+anything that fails:
+
+- No three equal icon-heading-paragraph cards in a row anywhere.
+- Every section heading is in-world (`I. FEJEZET`, `AZ AKTA`, `IKTATÓSZÁM`), never "Features" or
+  "Get Started".
+- No emoji used as an icon; no gradient text; no rounded corners.
+- Every page has one structural rule-break, so no two pages are interchangeable.
+- **Cover the logo. If the page could belong to another game, rework it.**
+
+Record the result in the PR description. This is a human judgement step with no automated
+equivalent — do not skip it on the grounds that the tests pass.
+
+- [ ] **Step 7: Add e2e to CI**
+
+Add a second job that runs `npx playwright install --with-deps chromium` then `npm run test:e2e`.
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Add end-to-end and accessibility coverage
+
+Covers the anonymous play, skip, register-later flow, plus WCAG AA and
+375px overflow checks on every public page.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Task 16: Deploy
+
+**Files:**
+- Create: `.env.example`, `vercel.json`
+- Modify: `README.md`
+
+**Interfaces:**
+- Consumes: everything.
+- Produces: the live site at `fityeszthegame.com`.
+
+- [ ] **Step 1: Create the hosted Supabase project**
+
+Create it, then push the migrations:
+
+```bash
+npx supabase link --project-ref <ref>
+npx supabase db push
+```
+
+- [ ] **Step 2: Document the environment**
+
+```bash
+# .env.example
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+NEXT_PUBLIC_KOFI_URL=
+```
+
+`SUPABASE_SERVICE_ROLE_KEY` is server-only and must never appear in a `NEXT_PUBLIC_` variable.
+
+- [ ] **Step 3: Deploy to Vercel**
+
+Import the repo, set the variables from Step 2, deploy.
+
+- [ ] **Step 4: Point the domain**
+
+Add `fityeszthegame.com` and `www.fityeszthegame.com` in Vercel, set the registrar's nameservers or A/CNAME records as Vercel instructs, and wait for the certificate.
+
+- [ ] **Step 5: Verify production**
+
+Check: `/` serves Hungarian and `/en` English · the flag rail appears on every page including `/lexikon` and `/jatek` · Chapter 1 is playable and autosaves · registering migrates the save · `/letoltes` refuses a signed-out download · `/tamogatas` shows the Ko-fi coming-soon state.
+
+- [ ] **Step 6: Update the README**
+
+Replace the placeholder README with the project description, local setup (`npm ci`, `npx supabase start`, `npm run dev`), the test commands, and a note that story JSON is generated and must not be hand-edited.
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Add deployment configuration and project README
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Deferred to later plans
+
+- **Phase 2 — Installers.** `jlink` + `jpackage` GitHub Actions matrix in `djkzea/fityeszthegame`. Until it exists, `/letoltes` shows every platform as unavailable, since `assetFor` returns `null` for a release with no assets.
+- **Phase 3 — Desktop sign-in and save sync.** Device code flow, `/eszkoz`, `/api/device/*`, and the Java client changes. `/eszkoz` is not built in Phase 1.
