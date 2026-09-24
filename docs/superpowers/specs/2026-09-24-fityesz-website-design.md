@@ -57,8 +57,9 @@ Facts taken from the source, not assumed:
 | Play presentation | Visual novel — dialogue boxes with typographic nameplates, no portrait art |
 | Visual direction | Campaign propaganda × terminal (billboard slogans for marketing, console for gameplay) |
 | Palette | **Pártvörös** (§6.1) |
+| Domain | `fityeszthegame.com` |
 | Crowd statistics | "% of players who chose this" hidden until a choice point has ≥ 30 responses |
-| Ko-fi | No profile exists yet; section is config-driven and ships in a "hamarosan" state |
+| Ko-fi | Profile being created by Zsombor; section is config-driven, so it ships with or without it |
 
 ---
 
@@ -369,7 +370,7 @@ download page states this plainly, per platform, with the steps to proceed. Cert
 A console application cannot perform a browser OAuth redirect, so the game uses **device code flow**:
 
 1. Game `POST`s `/api/device/start`, receives a device code and a short user code (`FTY-7K2Q`).
-2. Game prints: open `fityesz.app/eszkoz` and enter `FTY-7K2Q`.
+2. Game prints: open `fityeszthegame.com/eszkoz` and enter `FTY-7K2Q`.
 3. Player, signed in on the web, enters the code; the row is approved and bound to their user.
 4. Game's poll succeeds and receives a long-lived opaque token, stored at `~/.fityesz/credentials`
    with `0600` permissions.
@@ -402,7 +403,7 @@ it is last.
 
 ## 9. Open items
 
-1. **Ko-fi profile.** One creator must create it; the site needs only `NEXT_PUBLIC_KOFI_URL`.
-2. **Domain.** Not chosen. `fityesz.app` is used illustratively throughout this document.
+1. **Ko-fi profile.** Zsombor is creating it. Once it exists the site needs only `NEXT_PUBLIC_KOFI_URL` set; no code change.
+2. **Domain.** `fityeszthegame.com` — to be registered and pointed at Vercel.
 3. **Display font.** Chosen during implementation against the diacritic requirement in §6.2.
 4. **Code-signing certificates.** Deferred; see §7.3.
