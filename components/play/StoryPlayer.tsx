@@ -63,6 +63,10 @@ const DISPLAY: CSSProperties = {
 function useTypewriter(text: string, enabled: boolean) {
   const [shown, setShown] = useState(text)
   const doneRef = useRef(true)
+  /** Held so `finish` can stop the timer. Without this the interval keeps
+   *  ticking after a skip and overwrites the completed line with a short
+   *  prefix — the text visibly collapses and starts typing again. */
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Typing IS the effect: the text arrives over time from a timer, which is
   // exactly the external-system case useEffect exists for.
@@ -86,15 +90,24 @@ function useTypewriter(text: string, enabled: boolean) {
       if (n >= text.length) {
         doneRef.current = true
         clearInterval(id)
+        timerRef.current = null
       }
     }, 18)
-    return () => clearInterval(id)
+    timerRef.current = id
+    return () => {
+      clearInterval(id)
+      timerRef.current = null
+    }
   }, [text, enabled])
   /* eslint-enable react-hooks/set-state-in-effect */
 
   /** Skip to the end. Returns true if there was anything left to skip. */
   const finish = useCallback(() => {
     if (doneRef.current) return false
+    if (timerRef.current !== null) {
+      clearInterval(timerRef.current)
+      timerRef.current = null
+    }
     doneRef.current = true
     setShown(text)
     return true
@@ -303,7 +316,7 @@ export function StoryPlayer({
           background: 'var(--ink)',
           color: 'var(--onInk)',
           border: 'var(--bw) solid var(--ink)',
-          minHeight: 'clamp(600px,56cqw,700px)',
+          minHeight: 'clamp(680px,62cqw,880px)',
           cursor: beat?.kind === 'choice' || finished || name === null ? 'default' : 'pointer',
           userSelect: 'none',
         }}
@@ -481,7 +494,7 @@ export function StoryPlayer({
               )}
               <div
                 style={{
-                  fontSize: 'clamp(16px,1.6cqw,21px)',
+                  fontSize: 'clamp(17px,1.7cqw,24px)',
                   lineHeight: 1.55,
                   whiteSpace: 'pre-line',
                   minHeight: '3.1em',

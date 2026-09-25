@@ -48,8 +48,8 @@ export default async function PlayPage({
   return (
       <div
         style={{
-          padding: 'clamp(24px,4cqw,48px) clamp(16px,3cqw,40px)',
-          maxWidth: 820,
+          padding: 'clamp(14px,2.5cqw,32px) clamp(10px,3cqw,40px) clamp(40px,5cqw,72px)',
+          maxWidth: 1320,
           margin: '0 auto',
           minHeight: '70vh',
         }}
