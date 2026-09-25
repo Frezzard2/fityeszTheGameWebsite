@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
 import { localePath } from '@/i18n/routing'
 import { CHARACTERS } from '@/lib/design/characters'
+import { DOWNLOAD_ENABLED } from '@/lib/features'
 import codex from '@/lib/story/content/codex.json'
 
 const HALFTONE = {
@@ -95,7 +96,7 @@ export default async function HomePage({
               ▶ {t('cta1')}
             </Link>
             <Link
-              href={href('/letoltes')}
+              href={href(DOWNLOAD_ENABLED ? '/letoltes' : '/lexikon')}
               style={{
                 padding: '15px 22px',
                 border: 'var(--bw) solid var(--ink)',
@@ -107,7 +108,7 @@ export default async function HomePage({
                 textDecoration: 'none',
               }}
             >
-              {t('cta2')}
+              {DOWNLOAD_ENABLED ? t('cta2') : t('navLore')}
             </Link>
           </div>
           <p style={{ marginTop: 16, fontSize: 14, color: 'var(--inkSoft)' }}>{t('heroNote')}</p>

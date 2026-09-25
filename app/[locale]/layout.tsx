@@ -7,6 +7,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Antonio, IBM_Plex_Mono, Public_Sans } from 'next/font/google'
 import localFont from 'next/font/local'
 import { routing, localePath } from '@/i18n/routing'
+import { DOWNLOAD_ENABLED } from '@/lib/features'
 import { SITE_TITLE, type Locale } from '@/lib/constants'
 import { DirectionScope } from '@/components/DirectionScope'
 import { FlagRail } from '@/components/FlagRail'
@@ -59,9 +60,9 @@ const NAV_ITEMS = [
   { href: '/szereplok', labelKey: 'navChars' },
   { href: '/lexikon', labelKey: 'navLore' },
   { href: '/jatek', labelKey: 'navPlay' },
-  { href: '/letoltes', labelKey: 'navDownload' },
+  ...(DOWNLOAD_ENABLED ? [{ href: '/letoltes', labelKey: 'navDownload' }] : []),
   { href: '/tamogatas', labelKey: 'navSupport' },
-] as const
+]
 
 const CREATORS = [
   { name: { hu: 'Kukucska Zsombor', en: 'Zsombor Kukucska' }, handle: 'Frezzard2', url: 'https://github.com/Frezzard2' },
