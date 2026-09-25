@@ -243,5 +243,8 @@
   "kofiNote": "The Ko-fi page is on its way. Until then, you can star the project on GitHub.",
   "creatorWord": "Creator",
   "ghBtn": "GitHub profile",
-  "repoT": "The project on GitHub"
+  "repoT": "The project on GitHub",
+  "namePrompt": "Enter your name:",
+  "exposed": "You've been exposed!",
+  "pressfound": "The press has uncovered everything."
 }

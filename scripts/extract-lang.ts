@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url'
 
 export type Bilingual = { hu: string; en: string }
 
-const CALL = /p\(\s*"((?:[^"\\]|\\.)*)"\s*,\s*"((?:[^"\\]|\\.)*)"\s*,\s*"((?:[^"\\]|\\.)*)"\s*\)/gs
+const CALL = /p\(\s*"((?:[^"\\]|\\.)*)"\s*,\s*"((?:[^"\\]|\\.)*)"\s*,\s*"((?:[^"\\]|\\.)*)"\s*\)/g
 
 function unescapeJava(s: string): string {
   return s
