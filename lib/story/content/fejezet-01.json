@@ -1,0 +1,193 @@
+{
+  "id": "fejezet-01",
+  "chapter": 1,
+  "beats": [
+    {
+      "kind": "chapterCard",
+      "number": 1,
+      "title": {
+        "hu": "A Toborzás",
+        "en": "The Recruitment"
+      },
+      "quote": {
+        "hu": "Az országért mindenkinek tenni kell, nem csak beszélni róla.",
+        "en": "Everyone must act for the country, not merely talk about it."
+      },
+      "place": {
+        "hu": "Helyszín: egy eldugott kávézó. A falon egy Kossuth portrét és egy rejtélyes grafikát látsz.",
+        "en": "Location: a tucked-away café. On the wall you see a portrait of Kossuth and a cryptic chart."
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "lipoti",
+      "text": {
+        "hu": "%s? Lipóti Dezső vagyok, kérem, foglaljon helyet! Kávét? Pálinkát? Mindkettőt?\nLátom a szemén, hogy az utóbbi kell.",
+        "en": "%s? Dezső Lipóti is the name, please, take a seat! Coffee? Pálinka? Both?\nI can see in your eyes that it is the latter you need."
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "lipoti",
+      "text": {
+        "hu": "Szóval tanár volt. Nemes hivatás, nemde? De tudja, mi a nemesebb? A szolgálat. A NEMZET szolgálata.\nÉs mellékesen... nos, a nemzet szolgálata jól fizet.",
+        "en": "So you were a teacher. A noble calling, is it not? But do you know what is nobler? Service. Service to the NATION.\nAnd incidentally... well, serving the nation pays well."
+      }
+    },
+    {
+      "kind": "choice",
+      "id": "ch1.q1",
+      "prompt": {
+        "hu": "Mit válaszolsz?",
+        "en": "What do you say?"
+      },
+      "options": [
+        {
+          "text": {
+            "hu": "Engem csak a pénz érdekel",
+            "en": "I'm only in it for the money"
+          },
+          "xp": 15,
+          "lebukas": 10,
+          "response": [
+            {
+              "kind": "dialogue",
+              "speaker": "lipoti",
+              "text": {
+                "hu": "Őszinte ember! Ezt szeretem. Ilyen emberekre van szükségünk.",
+                "en": "An honest man! I like that. These are the people we need."
+              }
+            }
+          ]
+        },
+        {
+          "text": {
+            "hu": "A nemzet szolgálata érdekel",
+            "en": "I care about serving the nation"
+          },
+          "xp": 10,
+          "lebukas": 5,
+          "response": [
+            {
+              "kind": "dialogue",
+              "speaker": "lipoti",
+              "text": {
+                "hu": "Szép szavak! Megtanulja még a többit is.",
+                "en": "Fine words! You will learn the rest in time."
+              }
+            }
+          ]
+        },
+        {
+          "text": {
+            "hu": "Mi lenne a dolgom?",
+            "en": "What would my job be?"
+          },
+          "xp": 5,
+          "lebukas": 0,
+          "response": [
+            {
+              "kind": "dialogue",
+              "speaker": "lipoti",
+              "text": {
+                "hu": "Óvatos! Ez jó. De a részletekbe majd később megyünk bele.",
+                "en": "Cautious! That is good. But we will get into the details later."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "lipoti",
+      "text": {
+        "hu": "A Fityesz nem csak egy párt, %s. Család. És a családban mindenkiről gondoskodunk. Nézze csak...",
+        "en": "The Fityesz is not merely a party, %s. It is a family. And in a family we look after everyone. Just look..."
+      }
+    },
+    {
+      "kind": "narration",
+      "text": {
+        "hu": "Lipóti kitesz az asztalra egy borítékot. Kinyitod és 500 ezer magyar forintot látsz benne. Készpénzben.",
+        "en": "Lipóti lays an envelope on the table. You open it and see 500 thousand Hungarian forints inside. In cash."
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "lipoti",
+      "text": {
+        "hu": "Ez csak az eleje. Előleg a jövőbeni... hűségéért. Ahogy a Miniszterelnök Úr mondta egyszer...",
+        "en": "This is only the beginning. An advance on your future... loyalty. As the Prime Minister once said..."
+      }
+    },
+    {
+      "kind": "choice",
+      "id": "ch1.q2",
+      "prompt": {
+        "hu": "Elfogadod a pénzt?",
+        "en": "Do you take the money?"
+      },
+      "options": [
+        {
+          "text": {
+            "hu": "Elveszed és bólogatsz",
+            "en": "Take it and nod"
+          },
+          "xp": 20,
+          "lebukas": 15,
+          "grantsItem": "envelope1",
+          "response": [
+            {
+              "kind": "item",
+              "item": "envelope1"
+            },
+            {
+              "kind": "narration",
+              "text": {
+                "hu": "Lipóti elmosolyodik",
+                "en": "Lipóti smiles"
+              }
+            }
+          ]
+        },
+        {
+          "text": {
+            "hu": "Elveszed, de kérdezel: \"Mi a feltétel?\"",
+            "en": "Take it, but ask: \"What's the catch?\""
+          },
+          "xp": 10,
+          "lebukas": 5,
+          "response": [
+            {
+              "kind": "dialogue",
+              "speaker": "lipoti",
+              "text": {
+                "hu": "Feltétel? Csak annyi, hogy holnap megjelensz ezen a címen.",
+                "en": "A catch? Only that tomorrow you show up at this address."
+              }
+            }
+          ]
+        },
+        {
+          "text": {
+            "hu": "Nem nyúlsz hozzá",
+            "en": "Don't touch it"
+          },
+          "xp": 0,
+          "lebukas": -10,
+          "response": [
+            {
+              "kind": "dialogue",
+              "speaker": "lipoti",
+              "text": {
+                "hu": "Ó, tehát alkudni akar! Maga tényleg politikusnak született!",
+                "en": "Oh, so you want to haggle! You really were born to be a politician!"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

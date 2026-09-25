@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;600;700&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Saira+Stencil+One&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<style>
+html,body{margin:0;padding:0}
+body{background:#F4EFE6;-webkit-font-smoothing:antialiased}
+*,*::before,*::after{box-sizing:border-box}
+button,input{font:inherit;color:inherit}
+a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+a:hover{color:var(--accentText)}
+@keyframes fzCaret{50%{opacity:0}}
+@keyframes fzIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes fzFade{from{opacity:0}to{opacity:1}}
+@keyframes fzMarquee{to{transform:translateX(-50%)}}
+@keyframes fzDrift{from{background-position:0 0}to{background-position:72px 36px}}
+@keyframes fzWord{from{translate:0 0}to{translate:-9% 0}}
+@keyframes fzPulse{0%{box-shadow:0 0 0 0 var(--accent)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
+@keyframes fzStampIn{0%{opacity:0;scale:1.9}65%{opacity:1;scale:.95}100%{opacity:1;scale:1}}
+@keyframes fzSlam{0%{opacity:0;scale:1.18}100%{opacity:1;scale:1}}
+@keyframes fzTab{from{opacity:0;translate:0 12px}to{opacity:1;translate:0 0}}
+</style>
+</helmet>
+<div style="{{ stageStyle }}">
+<div style="{{ frameStyle }}">
+<div ref="{{ scrollRef }}" style="{{ scrollStyle }}">
+<div ref="{{ rootRef }}" style="{{ themeVars }}">
+<div style="container-type:inline-size;min-height:100vh;background:var(--desk);color:var(--ink);font-family:var(--fB);font-size:16px;line-height:1.5;position:relative;">
+
+<header style="position:sticky;top:0;z-index:40;background:var(--desk);border-bottom:var(--bw) solid var(--ink);">
+<div style="display:var(--cF);height:6px;"><div style="flex:1;background:var(--accent);"></div><div style="flex:1;background:var(--paper2);"></div><div style="flex:1;background:var(--second);"></div></div>
+<div style="max-width:1320px;margin:0 auto;padding:12px clamp(16px,3cqw,40px);display:flex;align-items:center;gap:18px;">
+<button onClick="{{ goHome }}" style="border:0;background:none;padding:0;cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left;color:var(--ink);">
+<span style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;background:var(--accent);color:var(--onAccent);font-family:var(--fD);font-weight:var(--dW);font-size:26px;line-height:1.14;border:var(--bw) solid var(--ink);">F</span>
+<span style="display:flex;flex-direction:column;line-height:1.14;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;">
+<span style="font-size:24px;letter-spacing:.02em;">Fityesz</span>
+<span style="font-size:12px;letter-spacing:.26em;color:var(--accentText);margin-top:5px;">{{ t.logoSub }}</span>
+</span>
+</button>
+<sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+<nav style="display:flex;align-items:center;gap:2px;margin-left:auto;">
+<sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+<button onClick="{{ n.go }}" style="border:0;background:none;cursor:pointer;padding:10px 12px;font:600 13px/1 var(--fL);letter-spacing:.07em;text-transform:uppercase;color:var(--ink);transition:box-shadow .2s ease,color .15s ease;box-shadow:inset 0 -3px 0 {{ n.bar }};" style-hover="color:var(--accentText)">{{ n.label }}</button>
+</sc-for>
+</nav>
+</sc-if>
+<sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}"><div style="margin-left:auto;"></div></sc-if>
+<div style="display:flex;align-items:center;gap:10px;">
+<div style="display:flex;border:var(--bw) solid var(--ink);">
+<button onClick="{{ setHu }}" style="border:0;cursor:pointer;padding:7px 9px;font:700 12px/1 var(--fL);letter-spacing:.08em;background:{{ huBg }};color:{{ huFg }};">HU</button>
+<button onClick="{{ setEn }}" style="border:0;cursor:pointer;padding:7px 9px;font:700 12px/1 var(--fL);letter-spacing:.08em;background:{{ enBg }};color:{{ enFg }};">EN</button>
+</div>
+<sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ goAccount }}" style="border:0;background:none;cursor:pointer;padding:8px 6px;font:600 13px/1 var(--fL);letter-spacing:.07em;text-transform:uppercase;color:var(--ink);text-decoration:underline;text-underline-offset:4px;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis;">{{ accountLabel }}</button>
+<button onClick="{{ goPlay }}" style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px 9px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:17px;line-height:1.14;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;white-space:nowrap;transition:transform .15s ease;" style-hover="transform:translate(-2px,-2px)">{{ t.playFree }}</button>
+</sc-if>
+<sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ toggleMenu }}" style="border:var(--bw) solid var(--ink);background:var(--ink);color:var(--onInk);cursor:pointer;padding:8px 12px;font:700 12px/1 var(--fL);letter-spacing:.1em;text-transform:uppercase;">{{ menuLabel }}</button>
+</sc-if>
+</div>
+</div>
+<sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+<div style="border-top:var(--bw) solid var(--ink);background:var(--desk);padding:6px clamp(16px,3cqw,40px) 22px;">
+<sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+<button onClick="{{ n.go }}" style="display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;cursor:pointer;padding:14px 0 12px;font-family:var(--fD);font-weight:var(--dW);font-size:30px;line-height:1.14;text-transform:uppercase;color:var(--ink);">{{ n.label }}</button>
+</sc-for>
+<div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;">
+<button onClick="{{ goAccount }}" style="padding:12px 16px 11px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:18px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ accountLabel }}</button>
+<button onClick="{{ goPlay }}" style="padding:12px 16px 11px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:18px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.playFree }}</button>
+</div>
+</div>
+</sc-if>
+</header>
+
+<sc-if value="{{ pg.home }}" hint-placeholder-val="{{ true }}">
+<section data-screen-label="Landing" style="display:var(--cB);position:relative;overflow:hidden;border-bottom:var(--bw) solid var(--ink);">
+<div style="position:absolute;top:0;right:0;bottom:0;width:64%;background-image:radial-gradient(circle,var(--ink) 1.2px,transparent 1.8px);background-size:9px 9px;animation:{{ anim.drift }};-webkit-mask-image:linear-gradient(to left,rgba(0,0,0,.3),transparent 85%);mask-image:linear-gradient(to left,rgba(0,0,0,.3),transparent 85%);pointer-events:none;"></div>
+<div style="position:relative;max-width:1320px;margin:0 auto;padding:clamp(32px,5cqw,72px) clamp(16px,3cqw,40px) clamp(48px,6cqw,92px);display:flex;flex-wrap:wrap;align-items:flex-end;gap:clamp(36px,5cqw,72px);">
+<div style="flex:1 1 540px;min-width:0;">
+<div data-reveal="drop" style="display:inline-block;transform:rotate(-2deg);background:var(--ink);color:var(--onInk);padding:9px 14px;font:700 13px/1.25 var(--fL);letter-spacing:.1em;text-transform:uppercase;">{{ t.heroKicker }}</div>
+<h1 style="margin:26px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.98;font-size:clamp(60px,10.5cqw,168px);letter-spacing:-.005em;">
+<span data-reveal="rise" data-delay="120" style="display:block;">{{ t.slogan1 }}</span>
+<span data-reveal="slam" data-delay="360" style="display:block;color:var(--accentText);transform-origin:left bottom;">{{ t.slogan2 }}</span>
+</h1>
+<p data-reveal="up" data-delay="540" style="max-width:32em;margin:28px 0 0;font-size:clamp(17px,1.45cqw,20px);line-height:1.5;text-wrap:pretty;">{{ t.heroSub }}</p>
+<div data-reveal="up" data-delay="660" style="display:flex;flex-wrap:wrap;gap:14px;margin-top:30px;">
+<button onClick="{{ goPlay }}" style="display:inline-flex;align-items:center;gap:12px;padding:15px 24px 14px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1.14;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;transition:transform .15s ease;" style-hover="transform:translate(-2px,-2px)"><span style="width:0;height:0;border-left:11px solid currentColor;border-top:7px solid transparent;border-bottom:7px solid transparent;"></span>{{ t.cta1 }}</button>
+<button onClick="{{ goDownload }}" style="display:inline-flex;align-items:center;padding:15px 22px 14px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1.14;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;transition:background-color .15s ease,color .15s ease;" style-hover="background:var(--ink);color:var(--onInk)">{{ t.cta2 }}</button>
+</div>
+<p data-reveal="fade" data-delay="840" style="margin:16px 0 0;font-size:14px;color:var(--inkSoft);">{{ t.heroNote }}</p>
+</div>
+<div data-reveal="swing" data-delay="300" style="flex:0 1 370px;min-width:260px;background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--sh);transform:rotate(1.2deg);">
+<div style="background:var(--accent);color:var(--onAccent);padding:14px 20px 12px;font-family:var(--fD);font-weight:var(--dW);font-size:28px;line-height:1.14;text-transform:uppercase;letter-spacing:.02em;border-bottom:var(--bw) solid var(--ink);">{{ t.posterTitle }}</div>
+<div style="padding:6px 20px 10px;">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);"><span style="font-family:var(--fD);font-weight:var(--dW);font-size:58px;line-height:1.14;">3</span><span style="font:700 13px/1.2 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--inkSoft);">{{ t.rolls }}</span></div>
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);"><span style="font-family:var(--fD);font-weight:var(--dW);font-size:58px;line-height:1.14;">{{ t.cashVal }}</span><span style="font:700 13px/1.2 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--inkSoft);">{{ t.cash }}</span></div>
+<div style="display:flex;flex-direction:column;gap:6px;padding:14px 0 6px;"><span style="font:700 13px/1.2 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--inkSoft);">{{ t.debt }}</span><span style="font-family:var(--fD);font-weight:var(--dW);font-size:clamp(40px,4cqw,52px);line-height:1.14;color:var(--accentText);white-space:nowrap;">{{ t.debtVal }}</span></div>
+</div>
+<div style="background:var(--ink);color:var(--onInk);padding:12px 20px;font:600 14px/1.3 var(--fL);">{{ t.bank }}</div>
+</div>
+</div>
+</section>
+
+<section data-screen-label="Landing (dossier)" style="display:var(--dB);position:relative;overflow:hidden;border-bottom:var(--bw) solid var(--ink);">
+<div style="max-width:1180px;margin:0 auto;padding:clamp(28px,5cqw,72px) clamp(16px,3cqw,40px) clamp(44px,6cqw,88px);">
+<div style="position:relative;">
+<div data-reveal="fade" data-delay="350" style="position:absolute;top:22px;left:26px;right:-8px;bottom:-16px;background:var(--sheet);border:1px solid var(--line);transform:rotate(1.4deg);box-shadow:var(--shS);"></div>
+<div data-reveal="up" style="position:relative;background:var(--sheet);background-image:var(--tex);border:1px solid var(--line);box-shadow:var(--sh);padding:clamp(22px,4cqw,56px);transform:rotate(-.4deg);">
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;font:600 13px/1.3 var(--fL);letter-spacing:.12em;text-transform:uppercase;">
+<span>{{ t.caseNo }}</span>
+<span data-reveal="stamp" data-delay="700" style="color:var(--accentText);border:2px solid var(--accentText);padding:5px 10px;">{{ t.conf }}</span>
+</div>
+<h1 style="margin:28px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:clamp(48px,8cqw,120px);">
+<span style="display:block;">{{ t.titleA }}</span><span style="display:block;">{{ t.titleB }}</span>
+</h1>
+<p style="max-width:40em;margin:24px 0 0;font-size:clamp(15px,1.25cqw,17px);line-height:1.65;">{{ t.heroSub }}</p>
+<div data-stagger="110" data-base="450" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:0 36px;margin-top:26px;">
+<sc-for list="{{ caseFields }}" as="f" hint-placeholder-count="5">
+<div data-reveal="wipe" style="display:flex;gap:12px;align-items:baseline;padding:11px 0;border-bottom:1px dashed var(--inkSoft);font-size:15px;">
+<span style="flex:none;width:120px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:12px;color:var(--inkSoft);">{{ f.k }}</span>
+<span style="min-width:0;">{{ f.v }}</span>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:32px;">
+<button onClick="{{ goPlay }}" style="display:inline-flex;align-items:center;gap:12px;padding:15px 24px 14px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:20px;line-height:1.14;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;transition:transform .15s ease;" style-hover="transform:translate(-2px,-2px)"><span style="width:0;height:0;border-left:11px solid currentColor;border-top:7px solid transparent;border-bottom:7px solid transparent;"></span>{{ t.cta1 }}</button>
+<button onClick="{{ goDownload }}" style="display:inline-flex;align-items:center;padding:15px 22px 14px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:20px;line-height:1.14;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;transition:background-color .15s ease,color .15s ease;" style-hover="background:var(--ink);color:var(--onInk)">{{ t.cta2 }}</button>
+<div data-reveal="stamp" data-delay="1300" style="margin-left:auto;transform:rotate(-7deg);border:4px double var(--accentText);color:var(--accentText);padding:10px 16px 8px;font-family:var(--fD);font-size:clamp(20px,2.4cqw,32px);text-transform:uppercase;line-height:1.14;opacity:.88;">{{ t.stampSlogan }}</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section style="background:var(--ink);color:var(--onInk);overflow:hidden;">
+<div style="display:flex;width:max-content;animation:{{ anim.marquee }};font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:clamp(17px,1.7cqw,23px);line-height:1.15;letter-spacing:.02em;white-space:nowrap;" style-hover="animation-play-state:paused">
+<div style="display:flex;gap:30px;padding:18px 15px;">
+<sc-for list="{{ bandQuotes }}" as="q" hint-placeholder-count="5">
+<span style="display:flex;gap:14px;align-items:center;"><span style="color:var(--accent);">★</span><span>{{ q }}</span></span>
+</sc-for>
+</div>
+<div aria-hidden="true" style="display:flex;gap:30px;padding:18px 15px;">
+<sc-for list="{{ bandQuotes }}" as="q" hint-placeholder-count="5">
+<span style="display:flex;gap:14px;align-items:center;"><span style="color:var(--accent);">★</span><span>{{ q }}</span></span>
+</sc-for>
+</div>
+</div>
+</section>
+
+<section style="border-bottom:var(--bw) solid var(--ink);">
+<div style="max-width:1320px;margin:0 auto;padding:clamp(56px,8cqw,120px) clamp(16px,3cqw,40px);display:flex;flex-wrap:wrap;gap:24px 48px;">
+<div style="flex:0 1 240px;">
+<div style="font:700 13px/1.3 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.proTitle }}</div>
+</div>
+<div data-stagger="130" style="flex:1 1 600px;min-width:0;">
+<sc-for list="{{ premise }}" as="l" hint-placeholder-count="5">
+<p data-reveal="rise" style="margin:0 0 .32em;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(30px,4.3cqw,62px));line-height:1.14;text-wrap:balance;color:{{ l.c }};">{{ l.text }}</p>
+</sc-for>
+<div data-reveal="up" style="margin-top:40px;border:var(--bw) solid var(--ink);background:var(--sheet);box-shadow:var(--sh);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px 28px;align-items:center;">
+<div style="flex:1 1 320px;min-width:0;">
+<div style="display:flex;align-items:center;gap:8px;font:700 12px/1.2 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);"><span style="width:9px;height:9px;border-radius:50%;background:var(--accent);animation:{{ anim.pulse }};"></span>{{ t.phone }}</div>
+<div style="margin-top:10px;font-size:clamp(18px,1.7cqw,22px);line-height:1.45;font-style:italic;">{{ t.offer }}</div>
+</div>
+<button onClick="{{ goPlay }}" style="display:inline-flex;align-items:center;gap:12px;padding:15px 24px 14px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1.14;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;transition:transform .15s ease;" style-hover="transform:translate(-2px,-2px)">{{ t.answer }}</button>
+</div>
+</div>
+</div>
+</section>
+
+<section style="border-bottom:var(--bw) solid var(--ink);">
+<div data-stagger="70" style="max-width:1320px;margin:0 auto;padding:clamp(56px,7cqw,104px) clamp(16px,3cqw,40px);">
+<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 32px;padding-bottom:18px;border-bottom:var(--bw) solid var(--ink);">
+<div>
+<h2 data-reveal="rise" style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:calc(var(--dS) * clamp(44px,6.4cqw,96px));">{{ t.castTitle }}</h2>
+<p style="margin:12px 0 0;font-size:17px;color:var(--inkSoft);">{{ t.castSub }}</p>
+</div>
+<button onClick="{{ goCharacters }}" style="border:0;background:none;cursor:pointer;padding:6px 0;font:700 14px/1 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--ink);text-decoration:underline;text-underline-offset:5px;">{{ t.castAll }} →</button>
+</div>
+<sc-for list="{{ roster }}" as="c" hint-placeholder-count="5">
+<button data-reveal="up" onClick="{{ goCharacters }}" style="transition:background-color .2s ease;display:grid;grid-template-columns:minmax(36px,64px) minmax(0,1fr) auto;align-items:center;gap:16px;width:100%;text-align:left;padding:20px 8px 18px 0;border:0;border-bottom:1px solid var(--line);background:none;cursor:pointer;color:var(--ink);" style-hover="background:var(--paper2)">
+<span style="font:700 14px/1 var(--fL);letter-spacing:.1em;color:var(--inkSoft);padding-left:4px;">{{ c.num }}</span>
+<span style="min-width:0;">
+<span style="display:block;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(30px,4.2cqw,58px));line-height:1.14;">{{ c.name }}</span>
+<span style="display:block;margin-top:8px;font-size:15px;color:var(--inkSoft);">{{ c.title }}</span>
+</span>
+<span style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+<span style="font:700 12px/1.2 var(--fL);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;">{{ c.first }}</span>
+<sc-if value="{{ c.boss }}" hint-placeholder-val="{{ false }}"><span style="font:700 11px/1 var(--fL);letter-spacing:.12em;padding:5px 7px;background:var(--accent);color:var(--onAccent);">BOSSFIGHT</span></sc-if>
+</span>
+</button>
+</sc-for>
+</div>
+</section>
+
+<section style="background:var(--paper2);border-bottom:var(--bw) solid var(--ink);">
+<div style="max-width:1320px;margin:0 auto;padding:clamp(56px,7cqw,104px) clamp(16px,3cqw,40px);">
+<h2 data-reveal="rise" style="margin:0 0 32px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:calc(var(--dS) * clamp(44px,6.4cqw,96px));">{{ t.howTitle }}</h2>
+<div data-stagger="120" style="display:grid;grid-template-columns:{{ g3 }};gap:24px;">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);display:flex;flex-direction:column;">
+<div style="padding:24px 24px 0;">
+<div style="font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1.14;color:var(--accentText);">01</div>
+<h3 style="margin:10px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 30px);line-height:1.14;">{{ t.how1t }}</h3>
+<p style="margin:10px 0 0;color:var(--inkSoft);font-size:15px;line-height:1.5;">{{ t.how1d }}</p>
+</div>
+<div style="margin-top:auto;padding:20px 24px 24px;">
+<div style="border-top:1px solid var(--line);padding-top:16px;">
+<div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);margin-bottom:6px;">{{ t.sampleQ }}</div>
+<sc-for list="{{ sampleOpts }}" as="o" hint-placeholder-count="3">
+<div style="display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);margin-top:6px;font-size:14px;line-height:1.3;"><span style="flex:none;width:22px;height:22px;display:flex;align-items:center;justify-content:center;background:var(--ink);color:var(--onInk);font:700 12px/1 var(--fL);">{{ o.n }}</span><span>{{ o.text }}</span></div>
+</sc-for>
+</div>
+</div>
+</div>
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);display:flex;flex-direction:column;">
+<div style="padding:24px 24px 0;">
+<div style="font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1.14;color:var(--accentText);">02</div>
+<h3 style="margin:10px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 30px);line-height:1.14;">{{ t.how2t }}</h3>
+<p style="margin:10px 0 0;color:var(--inkSoft);font-size:15px;line-height:1.5;">{{ t.how2d }}</p>
+</div>
+<div style="margin-top:auto;padding:20px 24px 24px;">
+<div style="border-top:1px solid var(--line);padding-top:16px;">
+<div style="display:flex;justify-content:space-between;font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;"><span>{{ t.exposure }}</span><span style="color:var(--accentText);">25 / 100</span></div>
+<div style="margin-top:10px;height:20px;border:2px solid var(--ink);position:relative;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),var(--line) calc(10% - 1px) 10%);"><div data-reveal="bar" data-delay="350" style="position:absolute;left:0;top:0;bottom:0;width:25%;background:var(--danger);transform-origin:left;"></div></div>
+<div style="margin-top:8px;display:flex;justify-content:space-between;font:600 11px/1 var(--fL);color:var(--inkSoft);"><span>0</span><span>50</span><span>100</span></div>
+</div>
+</div>
+</div>
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);display:flex;flex-direction:column;">
+<div style="padding:24px 24px 0;">
+<div style="font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1.14;color:var(--accentText);">03</div>
+<h3 style="margin:10px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 30px);line-height:1.14;">{{ t.how3t }}</h3>
+<p style="margin:10px 0 0;color:var(--inkSoft);font-size:15px;line-height:1.5;">{{ t.how3d }}</p>
+</div>
+<div style="margin-top:auto;padding:20px 24px 24px;">
+<div style="border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:10px;">
+<div style="display:flex;align-items:center;gap:10px;font:700 12px/1 var(--fL);letter-spacing:.08em;text-transform:uppercase;"><span style="width:70px;">{{ t.you }}</span><div style="flex:1;height:12px;background:var(--paper2);border:1px solid var(--line);"><div data-reveal="bar" data-delay="300" style="width:100%;height:100%;background:var(--good);transform-origin:left;"></div></div><span style="width:56px;text-align:right;">100/100</span></div>
+<div style="display:flex;align-items:center;gap:10px;font:700 12px/1 var(--fL);letter-spacing:.08em;text-transform:uppercase;"><span style="width:70px;">Lakatos</span><div style="flex:1;height:12px;background:var(--paper2);border:1px solid var(--line);"><div data-reveal="bar" data-delay="450" style="width:75%;height:100%;background:var(--danger);transform-origin:left;"></div></div><span style="width:56px;text-align:right;">60/80</span></div>
+<div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;">
+<span style="padding:8px 12px;background:var(--ink);color:var(--onInk);font:700 12px/1 var(--fL);letter-spacing:.08em;text-transform:uppercase;">1 · {{ t.attack }}</span>
+<span style="padding:8px 12px;border:1px solid var(--ink);font:700 12px/1 var(--fL);letter-spacing:.08em;text-transform:uppercase;">2 · {{ t.defend }}</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section style="border-bottom:var(--bw) solid var(--ink);">
+<div style="max-width:1320px;margin:0 auto;padding:clamp(56px,7cqw,104px) clamp(16px,3cqw,40px);">
+<h2 data-reveal="rise" style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:calc(var(--dS) * clamp(44px,6.4cqw,96px));max-width:12em;">{{ t.saveTitle }}</h2>
+<div data-stagger="110" style="display:grid;grid-template-columns:{{ g4 }};gap:1px;background:var(--line);border:var(--bw) solid var(--ink);margin-top:34px;">
+<sc-for list="{{ saveSteps }}" as="st" hint-placeholder-count="4">
+<div data-reveal="up" style="background:var(--sheet);padding:24px 24px 28px;">
+<div style="font-family:var(--fD);font-weight:var(--dW);font-size:64px;line-height:1.14;color:var(--accentText);">{{ st.n }}</div>
+<p style="margin:16px 0 0;font-size:16px;line-height:1.45;">{{ st.text }}</p>
+</div>
+</sc-for>
+</div>
+<div style="margin-top:28px;">
+<button onClick="{{ goPlay }}" style="display:inline-flex;align-items:center;gap:12px;padding:15px 24px 14px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1.14;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;transition:transform .15s ease;" style-hover="transform:translate(-2px,-2px)"><span style="width:0;height:0;border-left:11px solid currentColor;border-top:7px solid transparent;border-bottom:7px solid transparent;"></span>{{ t.saveCta }}</button>
+</div>
+</div>
+</section>
+
+<section style="background:var(--accent);color:var(--onAccent);border-bottom:var(--bw) solid var(--ink);">
+<div style="max-width:1320px;margin:0 auto;padding:clamp(52px,6cqw,92px) clamp(16px,3cqw,40px);display:flex;flex-wrap:wrap;gap:28px 56px;align-items:flex-end;justify-content:space-between;">
+<div style="flex:1 1 520px;min-width:0;">
+<h2 data-reveal="rise" style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(44px,6.4cqw,96px));line-height:1.14;">{{ t.supTitle }}</h2>
+<p style="margin:18px 0 0;max-width:34em;font-size:18px;line-height:1.5;">{{ t.supSub }}</p>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:12px;">
+<a href="{{ kofiHref }}" target="_blank" rel="noopener" onClick="{{ kofiClick }}" style="display:inline-flex;align-items:center;padding:15px 22px 14px;background:var(--ink);color:var(--onInk);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;letter-spacing:.03em;text-decoration:none;">{{ kofiLabel }}</a>
+<button onClick="{{ goSupport }}" style="padding:15px 22px 14px;background:transparent;color:var(--onAccent);border:var(--bw) solid var(--onAccent);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;">{{ t.meet }}</button>
+</div>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{ pg.characters }}" hint-placeholder-val="{{ false }}">
+<section data-screen-label="Characters" style="border-bottom:var(--bw) solid var(--ink);">
+<div style="max-width:1320px;margin:0 auto;padding:clamp(40px,6cqw,88px) clamp(16px,3cqw,40px) clamp(56px,7cqw,104px);">
+<div style="font:700 13px/1.3 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.charsKicker }}</div>
+<h1 data-reveal="rise" style="margin:12px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.98;font-size:calc(var(--dS) * clamp(56px,9cqw,140px));">{{ t.navChars }}</h1>
+<p style="margin:18px 0 0;max-width:30em;font-size:clamp(18px,1.6cqw,22px);line-height:1.45;font-style:italic;">{{ t.charsQuote }}</p>
+<div data-stagger="90" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:28px;margin-top:44px;">
+<sc-for list="{{ cast }}" as="c" hint-placeholder-count="6">
+<article data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--sh);display:flex;flex-direction:column;min-width:0;transition:translate .25s cubic-bezier(.2,.7,.2,1);" style-hover="translate:0 -6px">
+<div style="position:relative;height:220px;overflow:hidden;background:{{ c.bg }};color:{{ c.fg }};border-bottom:var(--bw) solid var(--ink);">
+<div style="display:var(--cB);position:absolute;inset:0;background-image:radial-gradient(circle,{{ c.fg }} 1px,transparent 1.6px);background-size:8px 8px;opacity:.3;-webkit-mask-image:linear-gradient(200deg,#000 10%,transparent 70%);mask-image:linear-gradient(200deg,#000 10%,transparent 70%);"></div>
+<div style="display:var(--cB);position:absolute;right:-6px;bottom:10px;font-family:var(--fD);font-weight:var(--dW);font-size:200px;line-height:1;letter-spacing:-.03em;background-image:radial-gradient(circle,{{ c.fg }} 2.4px,transparent 3px);background-size:7px 7px;-webkit-background-clip:text;background-clip:text;color:transparent;">{{ c.ini }}</div>
+<div style="display:var(--cB);position:absolute;left:16px;top:16px;font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;">{{ c.num }} · {{ c.first }}</div>
+<div style="display:var(--dF);position:absolute;inset:0;padding:18px;gap:18px;align-items:center;">
+<div style="flex:none;width:118px;height:150px;border:1px dashed var(--inkSoft);display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;font:600 11px/1.35 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);background:var(--sheet);">{{ t.noPhoto }}</div>
+<div style="font:600 12px/1.8 var(--fL);letter-spacing:.08em;text-transform:uppercase;">{{ t.fileNo }} FK-{{ c.num }}<br>{{ c.first }}</div>
+</div>
+<sc-if value="{{ c.boss }}" hint-placeholder-val="{{ false }}">
+<div style="display:var(--cB);position:absolute;right:14px;top:14px;padding:6px 8px;background:var(--ink);color:var(--onInk);font:700 11px/1 var(--fL);letter-spacing:.12em;">BOSSFIGHT</div>
+<div data-reveal="stamp" data-delay="450" style="display:var(--dB);position:absolute;right:14px;bottom:18px;transform:rotate(-8deg);border:3px double var(--accentText);color:var(--accentText);padding:6px 10px 4px;font-family:var(--fD);font-size:20px;line-height:1.14;text-transform:uppercase;opacity:.9;">Bossfight</div>
+</sc-if>
+</div>
+<div style="padding:20px 22px 22px;display:flex;flex-direction:column;gap:10px;flex:1;">
+<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 44px);line-height:1.14;">{{ c.name }}</h2>
+<div style="font:700 12px/1.35 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--accentText);">{{ c.title }}</div>
+<p style="margin:6px 0 0;font-size:17px;line-height:1.45;font-style:italic;text-wrap:pretty;">{{ c.q }}</p>
+<div style="margin-top:auto;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;font:600 12px/1.2 var(--fL);letter-spacing:.08em;text-transform:uppercase;color:var(--inkSoft);"><span>{{ t.firstSeen }}</span><span>{{ c.first }}</span></div>
+</div>
+</article>
+</sc-for>
+</div>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{ pg.lore }}" hint-placeholder-val="{{ false }}">
+<section data-screen-label="Lore" style="border-bottom:var(--bw) solid var(--ink);">
+<div style="max-width:1320px;margin:0 auto;padding:clamp(40px,6cqw,88px) clamp(16px,3cqw,40px) clamp(56px,7cqw,104px);">
+<div style="font:700 13px/1.3 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.loreKicker }}</div>
+<h1 data-reveal="rise" style="margin:12px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.98;font-size:calc(var(--dS) * clamp(56px,9cqw,140px));">{{ t.navLore }}</h1>
+<p style="margin:18px 0 0;max-width:34em;font-size:clamp(17px,1.5cqw,20px);line-height:1.5;">{{ t.loreSub }}</p>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin:36px 0;padding-bottom:18px;border-bottom:var(--bw) solid var(--ink);">
+<sc-for list="{{ loreTabs }}" as="tb" hint-placeholder-count="5">
+<button onClick="{{ tb.go }}" style="border:var(--bw) solid var(--ink);cursor:pointer;padding:10px 14px 9px;font-family:var(--fD);font-weight:var(--dW);font-size:calc(var(--dS) * 22px);line-height:1.14;text-transform:uppercase;background:{{ tb.bg }};color:{{ tb.fg }};">{{ tb.label }}</button>
+</sc-for>
+</div>
+
+<sc-if value="{{ lt.party }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:28px;">
+<div data-reveal="up" style="background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--sh);padding:clamp(24px,3cqw,40px);display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-height:440px;position:relative;overflow:hidden;">
+<div style="display:var(--cB);position:absolute;inset:0;background-image:radial-gradient(circle,var(--onAccent) 1.2px,transparent 1.8px);background-size:9px 9px;opacity:.22;-webkit-mask-image:linear-gradient(to top,#000,transparent 70%);mask-image:linear-gradient(to top,#000,transparent 70%);"></div>
+<div style="position:relative;font:700 12px/1 var(--fL);letter-spacing:.16em;text-transform:uppercase;">Fityesz</div>
+<div style="position:relative;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(64px,8cqw,124px));line-height:1.04;">{{ t.slogan1 }}<br>{{ t.slogan2 }}</div>
+<p style="position:relative;margin:0;font-size:15px;line-height:1.5;max-width:28em;">{{ t.partyCaption }}</p>
+</div>
+<div data-stagger="120" style="display:flex;flex-direction:column;gap:28px;">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:26px;">
+<div style="font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.leaderLabel }}</div>
+<div style="margin-top:12px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(44px,5cqw,68px));line-height:1.14;">Kapzs Imre</div>
+<div style="margin-top:10px;font-size:17px;font-style:italic;">{{ t.leaderTitle }}</div>
+</div>
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:26px;">
+<div style="font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.mottoLabel }}</div>
+<div style="margin-top:12px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(28px,3cqw,40px));line-height:1.14;">{{ t.q2 }}</div>
+</div>
+<div data-reveal="up" style="padding:4px 4px 0 22px;border-left:var(--bw) solid var(--ink);">
+<p style="margin:0;font-size:18px;line-height:1.5;font-style:italic;">{{ t.familyQuote }}</p>
+<div style="margin-top:10px;font:600 12px/1 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--inkSoft);">{{ t.familyBy }}</div>
+</div>
+</div>
+</div>
+<div data-reveal="up" style="margin-top:28px;background:var(--ink);color:var(--onInk);border:var(--bw) solid var(--ink);padding:clamp(24px,3cqw,40px);">
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;align-items:baseline;">
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(32px,3.6cqw,48px));line-height:1.14;">{{ t.rulesLabel }}</div>
+<div style="font:600 12px/1 var(--fL);letter-spacing:.1em;text-transform:uppercase;opacity:.8;">{{ t.rulesBy }}</div>
+</div>
+<div data-stagger="120" style="display:grid;grid-template-columns:{{ g4 }};gap:24px;margin-top:26px;">
+<sc-for list="{{ partyRules }}" as="r" hint-placeholder-count="4">
+<div data-reveal="up" style="border-top:2px solid var(--accent);padding-top:14px;">
+<div style="font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1.14;color:var(--accent);">{{ r.n }}</div>
+<div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 26px);line-height:1.05;">{{ r.text }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ lt.chapters }}" hint-placeholder-val="{{ false }}">
+<div data-stagger="60" style="border-top:var(--bw) solid var(--ink);">
+<sc-for list="{{ loreChapters }}" as="ch" hint-placeholder-count="8">
+<div data-reveal="up" style="display:flex;flex-wrap:wrap;gap:10px 32px;padding:24px 0;border-bottom:1px solid var(--line);align-items:baseline;">
+<div style="flex:0 0 150px;font:700 13px/1.2 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--accentText);">{{ ch.label }}</div>
+<div style="flex:1 1 420px;min-width:0;">
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(30px,3.6cqw,48px));line-height:1.14;">{{ ch.title }}</div>
+<div style="margin-top:8px;font-size:16px;font-style:italic;color:var(--inkSoft);">{{ ch.quote }}</div>
+</div>
+<div style="flex:0 0 auto;font:700 11px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;padding:6px 8px;border:1px solid var(--ink);background:{{ ch.tagBg }};color:{{ ch.tagFg }};">{{ ch.status }}</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ lt.places }}" hint-placeholder-val="{{ false }}">
+<div data-stagger="70" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:24px;">
+<sc-for list="{{ lorePlaces }}" as="pl" hint-placeholder-count="8">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:22px;display:flex;flex-direction:column;gap:10px;min-height:210px;">
+<div style="display:flex;justify-content:space-between;gap:10px;font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);"><span>{{ pl.label }}</span><span>{{ t.placeWord }}</span></div>
+<sc-if value="{{ pl.open }}" hint-placeholder-val="{{ true }}">
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 32px);line-height:1.14;">{{ pl.name }}</div>
+<p style="margin:0;font-size:15px;line-height:1.5;">{{ pl.d }}</p>
+</sc-if>
+<sc-if value="{{ pl.secret }}" hint-placeholder-val="{{ false }}">
+<div data-reveal="bar" data-delay="350" style="height:30px;width:80%;background:var(--ink);transform-origin:left;"></div>
+<div data-reveal="bar" data-delay="500" style="height:14px;width:95%;background:var(--ink);transform-origin:left;"></div>
+<div data-reveal="bar" data-delay="650" style="height:14px;width:62%;background:var(--ink);transform-origin:left;"></div>
+<div data-reveal="stamp" data-delay="880" style="margin-top:auto;align-self:flex-start;transform:rotate(-4deg);border:2px solid var(--accentText);color:var(--accentText);padding:5px 8px 3px;font-family:var(--fD);font-size:18px;text-transform:uppercase;line-height:1.14;">{{ t.censored }}</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ lt.items }}" hint-placeholder-val="{{ false }}">
+<div data-stagger="70" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:24px;">
+<sc-for list="{{ loreItems }}" as="it" hint-placeholder-count="7">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:22px;display:flex;flex-direction:column;gap:10px;">
+<div style="display:flex;justify-content:space-between;gap:10px;font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;"><span style="color:var(--inkSoft);">{{ it.where }}</span><span style="color:{{ it.stC }};">{{ it.status }}</span></div>
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 30px);line-height:1.14;">{{ it.name }}</div>
+<p style="margin:0;font-size:15px;line-height:1.5;color:var(--inkSoft);">{{ it.d }}</p>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ lt.rules }}" hint-placeholder-val="{{ false }}">
+<div data-stagger="110" style="display:grid;grid-template-columns:{{ g3 }};gap:24px;">
+<sc-for list="{{ loreRules }}" as="r" hint-placeholder-count="3">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:24px;">
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 34px);line-height:1.14;">{{ r.title }}</div>
+<p style="margin:12px 0 0;font-size:15px;line-height:1.55;">{{ r.d }}</p>
+</div>
+</sc-for>
+</div>
+<h3 data-reveal="rise" style="margin:52px 0 12px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(36px,4.4cqw,60px));line-height:1.14;">{{ t.bossT }}</h3>
+<p style="margin:0 0 24px;font-size:16px;max-width:40em;">{{ t.bossD }}</p>
+<div data-stagger="100" style="border-top:var(--bw) solid var(--ink);">
+<sc-for list="{{ loreBosses }}" as="b" hint-placeholder-count="3">
+<div data-reveal="up" style="display:flex;flex-wrap:wrap;gap:10px 32px;padding:22px 0;border-bottom:1px solid var(--line);">
+<div style="flex:0 0 230px;"><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--accentText);">{{ b.where }}</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 32px);line-height:1.14;">{{ b.name }}</div></div>
+<div style="flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:8px;">
+<sc-for list="{{ b.moves }}" as="m" hint-placeholder-count="1">
+<div style="font-size:16px;line-height:1.5;">{{ m }}</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{ pg.play }}" hint-placeholder-val="{{ false }}">
+<section data-screen-label="Play Chapter 1" style="border-bottom:var(--bw) solid var(--ink);">
+<div style="max-width:1320px;margin:0 auto;padding:clamp(14px,2.5cqw,32px) clamp(10px,3cqw,40px) clamp(40px,5cqw,72px);">
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px;padding:12px 16px;background:var(--sheet);border:var(--bw) solid var(--ink);border-bottom:0;">
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 24px);line-height:1.14;">{{ vn.chapter }}</div>
+<div style="display:flex;align-items:center;gap:10px 20px;margin-left:auto;flex-wrap:wrap;font:700 12px/1 var(--fL);letter-spacing:.1em;text-transform:uppercase;">
+<div style="display:flex;align-items:baseline;gap:6px;">XP <span style="font-size:18px;">{{ vn.xp }}</span></div>
+<div style="display:flex;align-items:center;gap:8px;">{{ t.exposure }}<div style="width:100px;height:10px;border:1px solid var(--ink);background:var(--paper2);"><div style="height:100%;width:{{ vn.expW }};background:var(--danger);transition:width .6s;"></div></div><span>{{ vn.expTxt }}</span></div>
+<div style="display:flex;align-items:baseline;gap:6px;">{{ t.itemsWord }} <span style="font-size:18px;">{{ vn.itemCount }}</span></div>
+<button onClick="{{ vnRestart }}" style="border:1px solid var(--ink);background:transparent;cursor:pointer;padding:7px 10px;font:700 11px/1 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--ink);">{{ t.restart }}</button>
+</div>
+</div>
+<div style="height:5px;background:var(--line);border-left:var(--bw) solid var(--ink);border-right:var(--bw) solid var(--ink);"><div style="height:100%;width:{{ vn.progW }};background:var(--accent);transition:width .4s;"></div></div>
+<div onClick="{{ vnStageClick }}" style="position:relative;overflow:hidden;background:var(--ink);color:var(--onInk);border:var(--bw) solid var(--ink);min-height:clamp(600px,56cqw,700px);cursor:{{ vn.cursor }};user-select:none;">
+<div style="display:var(--cB);position:absolute;inset:0;background-image:radial-gradient(circle,var(--onInk) 1px,transparent 1.6px);background-size:10px 10px;opacity:.13;-webkit-mask-image:radial-gradient(ellipse at 70% 25%,#000,transparent 72%);mask-image:radial-gradient(ellipse at 70% 25%,#000,transparent 72%);"></div>
+<div style="display:var(--dB);position:absolute;inset:0;background-image:linear-gradient(var(--onInk) 1px,transparent 1px),linear-gradient(90deg,var(--onInk) 1px,transparent 1px);background-size:48px 48px;opacity:.06;"></div>
+<div style="position:absolute;left:-.04em;top:9%;animation:{{ anim.word }};font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 22cqw);line-height:.8;color:var(--accent);opacity:.22;white-space:nowrap;pointer-events:none;">{{ vn.word }}</div>
+<div style="position:absolute;left:20px;top:18px;display:flex;gap:8px;align-items:center;font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent);"></span>{{ vn.loc }}</div>
+
+<sc-if value="{{ vn.showPortrait }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;right:clamp(20px,4cqw,56px);top:60px;width:230px;animation:fzIn .35s ease both;">
+<div style="display:var(--cB);background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--onInk);">
+<div style="position:relative;height:210px;overflow:hidden;">
+<div style="position:absolute;right:-6px;bottom:10px;font-family:var(--fD);font-weight:var(--dW);font-size:190px;line-height:1;letter-spacing:-.03em;background-image:radial-gradient(circle,var(--onAccent) 2.4px,transparent 3px);background-size:7px 7px;-webkit-background-clip:text;background-clip:text;color:transparent;">{{ vn.ini }}</div>
+</div>
+<div style="padding:12px 14px;border-top:var(--bw) solid var(--onInk);background:var(--ink);color:var(--onInk);">
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:24px;line-height:1.14;">{{ vn.speaker }}</div>
+<div style="margin-top:6px;font:600 11px/1.3 var(--fL);letter-spacing:.1em;text-transform:uppercase;opacity:.85;">{{ vn.whoTitle }}</div>
+</div>
+</div>
+<div style="display:var(--dB);background:var(--sheet);color:var(--ink);border:1px solid var(--line);box-shadow:var(--sh);padding:16px;transform:rotate(1.5deg);">
+<div style="font:600 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ t.fileNo }} · FK-{{ vn.ini }}</div>
+<div style="margin-top:12px;height:150px;border:1px dashed var(--inkSoft);display:flex;align-items:center;justify-content:center;font:600 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ t.noPhoto }}</div>
+<div style="margin-top:12px;font-family:var(--fD);text-transform:uppercase;font-size:22px;line-height:1.14;">{{ vn.speaker }}</div>
+<div style="margin-top:6px;font:500 12px/1.3 var(--fL);color:var(--inkSoft);">{{ vn.whoTitle }}</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ vn.hasItem }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;left:50%;top:clamp(70px,10cqw,130px);transform:translateX(-50%) rotate(-3deg);animation:fzStampIn .6s cubic-bezier(.3,1.5,.5,1) both;background:var(--sheet);color:var(--ink);border:var(--bw) solid var(--accent);box-shadow:var(--sh);padding:16px 26px;text-align:center;">
+<div style="font:700 12px/1 var(--fL);letter-spacing:.16em;color:var(--accentText);">{{ vn.itemLabel }}</div>
+<div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);font-size:calc(var(--dS) * 40px);line-height:1.14;white-space:nowrap;">{{ vn.itemName }}</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ vn.isTalk }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;left:clamp(12px,3cqw,40px);right:clamp(12px,3cqw,40px);bottom:clamp(12px,3cqw,32px);animation:fzIn .35s ease both;">
+<div style="position:relative;background:var(--sheet);color:var(--ink);border:var(--bw) solid var(--onInk);box-shadow:var(--shS);padding:24px clamp(18px,2.4cqw,28px) 16px;">
+<sc-if value="{{ vn.hasSpeaker }}" hint-placeholder-val="{{ false }}">
+<div style="animation:fzTab .3s cubic-bezier(.2,.7,.2,1) both;position:absolute;left:-3px;top:-36px;padding:9px 14px 8px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--onInk);font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 21px);line-height:1.14;">{{ vn.speaker }}</div>
+</sc-if>
+<div style="font-size:clamp(17px,1.6cqw,21px);line-height:1.55;white-space:pre-line;min-height:3.1em;font-style:{{ vn.fontStyle }};text-wrap:pretty;">{{ vn.typed }}</div>
+<div style="margin-top:12px;display:flex;justify-content:flex-end;font:600 12px/1.2 var(--fL);letter-spacing:.04em;color:var(--inkSoft);opacity:{{ vn.hintOp }};">{{ vn.enterHint }}</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ vn.isChoice }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ stop }}" style="position:absolute;left:clamp(12px,3cqw,40px);right:clamp(12px,3cqw,40px);bottom:clamp(12px,3cqw,32px);background:var(--sheet);color:var(--ink);border:var(--bw) solid var(--onInk);box-shadow:var(--shS);padding:clamp(18px,2.4cqw,26px);cursor:default;animation:fzIn .35s ease both;">
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;align-items:baseline;">
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 32px);line-height:1.14;">{{ vn.q }}</div>
+<div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ vn.chooseHint }}</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">
+<sc-for list="{{ vn.opts }}" as="o" hint-placeholder-count="3">
+<button onClick="{{ o.go }}" style="animation:fzIn .4s cubic-bezier(.2,.7,.2,1) both;animation-delay:{{ o.delay }};transition:border-color .2s ease,background-color .2s ease;position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:13px 16px;border:var(--bw) solid {{ o.bd }};background:var(--sheet);color:var(--ink);cursor:{{ o.cursor }};font-size:17px;line-height:1.35;" style-hover="background:var(--paper2)">
+<span style="position:absolute;left:0;top:0;bottom:0;width:{{ o.barW }};background:{{ o.barC }};transition:width .9s cubic-bezier(.2,.7,.2,1);"></span>
+<span style="position:relative;flex:none;width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:var(--ink);color:var(--onInk);font:700 14px/1 var(--fL);">{{ o.n }}</span>
+<span style="position:relative;flex:1;min-width:0;">{{ o.text }}<span style="display:block;font:700 11px/1.4 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--accentText);">{{ o.mineTxt }}</span></span>
+<span style="position:relative;font:700 15px/1 var(--fL);">{{ o.pctTxt }}</span>
+</button>
+</sc-for>
+</div>
+<sc-if value="{{ vn.revealed }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:14px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
+<div style="font:700 13px/1.4 var(--fL);letter-spacing:.04em;animation:fzIn .4s ease both .45s;">{{ t.others }} · <span style="color:var(--accentText);">{{ vn.delta }}</span></div>
+<button onClick="{{ vnNext }}" style="padding:12px 18px 11px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:19px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.next }} →</button>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ vn.isTitle }}" hint-placeholder-val="{{ false }}">
+<div style="display:var(--cF);position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px 24px;background:var(--accent);color:var(--onAccent);animation:fzIn .4s ease both;">
+<div style="position:absolute;inset:0;background-image:radial-gradient(circle,var(--onAccent) 1.2px,transparent 1.8px);background-size:10px 10px;opacity:.16;-webkit-mask-image:linear-gradient(to top,#000,transparent 80%);mask-image:linear-gradient(to top,#000,transparent 80%);"></div>
+<div style="position:relative;font:700 14px/1 var(--fL);letter-spacing:.24em;text-transform:uppercase;">{{ vn.tLabel }}</div>
+<div style="position:relative;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:clamp(56px,9cqw,132px);line-height:.98;animation:fzSlam .8s cubic-bezier(.2,.7,.2,1) both .12s;">{{ vn.tTitle }}</div>
+<div style="position:relative;max-width:30em;font-size:clamp(17px,1.6cqw,21px);font-style:italic;animation:fzIn .5s ease both .55s;">{{ vn.tQuote }}</div>
+<div style="position:relative;margin-top:14px;font:600 12px/1 var(--fL);letter-spacing:.06em;">{{ vn.enterHint }}</div>
+</div>
+<div style="display:var(--dF);position:absolute;inset:0;align-items:center;justify-content:center;padding:32px 20px;">
+<div style="position:relative;background:var(--sheet);color:var(--ink);background-image:var(--tex);border:1px solid var(--line);box-shadow:var(--sh);padding:clamp(28px,4cqw,56px);max-width:720px;width:100%;transform:rotate(-.6deg);">
+<div style="font:600 12px/1 var(--fL);letter-spacing:.16em;text-transform:uppercase;">{{ vn.tLabel }}</div>
+<div style="margin-top:14px;font-family:var(--fD);text-transform:uppercase;font-size:clamp(40px,6cqw,80px);line-height:1.14;">{{ vn.tTitle }}</div>
+<div style="margin-top:16px;font-size:16px;font-style:italic;">{{ vn.tQuote }}</div>
+<div style="margin-top:22px;font:600 12px/1 var(--fL);letter-spacing:.04em;color:var(--inkSoft);">{{ vn.enterHint }}</div>
+<div style="position:absolute;right:22px;top:20px;transform:rotate(-8deg);animation:fzStampIn .55s cubic-bezier(.3,1.5,.5,1) both .45s;border:3px double var(--accentText);color:var(--accentText);padding:6px 10px 4px;font-family:var(--fD);font-size:16px;text-transform:uppercase;line-height:1.14;">{{ t.conf }}</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ vn.isName }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ stop }}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;cursor:default;">
+<div style="width:100%;max-width:560px;background:var(--sheet);color:var(--ink);border:var(--bw) solid var(--onInk);box-shadow:var(--sh);padding:clamp(22px,3cqw,36px);animation:fzIn .35s ease both;">
+<div style="font:700 12px/1 var(--fL);letter-spacing:.16em;text-transform:uppercase;color:var(--accentText);">{{ t.prologue }}</div>
+<label style="display:block;margin-top:12px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 38px);line-height:1.14;">{{ vn.namePrompt }}</label>
+<div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;">
+<input value="{{ nameDraft }}" onChange="{{ onNameInput }}" onKeyDown="{{ onNameKey }}" placeholder="{{ t.namePh }}" maxLength="24" style="flex:1 1 220px;min-width:0;padding:14px;border:var(--bw) solid var(--ink);background:var(--desk);font-size:18px;outline:none;color:var(--ink);border-radius:0;">
+<button onClick="{{ submitName }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.confirm }}</button>
+</div>
+<p style="margin:12px 0 0;font-size:13px;color:var(--inkSoft);">{{ t.nameNote }}</p>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ vn.isEnd }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ stop }}" style="position:relative;padding:54px clamp(14px,3cqw,40px) clamp(14px,3cqw,40px);display:flex;justify-content:center;cursor:default;">
+<div style="width:100%;max-width:860px;background:var(--sheet);color:var(--ink);border:var(--bw) solid var(--onInk);box-shadow:var(--shS);animation:fzIn .4s ease both;">
+<div style="background:var(--accent);color:var(--onAccent);padding:clamp(20px,3cqw,32px);">
+<div style="font:700 12px/1 var(--fL);letter-spacing:.16em;text-transform:uppercase;">{{ t.endKicker }}</div>
+<div style="margin-top:10px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(44px,6cqw,80px));line-height:1.14;">{{ vn.endTitle }}</div>
+</div>
+<div style="padding:clamp(18px,3cqw,32px);">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);">
+<div style="background:var(--sheet);padding:16px;"><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">XP</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1.14;">{{ vn.xp }}</div></div>
+<div style="background:var(--sheet);padding:16px;"><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.exposure }}</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1.14;color:var(--accentText);">{{ vn.expTxt }}</div></div>
+<div style="background:var(--sheet);padding:16px;"><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.itemsWord }}</div><div style="margin-top:10px;font-size:15px;font-weight:700;line-height:1.3;">{{ vn.endItems }}</div></div>
+</div>
+<div style="margin-top:24px;font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ t.decisions }}</div>
+<sc-for list="{{ vn.summary }}" as="d" hint-placeholder-count="2">
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;padding:12px 0;border-bottom:1px solid var(--line);">
+<div style="min-width:0;flex:1 1 300px;"><div style="font-size:13px;color:var(--inkSoft);">{{ d.q }}</div><div style="font-size:17px;font-weight:600;margin-top:2px;">{{ d.a }}</div></div>
+<div style="font:600 13px/1.3 var(--fL);color:var(--accentText);align-self:center;">{{ d.pctTxt }}</div>
+</div>
+</sc-for>
+<div style="margin-top:16px;font-size:15px;">{{ t.endNext }}</div>
+<sc-if value="{{ vn.loggedOut }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:22px;align-items:center;">
+<button onClick="{{ gateRegister }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.regSave }}</button>
+<button onClick="{{ vnRestart }}" style="padding:14px 20px 13px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.replay }}</button>
+<span style="font-size:13px;color:var(--inkSoft);">{{ t.savedLocal }}</span>
+</div>
+</sc-if>
+<sc-if value="{{ vn.loggedIn }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:22px;align-items:center;">
+<button onClick="{{ goDashboard }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.toDash }}</button>
+<button onClick="{{ goDownload }}" style="padding:14px 20px 13px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.cta2 }}</button>
+<span style="font:700 13px/1 var(--fL);color:var(--good);">✓ {{ t.savedAcc }}</span>
+</div>
+</sc-if>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+<p style="margin:14px 0 0;font-size:13px;color:var(--inkSoft);">{{ t.playHelp }}</p>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{ pg.auth }}" hint-placeholder-val="{{ false }}">
+<section data-screen-label="Register / Log in" style="border-bottom:var(--bw) solid var(--ink);">
+<div style="max-width:1180px;margin:0 auto;padding:clamp(36px,5cqw,80px) clamp(16px,3cqw,40px) clamp(56px,7cqw,104px);display:flex;flex-wrap:wrap;gap:44px 64px;align-items:flex-start;">
+<div style="flex:1 1 440px;min-width:0;">
+<div style="display:inline-flex;border:var(--bw) solid var(--ink);max-width:100%;">
+<button onClick="{{ auth.toReg }}" style="border:0;cursor:pointer;padding:10px 16px 9px;font-family:var(--fD);font-weight:var(--dW);font-size:calc(var(--dS) * 20px);line-height:1.14;text-transform:uppercase;background:{{ auth.regBg }};color:{{ auth.regFg }};">{{ t.tabReg }}</button>
+<button onClick="{{ auth.toLogin }}" style="border:0;cursor:pointer;padding:10px 16px 9px;font-family:var(--fD);font-weight:var(--dW);font-size:calc(var(--dS) * 20px);line-height:1.14;text-transform:uppercase;background:{{ auth.logBg }};color:{{ auth.logFg }};">{{ t.tabLogin }}</button>
+</div>
+<h1 data-reveal="rise" style="margin:26px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:calc(var(--dS) * clamp(48px,6.4cqw,88px));">{{ auth.title }}</h1>
+<p style="margin:14px 0 0;font-size:17px;line-height:1.5;max-width:30em;">{{ t.authSub }}</p>
+<sc-if value="{{ auth.hasSave }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:18px;display:flex;gap:12px;align-items:center;padding:12px 14px;border:var(--bw) solid var(--ink);background:var(--paper2);font-size:15px;line-height:1.4;"><span style="flex:none;width:10px;height:10px;background:var(--accent);"></span>{{ auth.saveNote }}</div>
+</sc-if>
+<form onSubmit="{{ auth.submit }}" style="margin-top:24px;display:flex;flex-direction:column;gap:16px;">
+<sc-if value="{{ auth.isReg }}" hint-placeholder-val="{{ true }}">
+<label style="display:flex;flex-direction:column;gap:6px;"><span style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;">{{ t.fUser }}</span><input value="{{ auth.user }}" onChange="{{ auth.onUser }}" autoComplete="username" style="width:100%;padding:14px;border:var(--bw) solid var(--ink);background:var(--sheet);font-size:17px;outline:none;color:var(--ink);border-radius:0;"></label>
+<label style="display:flex;flex-direction:column;gap:6px;"><span style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;">{{ t.fEmail }}</span><input type="email" value="{{ auth.email }}" onChange="{{ auth.onEmail }}" autoComplete="email" style="width:100%;padding:14px;border:var(--bw) solid var(--ink);background:var(--sheet);font-size:17px;outline:none;color:var(--ink);border-radius:0;"></label>
+</sc-if>
+<sc-if value="{{ auth.isLogin }}" hint-placeholder-val="{{ false }}">
+<label style="display:flex;flex-direction:column;gap:6px;"><span style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;">{{ t.fId }}</span><input value="{{ auth.user }}" onChange="{{ auth.onUser }}" autoComplete="username" style="width:100%;padding:14px;border:var(--bw) solid var(--ink);background:var(--sheet);font-size:17px;outline:none;color:var(--ink);border-radius:0;"></label>
+</sc-if>
+<label style="display:flex;flex-direction:column;gap:6px;"><span style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;">{{ t.fPass }}</span><input type="password" value="{{ auth.pass }}" onChange="{{ auth.onPass }}" autoComplete="current-password" style="width:100%;padding:14px;border:var(--bw) solid var(--ink);background:var(--sheet);font-size:17px;outline:none;color:var(--ink);border-radius:0;"></label>
+<button type="submit" style="margin-top:6px;padding:16px 22px 15px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ auth.submitLabel }}</button>
+</form>
+<div style="margin-top:18px;display:flex;flex-wrap:wrap;gap:10px 22px;">
+<button onClick="{{ auth.swap }}" style="border:0;background:none;padding:0;cursor:pointer;font:600 14px/1.3 var(--fL);color:var(--ink);text-decoration:underline;text-underline-offset:4px;">{{ auth.swapLabel }}</button>
+<button onClick="{{ auth.skip }}" style="border:0;background:none;padding:0;cursor:pointer;font:600 14px/1.3 var(--fL);color:var(--inkSoft);text-decoration:underline;text-underline-offset:4px;">{{ t.authSkip }}</button>
+</div>
+</div>
+<div style="flex:0 1 420px;min-width:280px;">
+<div data-reveal="swing" data-delay="200" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--sh);transform:rotate(-1.5deg);overflow:hidden;">
+<div style="display:var(--cF);height:10px;"><div style="flex:1;background:var(--accent);"></div><div style="flex:1;background:var(--paper2);"></div><div style="flex:1;background:var(--second);"></div></div>
+<div style="padding:22px 24px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:1px solid var(--line);">
+<div><div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 30px);line-height:1.14;">Fityesz</div><div style="margin-top:6px;font:700 11px/1 var(--fL);letter-spacing:.2em;text-transform:uppercase;color:var(--accentText);">{{ t.cardTitle }}</div></div>
+<div style="width:56px;height:56px;flex:none;background:var(--accent);color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:var(--fD);font-weight:var(--dW);font-size:32px;border:var(--bw) solid var(--ink);">F</div>
+</div>
+<div style="padding:18px 24px 22px;display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;">
+<div style="grid-column:1 / -1;"><div style="font:700 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ t.cardName }}</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 40px);line-height:1.14;overflow-wrap:anywhere;">{{ auth.cardName }}</div></div>
+<div><div style="font:700 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ t.cardNo }}</div><div style="margin-top:6px;font:700 16px/1.2 var(--fL);">FK-000142</div></div>
+<div><div style="font:700 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ t.cardJoined }}</div><div style="margin-top:6px;font:700 16px/1.2 var(--fL);">2026</div></div>
+<div><div style="font:700 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">XP</div><div style="margin-top:6px;font:700 16px/1.2 var(--fL);">{{ auth.cardXp }}</div></div>
+<div><div style="font:700 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ t.cardRank }}</div><div style="margin-top:6px;font:700 16px/1.2 var(--fL);">—</div></div>
+</div>
+<div style="padding:12px 24px;background:var(--ink);color:var(--onInk);font:600 12px/1.4 var(--fL);">{{ t.cardNote }}</div>
+</div>
+</div>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{ pg.dashboard }}" hint-placeholder-val="{{ false }}">
+<section data-screen-label="Player dashboard" style="border-bottom:var(--bw) solid var(--ink);">
+<div style="max-width:1320px;margin:0 auto;padding:clamp(36px,5cqw,72px) clamp(16px,3cqw,40px) clamp(56px,7cqw,104px);">
+<sc-if value="{{ dash.out }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:720px;background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--sh);padding:clamp(24px,4cqw,48px);">
+<div style="font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.dashKicker }}</div>
+<h1 style="margin:12px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:calc(var(--dS) * clamp(44px,6cqw,80px));">{{ t.dashOutT }}</h1>
+<p style="margin:14px 0 0;font-size:17px;line-height:1.5;">{{ t.dashOutD }}</p>
+<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;">
+<button onClick="{{ auth.openLogin }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.tabLogin }}</button>
+<button onClick="{{ auth.openReg }}" style="padding:14px 20px 13px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.tabReg }}</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ dash.in }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px 32px;">
+<div style="min-width:0;">
+<div style="font:700 13px/1.3 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.dashKicker }}</div>
+<h1 data-reveal="rise" style="margin:10px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:calc(var(--dS) * clamp(48px,7cqw,104px));overflow-wrap:anywhere;">{{ dash.hello }}</h1>
+</div>
+<button onClick="{{ logout }}" style="border:var(--bw) solid var(--ink);background:transparent;cursor:pointer;padding:9px 14px;font:700 12px/1 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--ink);">{{ t.logout }}</button>
+</div>
+
+<sc-if value="{{ dash.empty }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:32px;background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--sh);padding:clamp(24px,4cqw,44px);display:flex;flex-wrap:wrap;gap:20px 40px;align-items:center;justify-content:space-between;">
+<div style="flex:1 1 360px;min-width:0;"><div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 40px);line-height:1.14;">{{ t.dashEmptyT }}</div><p style="margin:10px 0 0;font-size:16px;">{{ t.dashEmptyD }}</p></div>
+<button onClick="{{ goPlay }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.cta1 }}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{ dash.has }}" hint-placeholder-val="{{ false }}">
+<div data-reveal="up" style="margin-top:32px;background:var(--ink);color:var(--onInk);border:var(--bw) solid var(--ink);display:flex;flex-wrap:wrap;">
+<div style="flex:1 1 460px;min-width:0;padding:clamp(22px,3cqw,36px);">
+<div style="font:700 12px/1 var(--fL);letter-spacing:.16em;text-transform:uppercase;color:var(--accent);">{{ t.slotLabel }}</div>
+<div style="margin-top:12px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(34px,4cqw,56px));line-height:1.14;">{{ dash.nextTitle }}</div>
+<p style="margin:12px 0 0;font-size:15px;line-height:1.5;opacity:.88;">{{ dash.contNote }}</p>
+<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:22px;">
+<button onClick="{{ dash.cont }}" style="display:inline-flex;align-items:center;gap:12px;padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--accent);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;"><span style="width:0;height:0;border-left:10px solid currentColor;border-top:6px solid transparent;border-bottom:6px solid transparent;"></span>{{ t.dashContinue }}</button>
+<button onClick="{{ dash.replay }}" style="padding:14px 20px 13px;background:transparent;color:var(--onInk);border:var(--bw) solid var(--onInk);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.replay }}</button>
+</div>
+</div>
+<div style="flex:1 1 380px;min-width:0;padding:clamp(22px,3cqw,36px);border-left:1px solid color-mix(in srgb,var(--onInk) 20%,transparent);">
+<div style="display:flex;justify-content:space-between;font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;"><span>{{ t.progress }}</span><span>{{ dash.progTxt }}</span></div>
+<div data-stagger="55" data-base="250" style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:4px;margin-top:14px;">
+<sc-for list="{{ dash.segs }}" as="sg" hint-placeholder-count="8">
+<div data-reveal="slam" style="height:40px;background:{{ sg.bg }};border:2px solid {{ sg.bd }};display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;font:700 11px/1 var(--fL);color:{{ sg.fg }};">{{ sg.n }}</div>
+</sc-for>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px;font:600 12px/1 var(--fL);letter-spacing:.06em;text-transform:uppercase;">
+<span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;background:var(--accent);"></span>{{ t.pDone }}</span>
+<span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border:2px solid var(--onInk);"></span>{{ t.pNext }}</span>
+<span style="display:flex;align-items:center;gap:6px;opacity:.6;"><span style="width:10px;height:10px;border:2px solid currentColor;"></span>{{ t.pLock }}</span>
+</div>
+</div>
+</div>
+
+<div data-stagger="120" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px;margin-top:24px;">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:18px 22px;border-bottom:var(--bw) solid var(--ink);">
+<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 28px);line-height:1.14;">{{ t.statsT }}</h2>
+<span style="font:700 11px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.statsSub }}</span>
+</div>
+<div style="padding:20px 22px 24px;display:flex;flex-direction:column;gap:22px;">
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;">
+<div><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">XP</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);font-size:48px;line-height:1.14;">{{ dash.xp }}</div></div>
+<div><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.levelW }}</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);font-size:48px;line-height:1.14;">{{ dash.level }}</div></div>
+<div style="min-width:0;"><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.rankW }}</div><div style="margin-top:10px;font:700 15px/1.2 var(--fL);text-transform:uppercase;">{{ dash.rank }}</div><div style="font-size:12px;color:var(--inkSoft);margin-top:4px;">{{ dash.rankNote }}</div></div>
+</div>
+<div>
+<div style="display:flex;justify-content:space-between;font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;"><span>{{ t.exposure }}</span><span style="color:var(--accentText);">{{ dash.expTxt }}</span></div>
+<div style="margin-top:8px;height:18px;border:2px solid var(--ink);position:relative;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),var(--line) calc(10% - 1px) 10%);"><div data-reveal="bar" data-delay="400" style="position:absolute;left:0;top:0;bottom:0;width:{{ dash.expW }};background:var(--danger);transform-origin:left;"></div></div>
+<div style="margin-top:6px;font-size:13px;color:var(--inkSoft);">{{ t.expWarn }}</div>
+</div>
+<div>
+<div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.itemsWord }} · {{ dash.itemsTxt }}</div>
+<div data-stagger="45" data-base="200" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px;margin-top:10px;">
+<sc-for list="{{ dash.items }}" as="it" hint-placeholder-count="7">
+<div data-reveal="up" style="min-height:66px;padding:10px;border:1px {{ it.bs }} {{ it.bc }};background:{{ it.bg }};color:{{ it.fg }};font:700 11px/1.3 var(--fL);letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:flex-end;">{{ it.name }}</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:18px 22px;border-bottom:var(--bw) solid var(--ink);">
+<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 28px);line-height:1.14;">{{ t.relT }}</h2>
+<span style="font:700 11px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.relSub }}</span>
+</div>
+<div style="padding:6px 22px 22px;">
+<sc-for list="{{ dash.rel }}" as="r" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);">
+<div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:{{ r.bg }};color:{{ r.fg }};font-family:var(--fD);font-weight:var(--dW);font-size:19px;border:var(--bw) solid var(--ink);">{{ r.ini }}</div>
+<div style="min-width:0;">
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 10px;align-items:baseline;"><span style="font-weight:700;font-size:16px;">{{ r.name }}</span><span style="font:700 11px/1.2 var(--fL);letter-spacing:.08em;text-transform:uppercase;color:var(--inkSoft);">{{ r.status }}</span></div>
+<div style="margin-top:8px;height:8px;background:var(--paper2);border:1px solid var(--line);"><div data-reveal="bar" data-delay="350" style="height:100%;width:{{ r.w }};background:var(--good);transform-origin:left;"></div></div>
+</div>
+<div style="font-family:var(--fD);font-weight:var(--dW);font-size:24px;line-height:1.14;min-width:2em;text-align:right;">{{ r.val }}</div>
+</div>
+</sc-for>
+<p style="margin:14px 0 0;font-size:13px;line-height:1.45;color:var(--inkSoft);">{{ t.relNote }}</p>
+</div>
+</div>
+</div>
+
+<div data-reveal="up" style="margin-top:24px;background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);">
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 12px;padding:18px 22px;border-bottom:var(--bw) solid var(--ink);">
+<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 28px);line-height:1.14;">{{ t.tlT }}</h2>
+<span style="font:700 11px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.others }}</span>
+</div>
+<div data-stagger="90" style="padding:4px 22px 18px;">
+<sc-for list="{{ dash.timeline }}" as="e" hint-placeholder-count="5">
+<div data-reveal="lift" style="display:grid;grid-template-columns:24px minmax(0,1fr);gap:14px;opacity:{{ e.op }};">
+<div style="display:flex;flex-direction:column;align-items:center;"><div style="width:14px;height:14px;margin-top:22px;flex:none;background:{{ e.dot }};border:2px solid var(--ink);"></div><div style="flex:1;width:2px;background:var(--line);"></div></div>
+<div style="padding:18px 0;border-bottom:1px solid var(--line);min-width:0;">
+<div style="font:700 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ e.label }}</div>
+<div style="margin-top:6px;font-size:14px;color:var(--inkSoft);">{{ e.q }}</div>
+<div style="margin-top:4px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 26px);line-height:1.05;">{{ e.a }}</div>
+<sc-if value="{{ e.hasDelta }}" hint-placeholder-val="{{ false }}"><div style="margin-top:8px;font:700 12px/1.3 var(--fL);letter-spacing:.05em;">{{ e.delta }}</div></sc-if>
+<sc-if value="{{ e.hasDist }}" hint-placeholder-val="{{ false }}">
+<div data-reveal="wipe" data-delay="300" style="margin-top:12px;display:flex;height:24px;border:1px solid var(--ink);max-width:560px;">
+<sc-for list="{{ e.dist }}" as="d" hint-placeholder-count="3">
+<div style="width:{{ d.w }};background:{{ d.bg }};color:{{ d.fg }};display:flex;align-items:center;padding:0 6px;font:700 11px/1 var(--fL);overflow:hidden;white-space:nowrap;border-right:1px solid var(--ink);">{{ d.n }} · {{ d.p }}</div>
+</sc-for>
+</div>
+<div style="margin-top:6px;font-size:13px;color:var(--inkSoft);">{{ e.pctTxt }}</div>
+</sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div data-stagger="120" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px;margin-top:24px;">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:18px 22px;border-bottom:var(--bw) solid var(--ink);">
+<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 28px);line-height:1.14;">{{ t.slotsT }}</h2>
+<span style="font:700 11px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.slotsSub }}</span>
+</div>
+<div data-stagger="90" style="padding:16px 22px 22px;display:flex;flex-direction:column;gap:12px;">
+<sc-for list="{{ dash.slots }}" as="sl" hint-placeholder-count="3">
+<div data-reveal="up" style="display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;padding:14px 16px;border:{{ sl.bd }};background:{{ sl.bg }};">
+<div style="font-family:var(--fD);font-weight:var(--dW);font-size:34px;line-height:1.14;width:30px;">{{ sl.n }}</div>
+<div style="flex:1 1 200px;min-width:0;"><div style="font-weight:700;font-size:16px;">{{ sl.title }}</div><div style="font-size:13px;color:var(--inkSoft);margin-top:2px;">{{ sl.meta }}</div></div>
+<button onClick="{{ sl.go }}" style="padding:10px 14px 9px;border:var(--bw) solid var(--ink);background:{{ sl.btnBg }};color:{{ sl.btnFg }};font-family:var(--fD);font-weight:var(--dW);font-size:16px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ sl.btn }}</button>
+</div>
+</sc-for>
+</div>
+</div>
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:18px 22px;border-bottom:var(--bw) solid var(--ink);">
+<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 28px);line-height:1.14;">{{ t.endingsT }}</h2>
+<span style="font:700 11px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ dash.endTxt }}</span>
+</div>
+<div data-stagger="100" style="padding:16px 22px 22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;">
+<sc-for list="{{ dash.endings }}" as="en" hint-placeholder-count="3">
+<div data-reveal="up" style="min-height:160px;padding:14px;border:1px dashed var(--inkSoft);display:flex;flex-direction:column;justify-content:space-between;gap:10px;background:repeating-linear-gradient(135deg,transparent 0 10px,color-mix(in srgb,var(--line) 50%,transparent) 10px 11px);">
+<div style="font:700 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ en.n }}</div>
+<div style="font-family:var(--fD);font-weight:var(--dW);font-size:40px;line-height:1.14;">???</div>
+<div style="font-size:13px;line-height:1.35;">{{ en.hint }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+</sc-if>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{ pg.download }}" hint-placeholder-val="{{ false }}">
+<section data-screen-label="Download" style="border-bottom:var(--bw) solid var(--ink);">
+<div style="max-width:1320px;margin:0 auto;padding:clamp(40px,6cqw,88px) clamp(16px,3cqw,40px) clamp(56px,7cqw,104px);">
+<div style="font:700 13px/1.3 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.dlKicker }}</div>
+<h1 data-reveal="rise" style="margin:12px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.06;font-size:calc(var(--dS) * clamp(52px,8cqw,124px));max-width:11em;">{{ t.dlTitle }}</h1>
+<p style="margin:18px 0 0;max-width:34em;font-size:clamp(17px,1.5cqw,20px);line-height:1.5;">{{ t.dlSub }}</p>
+<sc-if value="{{ dl.out }}" hint-placeholder-val="{{ true }}">
+<div data-reveal="up" style="margin-top:32px;background:var(--ink);color:var(--onInk);border:var(--bw) solid var(--ink);padding:clamp(20px,3cqw,32px);display:flex;flex-wrap:wrap;gap:18px 32px;align-items:center;justify-content:space-between;">
+<div style="flex:1 1 360px;min-width:0;display:flex;gap:16px;align-items:flex-start;">
+<div data-reveal="shake" data-delay="700" style="flex:none;width:34px;height:40px;position:relative;margin-top:2px;"><div style="position:absolute;left:6px;right:6px;top:0;height:22px;border:4px solid var(--accent);border-bottom:0;border-radius:12px 12px 0 0;"></div><div style="position:absolute;left:0;right:0;bottom:0;height:22px;background:var(--accent);"></div></div>
+<div><div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 32px);line-height:1.14;">{{ t.dlLockedT }}</div><p style="margin:8px 0 0;font-size:15px;opacity:.88;">{{ t.dlLockedD }}</p></div>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:12px;">
+<button onClick="{{ auth.openReg }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--accent);font-family:var(--fD);font-weight:var(--dW);font-size:20px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.tabReg }}</button>
+<button onClick="{{ auth.openLogin }}" style="padding:14px 20px 13px;background:transparent;color:var(--onInk);border:var(--bw) solid var(--onInk);font-family:var(--fD);font-weight:var(--dW);font-size:20px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.tabLogin }}</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ dl.in }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:28px;display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border:var(--bw) solid var(--ink);background:var(--sheet);font-size:15px;"><span style="font:700 14px/1 var(--fL);color:var(--good);">✓</span>{{ dl.signedTxt }}</div>
+</sc-if>
+<div data-stagger="110" style="display:grid;grid-template-columns:{{ g3 }};gap:24px;margin-top:28px;">
+<sc-for list="{{ dl.platforms }}" as="p" hint-placeholder-count="3">
+<div data-reveal="lift" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:24px;display:flex;flex-direction:column;gap:12px;min-height:250px;opacity:{{ p.op }};">
+<div style="font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ p.ver }}</div>
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 56px);line-height:1.14;">{{ p.name }}</div>
+<div style="font-size:15px;">{{ p.file }}</div>
+<button onClick="{{ p.go }}" style="margin-top:auto;padding:14px 18px 13px;background:{{ p.bg }};color:{{ p.fg }};border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:20px;line-height:1.14;text-transform:uppercase;cursor:{{ p.cursor }};">{{ p.btn }}</button>
+</div>
+</sc-for>
+</div>
+<h2 data-reveal="rise" style="margin:clamp(48px,6cqw,80px) 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:calc(var(--dS) * clamp(36px,4.6cqw,64px));">{{ t.dlHowT }}</h2>
+<div data-stagger="110" style="display:grid;grid-template-columns:{{ g3 }};gap:1px;background:var(--line);border:var(--bw) solid var(--ink);margin-top:26px;">
+<sc-for list="{{ dl.steps }}" as="st" hint-placeholder-count="3">
+<div data-reveal="up" style="background:var(--sheet);padding:24px 24px 28px;"><div style="font-family:var(--fD);font-weight:var(--dW);font-size:60px;line-height:1.14;color:var(--accentText);">{{ st.n }}</div><p style="margin:14px 0 0;font-size:16px;line-height:1.45;">{{ st.text }}</p></div>
+</sc-for>
+</div>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{ pg.support }}" hint-placeholder-val="{{ false }}">
+<section data-screen-label="Support the creators" style="border-bottom:var(--bw) solid var(--ink);">
+<div style="max-width:1320px;margin:0 auto;padding:clamp(40px,6cqw,88px) clamp(16px,3cqw,40px) clamp(56px,7cqw,104px);">
+<div style="font:700 13px/1.3 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.supKicker }}</div>
+<h1 data-reveal="rise" style="margin:12px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.06;font-size:calc(var(--dS) * clamp(52px,8cqw,124px));max-width:10em;">{{ t.supTitle }}</h1>
+<p style="margin:18px 0 0;max-width:34em;font-size:clamp(17px,1.5cqw,20px);line-height:1.5;">{{ t.supSub }}</p>
+<div data-stagger="120" style="display:grid;grid-template-columns:{{ g3 }};gap:24px;margin-top:40px;align-items:stretch;">
+<div data-reveal="up" style="background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--sh);padding:clamp(24px,3cqw,36px);display:flex;flex-direction:column;gap:16px;position:relative;overflow:hidden;">
+<div style="display:var(--cB);position:absolute;inset:0;background-image:radial-gradient(circle,var(--onAccent) 1.2px,transparent 1.8px);background-size:9px 9px;opacity:.2;animation:{{ anim.drift }};-webkit-mask-image:linear-gradient(to top left,#000,transparent 65%);mask-image:linear-gradient(to top left,#000,transparent 65%);"></div>
+<div style="position:relative;font:700 12px/1 var(--fL);letter-spacing:.16em;text-transform:uppercase;">Ko-fi</div>
+<div style="position:relative;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(40px,4.4cqw,60px));line-height:1.14;">{{ t.kofiCardT }}</div>
+<p style="position:relative;margin:0;font-size:16px;line-height:1.5;">{{ t.kofiCardD }}</p>
+<a href="{{ kofiHref }}" target="_blank" rel="noopener" onClick="{{ kofiClick }}" style="position:relative;margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;padding:15px 22px 14px;background:var(--ink);color:var(--onInk);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;text-decoration:none;">{{ kofiLabel }}</a>
+<sc-if value="{{ kofiPending }}" hint-placeholder-val="{{ true }}"><p style="position:relative;margin:0;font-size:13px;line-height:1.45;">{{ t.kofiNote }}</p></sc-if>
+</div>
+<sc-for list="{{ creators }}" as="c" hint-placeholder-count="2">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);display:flex;flex-direction:column;">
+<div style="position:relative;height:150px;overflow:hidden;background:var(--ink);color:var(--onInk);border-bottom:var(--bw) solid var(--ink);">
+<div style="position:absolute;right:-6px;bottom:8px;font-family:var(--fD);font-weight:var(--dW);font-size:140px;line-height:1;letter-spacing:-.03em;background-image:radial-gradient(circle,var(--onInk) 2.2px,transparent 2.8px);background-size:7px 7px;-webkit-background-clip:text;background-clip:text;color:transparent;">{{ c.ini }}</div>
+<div style="position:absolute;left:16px;top:16px;font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;">{{ t.creatorWord }}</div>
+</div>
+<div style="padding:20px 22px 22px;display:flex;flex-direction:column;gap:8px;flex:1;">
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 40px);line-height:1.14;">{{ c.name }}</div>
+<div style="font:600 14px/1.3 var(--fL);color:var(--inkSoft);">@{{ c.handle }}</div>
+<a href="{{ c.url }}" target="_blank" rel="noopener" style="margin-top:auto;align-self:flex-start;padding:11px 16px 10px;border:var(--bw) solid var(--ink);color:var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:17px;line-height:1.14;text-transform:uppercase;text-decoration:none;">{{ t.ghBtn }} →</a>
+</div>
+</div>
+</sc-for>
+</div>
+<div data-reveal="up" style="margin-top:28px;display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;padding:18px 20px;border:var(--bw) solid var(--ink);background:var(--paper2);">
+<span style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 24px);line-height:1.14;">{{ t.repoT }}</span>
+<a href="https://github.com/djkzea/fityeszthegame" target="_blank" rel="noopener" style="font:600 15px/1.3 var(--fL);">github.com/djkzea/fityeszthegame</a>
+</div>
+</div>
+</section>
+</sc-if>
+
+<footer style="background:var(--ink);color:var(--onInk);">
+<div style="max-width:1320px;margin:0 auto;padding:56px clamp(16px,3cqw,40px) 36px;display:flex;flex-wrap:wrap;gap:40px 64px;">
+<div style="flex:1 1 300px;">
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:calc(var(--dS) * 56px);">Fityesz<span style="display:block;font-size:.4em;letter-spacing:.26em;margin-top:6px;color:var(--accent);">{{ t.logoSub }}</span></div>
+<p style="margin:16px 0 0;font-size:15px;max-width:22em;">{{ t.footTag }}</p>
+</div>
+<div style="flex:0 1 200px;display:flex;flex-direction:column;align-items:flex-start;gap:10px;">
+<sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+<button onClick="{{ n.go }}" style="border:0;background:none;padding:0;cursor:pointer;font:600 14px/1.2 var(--fL);letter-spacing:.07em;text-transform:uppercase;color:var(--onInk);" style-hover="text-decoration:underline">{{ n.label }}</button>
+</sc-for>
+</div>
+<div style="flex:0 1 280px;">
+<div style="font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;opacity:.75;">{{ t.footMade }}</div>
+<sc-for list="{{ creators }}" as="c" hint-placeholder-count="2">
+<div style="margin-top:14px;"><div style="font-size:16px;font-weight:600;">{{ c.name }}</div><a href="{{ c.url }}" target="_blank" rel="noopener" style="font:500 14px/1.4 var(--fL);color:var(--onInk);">github.com/{{ c.handle }}</a></div>
+</sc-for>
+</div>
+</div>
+<div style="max-width:1320px;margin:0 auto;padding:18px clamp(16px,3cqw,40px) 30px;border-top:1px solid color-mix(in srgb,var(--onInk) 22%,transparent);display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-between;font-size:13px;">
+<span>© 2026 {{ t.titleFull }}</span>
+<a href="https://github.com/djkzea/fityeszthegame" target="_blank" rel="noopener" style="color:var(--onInk);">{{ t.footRepo }}</a>
+</div>
+</footer>
+
+<sc-if value="{{ gateOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeGate }}" style="animation:fzFade .25s ease both;position:fixed;inset:0;z-index:80;background:color-mix(in srgb,var(--ink) 72%,transparent);display:flex;align-items:center;justify-content:center;padding:20px;">
+<div onClick="{{ stop }}" data-screen-label="Register prompt" style="width:100%;max-width:560px;max-height:calc(100% - 20px);overflow:auto;background:var(--sheet);color:var(--ink);border:var(--bw) solid var(--ink);box-shadow:var(--sh);animation:fzIn .3s ease both;">
+<div style="background:var(--accent);color:var(--onAccent);padding:14px 22px;font:700 12px/1 var(--fL);letter-spacing:.16em;text-transform:uppercase;">{{ t.gateKicker }}</div>
+<div style="padding:26px 26px 24px;">
+<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(38px,4.4cqw,54px));line-height:1.14;">{{ t.gateTitle }}</h2>
+<p style="margin:14px 0 0;font-size:16px;line-height:1.5;">{{ t.gateSub }}</p>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;">
+<span style="padding:7px 10px;border:1px solid var(--ink);font:700 12px/1 var(--fL);letter-spacing:.08em;text-transform:uppercase;">XP {{ vn.xp }}</span>
+<span style="padding:7px 10px;border:1px solid var(--ink);font:700 12px/1 var(--fL);letter-spacing:.08em;text-transform:uppercase;">{{ t.exposure }} {{ vn.expTxt }}</span>
+<span style="padding:7px 10px;border:1px solid var(--ink);font:700 12px/1 var(--fL);letter-spacing:.08em;text-transform:uppercase;">{{ t.itemsWord }} {{ vn.itemCount }}</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:22px;">
+<button onClick="{{ gateRegister }}" style="width:100%;padding:15px 22px 14px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.gateCta }}</button>
+<button onClick="{{ gateLogin }}" style="width:100%;padding:15px 22px 14px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.gateLogin }}</button>
+</div>
+<div style="margin-top:16px;text-align:center;">
+<button onClick="{{ closeGate }}" style="border:0;background:none;cursor:pointer;padding:6px;font:600 14px/1 var(--fL);color:var(--ink);text-decoration:underline;text-underline-offset:4px;">{{ t.gateSkip }}</button>
+<div style="margin-top:6px;font-size:13px;color:var(--inkSoft);">{{ t.gateSkipNote }}</div>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;direction&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Campaign propaganda&quot;,&quot;Leaked dossier&quot;],&quot;default&quot;:&quot;Campaign propaganda&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;palette&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Tricolour&quot;,&quot;Party orange&quot;,&quot;Terminal gold&quot;,&quot;Newsprint&quot;],&quot;default&quot;:&quot;Tricolour&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;motion&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;On&quot;,&quot;Off&quot;],&quot;default&quot;:&quot;On&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;frame&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Desktop&quot;,&quot;Mobile&quot;],&quot;default&quot;:&quot;Desktop&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Preview&quot;},&quot;demoState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Visitor&quot;,&quot;Member with save&quot;],&quot;default&quot;:&quot;Visitor&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Preview&quot;},&quot;kofiUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Links&quot;},&quot;page&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string&quot;},&quot;lang&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string&quot;},&quot;embedded&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  static PAGES = ['home','characters','lore','play','auth','dashboard','download','support'];
+  static PAL = {
+    tricolour:{paper:'#F4EFE6',paper2:'#E8DFD0',sheet:'#FBF8F2',ink:'#161616',inkSoft:'#4A4640',line:'#CFC6B6',accent:'#C8102E',onAccent:'#FFF8F0',accentText:'#B10E28',second:'#1F6B3A',onSecond:'#F4EFE6',danger:'#C8102E',good:'#1F6B3A',onInk:'#F4EFE6'},
+    orange:{paper:'#F2EDE4',paper2:'#E5DDCF',sheet:'#FAF7F1',ink:'#111111',inkSoft:'#4B4741',line:'#CEC6B8',accent:'#F26B1D',onAccent:'#111111',accentText:'#B8470F',second:'#13233F',onSecond:'#F2EDE4',danger:'#E0521B',good:'#13233F',onInk:'#F2EDE4'},
+    gold:{paper:'#0E0D0B',paper2:'#1B1915',sheet:'#15130F',ink:'#EFE6D2',inkSoft:'#B5AB96',line:'#3A352B',accent:'#D4A017',onAccent:'#0E0D0B',accentText:'#E0B43A',second:'#B3261E',onSecond:'#EFE6D2',danger:'#E0453A',good:'#D4A017',onInk:'#0E0D0B'},
+    newsprint:{paper:'#F1ECE1',paper2:'#E3DCCD',sheet:'#F8F5EE',ink:'#1B1B1B',inkSoft:'#5C5850',line:'#C9C2B3',accent:'#D22B2B',onAccent:'#FFF9F0',accentText:'#B52222',second:'#8A857B',onSecond:'#1B1B1B',danger:'#D22B2B',good:'#1B1B1B',onInk:'#F1ECE1'}
+  };
+  static DIR = {
+    campaign:{'--fD':"'Antonio', 'Arial Narrow', sans-serif",'--fB':"'Public Sans', system-ui, sans-serif",'--fL':"'Public Sans', system-ui, sans-serif",'--dW':'700','--dS':'1','--bw':'3px','--sh':'6px 6px 0 var(--ink)','--shS':'4px 4px 0 var(--ink)','--desk':'var(--paper)','--cB':'block','--cF':'flex','--dB':'none','--dF':'none','--tex':'none'},
+    dossier:{'--fD':"'Saira Stencil One', sans-serif",'--fB':"'IBM Plex Mono', ui-monospace, monospace",'--fL':"'IBM Plex Mono', ui-monospace, monospace",'--dW':'400','--dS':'.74','--bw':'1px','--sh':'0 1px 0 rgba(0,0,0,.05), 0 22px 44px -26px rgba(0,0,0,.6)','--shS':'0 12px 26px -18px rgba(0,0,0,.55)','--desk':'var(--paper2)','--cB':'none','--cF':'none','--dB':'block','--dF':'flex','--tex':'repeating-linear-gradient(0deg, transparent 0 31px, color-mix(in srgb, var(--line) 60%, transparent) 31px 32px)'}
+  };
+  static CREATORS = [
+    {name:['Kukucska Zsombor','Zsombor Kukucska'],handle:'Frezzard2',url:'https://github.com/Frezzard2'},
+    {name:['Dajka Zea','Zea Dajka'],handle:'djkzea',url:'https://github.com/djkzea'}
+  ];
+  static CHARS = [
+    {id:'you',ini:'?',name:['Te','You'],title:['Volt középiskolai tanár','Former secondary school teacher'],quote:['Ezért politikusnak állsz.','So you go into politics.'],ch:0},
+    {id:'lipoti',ini:'LD',name:['Lipóti Dezső','Lipóti Dezső'],title:['A toborzó','The recruiter'],quote:['Kávét? Pálinkát? Mindkettőt?','Coffee? Pálinka? Both?'],ch:1},
+    {id:'lakatos',ini:'LE',name:['Lakatos Ervin','Lakatos Ervin'],title:['Kerületi pártember','District party man'],quote:['Lebukás? Haha! Mi vagyunk a hatalom, kisfiam!','Caught? Haha! We are the power, my boy!'],ch:2,boss:true},
+    {id:'kapzs',ini:'KI',name:['Kapzs Imre','Kapzs Imre'],title:['Miniszterelnök, a Nemzet Megmentője','Prime Minister, Saviour of the Nation'],quote:['A mászó bármikor leeshet. A csillag... a csillag örökké ragyog.','A climber can fall at any time. A star... a star shines forever.'],ch:3,boss:true},
+    {id:'peteri',ini:'PK',name:['Dr. Péteri Katalin','Dr. Péteri Katalin'],title:['Az Országos Választmány tagja','Member of the National Committee'],quote:['Az idő pénz – szó szerint.','Time is money – literally.'],ch:4,boss:true},
+    {id:'molnar',ini:'MG',name:['Molnár Gábor','Molnár Gábor'],title:['A frakció embere','The party whip'],quote:['Vélemény? VÉLEMÉNY?!','Opinion? OPINION?!'],ch:5}
+  ];
+  static S = {
+    logoSub:['Krónika','Chronicle'], titleFull:['Fityesz Krónika','The Fityesz Chronicle'],
+    navChars:['Szereplők','Characters'], navLore:['Lexikon','Lore'], navPlay:['Játék','Play'], navDownload:['Letöltés','Download'], navSupport:['Támogatás','Support'],
+    login:['Belépés','Log in'], playFree:['Játssz ingyen','Play free'], menu:['Menü','Menu'], close:['Bezár','Close'],
+    heroKicker:['Szöveges kalandjáték · az 1. fejezet ingyen játszható','A text-based adventure · Chapter 1 is free to play'],
+    slogan1:['Csak','Onwards'], slogan2:['felfelé!','and upwards!'],
+    heroSub:['Izgalmas történet arról, hogyan leszel politikus. A döntéseid mind befolyásolják a cselekmény kimenetelét. Bölcsen válassz!','A gripping story about becoming a politician. Every decision you make shapes how the plot turns out. Choose wisely!'],
+    cta1:['Játszd az 1. fejezetet','Play Chapter 1'], cta2:['Teljes játék letöltése','Download the full game'],
+    heroNote:['A kezdéshez nem kell fiók. A böngésződben fut.','No account needed to start. It runs in your browser.'],
+    posterTitle:['Kiinduló helyzet','Starting position'], rolls:['kifli','bread rolls'], cash:['készpénz','cash'], debt:['adósság','debt'],
+    cashVal:['380 Ft','380 Ft'], debtVal:['−4 000 000 Ft','−4,000,000 Ft'], bank:['A bank már keres.','The bank is already looking for you.'],
+    caseNo:['Ügyszám: FK-1.0','Case no. FK-1.0'], conf:['Szigorúan bizalmas','Strictly confidential'],
+    titleA:['Fityesz','The Fityesz'], titleB:['Krónika','Chronicle'],
+    fSubject:['Alany','Subject'], fSubjectV:['Te','You'], fOcc:['Foglalkozás','Occupation'], fOccV:['volt középiskolai tanár','former secondary school teacher'],
+    fAssets:['Vagyon','Assets'], fAssetsV:['3 kifli, 380 Ft','3 bread rolls, 380 forints'], fDebt:['Tartozás','Debt'], fDebtV:['4 millió forint','4 million forints'], fNote:['Megjegyzés','Note'],
+    stampSlogan:['Csak felfelé!','Onwards and upwards!'],
+    q1:['Az országért mindenkinek tenni kell, nem csak beszélni róla.','Everyone must act for the country, not merely talk about it.'],
+    q2:['Aki nincs ellenünk, az velünk van.','Whoever is not against us is with us.'],
+    q3:['Ha nincs semmi gond, csinálunk valamit, hogy legyen.','If there is no trouble, we will make some.'],
+    proTitle:['Prológus: A mélyPont','Prologue: Rock Bottom'],
+    pro1:['Volt középiskolai tanár vagy.','You are a former secondary school teacher.'],
+    pro2:['A havi 180 ezres fizetésből nem jött ki a matek.','On a salary of 180 thousand a month, the maths never added up.'],
+    pro3:['Van 3 kiflid, 380 Forintod és 4 millió forint adósságod.','You own 3 bread rolls, 380 forints and 4 million forints of debt.'],
+    pro4:['A bank már keres.','The bank is already looking for you.'],
+    pro5:['Ezért politikusnak állsz.','So you go into politics.'],
+    phone:['Csörög a telefonod','Your phone rings'],
+    offer:['„Van egy ajánlatom, amit nem fog tudni visszautasítani.”','“I have an offer you will not be able to refuse.”'],
+    answer:['Vedd fel','Answer it'],
+    castTitle:['A szereplők','The cast'], castSub:['Akikkel a ranglétrán találkozol.','The people you meet on the way up.'], castAll:['Összes szereplő','All characters'],
+    howTitle:['Így működik','How it plays'],
+    how1t:['Válassz 1–3','Pick 1–3'], how1d:['A sztori során 1-3 számok közül kell választanod a folytatást.','Throughout the story you choose how it continues by picking a number from 1 to 3.'],
+    how2t:['Figyeld a lebukásmérőt','Watch the exposure meter'], how2d:['A kockázatos döntések növelik. Ha eléri a 100-at: „A sajtó mindent kiderített.”','Risky choices raise it. If it reaches 100: “The press has uncovered everything.”'],
+    how3t:['Harcolj a csúcsért','Fight your way up'], how3d:['Három bossfight. Támadj vagy védekezz, és tanuld ki az ellenfeled különleges képességét.','Three bossfights. Attack or defend, and learn each rival’s special move.'],
+    exposure:['Lebukás','Exposure'], you:['Te','You'], attack:['Támadás','Attack'], defend:['Védekezés','Defend'],
+    sampleQ:['Mit válaszolsz?','What do you say?'],
+    sampleO1:['Engem csak a pénz érdekel',"I'm only in it for the money"], sampleO2:['A nemzet szolgálata érdekel','I care about serving the nation'], sampleO3:['Mi lenne a dolgom?','What would my job be?'],
+    saveTitle:['A döntéseid veled jönnek','Your decisions come with you'],
+    save1:['Játszd végig az 1. fejezetet itt, a böngészőben.','Play Chapter 1 right here in your browser.'],
+    save2:['Regisztrálj, és elmentjük minden döntésedet.','Register and we save every decision you made.'],
+    save3:['Töltsd le a teljes játékot Windowsra, macOS-re vagy Linuxra.','Download the full game for Windows, macOS or Linux.'],
+    save4:['Lépj be a játékban, és a 2. fejezettől folytatod.','Sign in inside the game and continue from Chapter 2.'],
+    saveCta:['Kezdjük','Start playing'],
+    supTitle:['Támogasd az alkotókat','Support the creators'],
+    supSub:['A Fityesz Krónikát ketten készítik. Ha tetszett, meghívhatod őket egy kávéra a Ko-fin.','The Fityesz Chronicle is made by two people. If you enjoyed it, you can buy them a coffee on Ko-fi.'],
+    kofi:['Támogatás Ko-fin','Support on Ko-fi'], kofiSoon:['Ko-fi: hamarosan','Ko-fi: coming soon'], meet:['Az alkotók','Meet the creators'],
+    footTag:['Szöveges kalandjáték magyarul és angolul.','A text-based adventure in Hungarian and English.'],
+    footMade:['Készítették','Made by'], footRepo:['Forráskód a GitHubon','Source code on GitHub'],
+    chapterN:['%n. fejezet','Chapter %n'], prologue:['Prológus','Prologue'],
+    charsKicker:['Ki kicsoda a Fityeszben','Who’s who in the Fityesz'],
+    charsQuote:['„A Fityesz nem csak egy párt. Család.”','“The Fityesz is not merely a party. It is a family.”'],
+    firstSeen:['Első megjelenés','First appears'], noPhoto:['Nincs fénykép','No photo'], fileNo:['Akta','File'],
+    loreKicker:['A világ','The world'], loreSub:['Minden, amit a Fityeszről tudni lehet. És amit jobb nem tudni.','Everything there is to know about the Fityesz. And some things better left unknown.'],
+    tabParty:['A párt','The party'], tabChapters:['Fejezetek','Chapters'], tabPlaces:['Helyszínek','Places'], tabItems:['Tárgyak','Items'], tabRules:['Játékszabályok','Mechanics'],
+    partyCaption:['A falon gigantikus Kapzs Imre-portré, alatta a felirat: „CSAK FELFELÉ!”','On the wall a gigantic portrait of Kapzs Imre, beneath it the caption: “ONWARDS AND UPWARDS!”'],
+    leaderLabel:['A Főnök','The Boss'], leaderTitle:['a Nemzet Megmentője, a Haza Pajzsa','the Saviour of the Nation, the Shield of the Homeland'],
+    mottoLabel:['Jelmondat','Motto'], rulesLabel:['A négy szabály','The four rules'], rulesBy:['Lakatos Ervin, 2. fejezet','Lakatos Ervin, Chapter 2'],
+    rule1:['Amit látsz, nem láttad.',"What you see, you didn't see."], rule2:['Amit hallasz, nem hallottad.',"What you hear, you didn't hear."],
+    rule3:['Amit kapsz, az jutalom a kemény munkáért.','What you get is a reward for hard work.'], rule4:['Minden a Főnökért.','Everything for the Boss.'],
+    familyQuote:['„A Fityesz nem csak egy párt... Család. És a családban mindenkiről gondoskodunk.”','“The Fityesz is not merely a party... It is a family. And in a family we look after everyone.”'],
+    familyBy:['Lipóti Dezső, 1. fejezet','Lipóti Dezső, Chapter 1'],
+    inBrowser:['Böngészőben játszható','Playable in your browser'], inGame:['A teljes játékban','In the full game'],
+    placeWord:['Helyszín','Location'], censored:['Cenzúrázva','Censored'], found:['Megszerezve','Acquired'], notFound:['Még nincs meg','Not found yet'], finalBoss:['Végső bossfight','Final bossfight'],
+    xpD:['Minden döntés XP-t ér. A bossfightok még többet: 50, 80 és 120 XP-t.','Every decision earns XP. Bossfights earn more: 50, 80 and 120 XP.'],
+    expD:['A kockázatos döntések növelik, az óvatosak csökkenthetik. 100-nál vége: „A sajtó mindent kiderített.”','Risky choices raise it, careful ones can lower it. At 100 it’s over: “The press has uncovered everything.”'],
+    rankT:['Szint és rang','Level and rank'], rankD:['50 XP-nél szintet lépsz. Új rang: HELYI PÁRTTAG.','At 50 XP you level up. New rank: LOCAL PARTY MEMBER.'],
+    bossT:['Bossfightok','Bossfights'], bossD:['Minden körben támadsz vagy védekezel. Minden ellenfélnek van egy különleges képessége.','Each round you attack or defend. Every rival has a special move.'],
+    restart:['Újrakezdés','Restart'], itemsWord:['Tárgyak','Items'], next:['Tovább','Continue'],
+    namePh:['pl. Nagy Anna','e.g. Anna Nagy'], confirm:['Kész','Done'], nameNote:['Ezen a néven szólítanak a játékban.','This is the name the game will call you.'],
+    others:['Mások döntései','How other players chose'], yourChoice:['A te döntésed','Your choice'], chooseHint:['Válassz 1–3','Choose 1–3'],
+    samePct:['A játékosok %p%-a döntött így','%p% of players chose this'],
+    endKicker:['Vége az 1. fejezetnek','End of Chapter 1'], endNext:['Következik: 2. fejezet · Az első gyűlés. A teljes játékban folytatod.','Next up: Chapter 2 · The First Meeting, in the full game.'],
+    decisions:['Döntéseid','Your decisions'], savedAcc:['Mentve a fiókodba','Saved to your account'], savedLocal:['Egyelőre csak ebben a böngészőben mentve','For now, saved in this browser only'],
+    toDash:['Mentéseim','My saves'], replay:['Újrajátszás','Replay'], regSave:['Regisztrálok és mentek','Register and save'],
+    gateKicker:['1. fejezet teljesítve','Chapter 1 complete'], gateTitle:['Mentsd el a döntéseidet','Save your decisions'],
+    gateSub:['Regisztrálj, és a letölthető játékban a 2. fejezettől folytathatod. Minden eddigi döntésed megmarad.','Register to continue from Chapter 2 in the downloadable game. Every decision you’ve made so far is kept.'],
+    gateCta:['Regisztrálok','Register'], gateLogin:['Már van fiókom','I already have an account'], gateSkip:['Most kihagyom','Skip for now'], gateSkipNote:['A mentésed csak ebben a böngészőben marad meg.','Your save stays in this browser only.'],
+    playHelp:['Kattints vagy nyomj Entert a továbblépéshez, a válaszokhoz használd az 1–3 billentyűket. A játék automatikusan ment.','Click or press Enter to continue, and use keys 1–3 to answer. Progress saves automatically.'],
+    authRegTitle:['Kérd a pártigazolványod','Get your party card'], authLoginTitle:['Üdv újra a pártban','Welcome back to the party'],
+    authSub:['Elmentjük a döntéseidet, és letöltheted a teljes játékot.','We save your decisions and unlock the full game download.'],
+    tabReg:['Regisztráció','Register'], tabLogin:['Belépés','Log in'],
+    fUser:['Felhasználónév','Username'], fEmail:['E-mail','Email'], fPass:['Jelszó','Password'], fId:['E-mail vagy felhasználónév','Email or username'],
+    submitReg:['Regisztrálok','Create account'], submitLogin:['Belépés','Log in'],
+    haveAcc:['Van már fiókod? Belépés','Already have an account? Log in'], noAcc:['Még nincs fiókod? Regisztráció','No account yet? Register'],
+    saveMove:['Az 1. fejezetben hozott %n döntésed átkerül a fiókodba.','Your %n Chapter 1 decisions will move to your account.'],
+    authSkip:['Most nem, maradok fiók nélkül','Not now, continue without an account'],
+    cardTitle:['Pártigazolvány','Party card'], cardNo:['Tagsági szám','Member no.'], cardName:['Név','Name'], cardRank:['Rang','Rank'], cardJoined:['Belépett','Joined'], cardNamePh:['A neved','Your name'],
+    cardNote:['A játékban is ezzel a fiókkal lépsz be.','You sign in to the game with this same account.'],
+    dashKicker:['Mentéseim','My saves'], hello:['Üdv újra, %s!','Welcome back, %s!'], logout:['Kilépés','Log out'],
+    dashOutT:['Lépj be a mentéseidhez','Log in to see your saves'], dashOutD:['A döntéseid, a statisztikáid és a mentési helyeid a fiókodhoz tartoznak.','Your decisions, stats and save slots live in your account.'],
+    dashEmptyT:['Még nincs döntésed','No decisions yet'], dashEmptyD:['Játszd végig az 1. fejezetet, és itt látod majd minden döntésedet.','Play Chapter 1 and every decision you make will show up here.'],
+    slotLabel:['1. mentés · Következik','Slot 1 · Up next'], nextCh2:['2. fejezet: Az első gyűlés','Chapter 2: The First Meeting'], contCh1:['1. fejezet: A Toborzás','Chapter 1: The Recruitment'],
+    contNoteDone:['A letöltött játékban folytatod: lépj be, és a mentésed betöltődik.','Continue in the downloaded game: sign in and your save loads automatically.'],
+    contNoteProg:['Folytasd itt, a böngészőben, ahol abbahagytad.','Pick up where you left off, right here in your browser.'],
+    dashContinue:['Folytatás','Continue'], progress:['Haladás','Progress'], pDone:['Kész','Done'], pNext:['Következik','Next'], pLock:['Zárolva','Locked'],
+    statsT:['Statisztika','Stats'], statsSub:['A játék szerint','Tracked by the game'], levelW:['Szint','Level'], rankW:['Rang','Rank'],
+    rankNone:['Még nincs','None yet'], rankNote:['50 XP-nél lépsz szintet','Level up at 50 XP'], rankLocal:['Helyi párttag','Local party member'],
+    expWarn:['100-nál lebuksz, és vége a játéknak.','At 100 you are exposed and the game ends.'],
+    relT:['Kapcsolatok','Relationships'], relSub:['Bizalom','Trust'],
+    relNote:['A bizalom a döntéseidtől függ. Később ez dönti el, ki áll melléd.','Trust depends on your decisions. Later on, it decides who stands by you.'],
+    trustHi:['Bízik benned','Trusts you'], trustMid:['Kivár','Wait and see'], trustLo:['Gyanakszik','Suspicious'], notMet:['Még nem találkoztatok','Not met yet'],
+    tlT:['Döntéseid','Your decisions'], tlName:['A neved','Your name'], tlNext:['A teljes játékban vár rád','Waiting for you in the full game'], tlLater:['3–7. fejezet','Chapters 3–7'], tlLocked:['Zárolva','Locked'],
+    slotsT:['Mentési helyek','Save slots'], slotsSub:['3 hely','3 slots'], slotDone:['1. fejezet kész','Chapter 1 complete'], slotProg:['1. fejezet folyamatban','Chapter 1 in progress'],
+    webSave:['Webes mentés','Web save'], emptySlot:['Üres hely','Empty slot'], emptyMeta:['A teljes játékban használható','Used by the full game'], newGame:['Új játék','New game'],
+    endingsT:['Befejezések','Endings'], endingsSub:['%n/3 feloldva','%n/3 unlocked'], endingN:['%n. befejezés','Ending %n'],
+    end1:['Érj fel a csúcsra.','Reach the very top.'], end2:['Hagyd, hogy a sajtó mindent kiderítsen.','Let the press uncover everything.'], end3:['Add fel egy elvesztett bossfight után.','Give up after losing a bossfight.'],
+    finalShort:['Finálé','Finale'],
+    dlKicker:['Verzió 1.0','Version 1.0'], dlTitle:['Töltsd le a teljes játékot','Download the full game'],
+    dlSub:['Prológus és 7 fejezet, 3 bossfight, 3 befejezés. Magyarul és angolul.','A prologue and 7 chapters, 3 bossfights and 3 endings. In Hungarian and English.'],
+    dlLockedT:['A letöltéshez fiók kell','You need an account to download'], dlLockedD:['Ingyenes, és így a játék be tudja tölteni a webes mentésedet.','It’s free, and it lets the game load your web save.'],
+    signedAs:['Belépve mint %s. A webes mentésed készen áll.','Signed in as %s. Your web save is ready.'],
+    dlWin:['Telepítő (.exe)','Installer (.exe)'], dlMac:['Lemezkép (.dmg)','Disk image (.dmg)'], dlLinux:['AppImage','AppImage'],
+    dlBtn:['Letöltés','Download'], dlLockedBtn:['Fiók szükséges','Account required'], dlStarted:['Letöltés elindult ✓','Download started ✓'],
+    dlHowT:['Így viszed át a mentésed','How your save carries over'],
+    dlStep1:['Telepítsd és indítsd el a játékot.','Install and launch the game.'], dlStep2:['Lépj be ugyanazzal a fiókkal.','Sign in with the same account.'], dlStep3:['A 2. fejezettől folytatod, az eddigi döntéseiddel.','Continue from Chapter 2 with every decision so far.'],
+    supKicker:['Ko-fi','Ko-fi'], kofiCardT:['Hívd meg őket egy kávéra','Buy them a coffee'], kofiCardD:['Minden támogatás abban segít, hogy a Fityesz Krónika tovább bővüljön.','Every contribution helps the Fityesz Chronicle keep growing.'],
+    kofiNote:['A Ko-fi oldal még készül. Addig is csillagozd a projektet a GitHubon.','The Ko-fi page is on its way. Until then, you can star the project on GitHub.'],
+    creatorWord:['Alkotó','Creator'], ghBtn:['GitHub-profil','GitHub profile'], repoT:['A projekt a GitHubon','The project on GitHub'],
+    /*S_END*/
+  };
+  static G = {
+    'pro.quote':['Aki a múltat nem ismeri, az a jövőt sem érti.','He who does not know the past cannot understand the future.'],
+    'pro.namePrompt':['Add meg a neved: ','Enter your name: '],
+    'pro.youAre':['Te %s vagy.','You are %s.'],
+    'pro.teacher':['Volt középiskolai tanár vagy.','You are a former secondary school teacher.'],
+    'pro.salary':['A havi 180 ezres fizetésből nem jött ki a matek.','On a salary of 180 thousand a month, the maths never added up.'],
+    'pro.assets':['Van 3 kiflid, 380 Forintod és 4 millió forint adósságod.','You own 3 bread rolls, 380 forints and 4 million forints of debt.'],
+    'pro.bank':['A bank már keres.','The bank is already looking for you.'],
+    'pro.politician':['Ezért politikusnak állsz.','So you go into politics.'],
+    'pro.phone':['Csörög a telefonod','Your phone rings'],
+    'pro.call':['%s? Hallottam a helyzetéről. Van egy ajánlatom, amit nem fog tudni visszautasítani.\nTalálkozzunk a Dohány utcai kávézóban, holnap délben. Kérdezzen Lipóti úr után.','%s? I have heard about your situation. I have an offer you will not be able to refuse.\nMeet me at the café on Dohány Street, tomorrow at noon. Ask for Mr. Lipóti.'],
+    'ch1.quote':['Az országért mindenkinek tenni kell, nem csak beszélni róla.','Everyone must act for the country, not merely talk about it.'],
+    'ch1.place':['Helyszín: egy eldugott kávézó. A falon egy Kossuth portrét és egy rejtélyes grafikát látsz.','Location: a tucked-away café. On the wall you see a portrait of Kossuth and a cryptic chart.'],
+    'ch1.lipoti1':['%s? Lipóti Dezső vagyok, kérem, foglaljon helyet! Kávét? Pálinkát? Mindkettőt?\nLátom a szemén, hogy az utóbbi kell.','%s? Dezső Lipóti is the name, please, take a seat! Coffee? Pálinka? Both?\nI can see in your eyes that it is the latter you need.'],
+    'ch1.lipoti2':['Szóval tanár volt. Nemes hivatás, nemde? De tudja, mi a nemesebb? A szolgálat. A NEMZET szolgálata.\nÉs mellékesen... nos, a nemzet szolgálata jól fizet.','So you were a teacher. A noble calling, is it not? But do you know what is nobler? Service. Service to the NATION.\nAnd incidentally... well, serving the nation pays well.'],
+    'ch1.q1':['Mit válaszolsz?','What do you say?'],
+    'ch1.q1.opt1':['Engem csak a pénz érdekel',"I'm only in it for the money"],
+    'ch1.q1.opt2':['A nemzet szolgálata érdekel','I care about serving the nation'],
+    'ch1.q1.opt3':['Mi lenne a dolgom?','What would my job be?'],
+    'ch1.q1.ans1':['Őszinte ember! Ezt szeretem. Ilyen emberekre van szükségünk.','An honest man! I like that. These are the people we need.'],
+    'ch1.q1.ans2':['Szép szavak! Megtanulja még a többit is.','Fine words! You will learn the rest in time.'],
+    'ch1.q1.ans3':['Óvatos! Ez jó. De a részletekbe majd később megyünk bele.','Cautious! That is good. But we will get into the details later.'],
+    'ch1.lipoti3':['A Fityesz nem csak egy párt, %s. Család. És a családban mindenkiről gondoskodunk. Nézze csak...','The Fityesz is not merely a party, %s. It is a family. And in a family we look after everyone. Just look...'],
+    'ch1.envelope':['Lipóti kitesz az asztalra egy borítékot. Kinyitod és 500 ezer magyar forintot látsz benne. Készpénzben.','Lipóti lays an envelope on the table. You open it and see 500 thousand Hungarian forints inside. In cash.'],
+    'ch1.lipoti4':['Ez csak az eleje. Előleg a jövőbeni... hűségéért. Ahogy a Miniszterelnök Úr mondta egyszer...','This is only the beginning. An advance on your future... loyalty. As the Prime Minister once said...'],
+    'ch1.q2':['Elfogadod a pénzt?','Do you take the money?'],
+    'ch1.q2.opt1':['Elveszed és bólogatsz','Take it and nod'],
+    'ch1.q2.opt2':['Elveszed, de kérdezel: "Mi a feltétel?"','Take it, but ask: "What\'s the catch?"'],
+    'ch1.q2.opt3':['Nem nyúlsz hozzá',"Don't touch it"],
+    'ch1.q2.ans1':['Lipóti elmosolyodik','Lipóti smiles'],
+    'ch1.q2.ans2':['Feltétel? Csak annyi, hogy holnap megjelensz ezen a címen.','A catch? Only that tomorrow you show up at this address.'],
+    'ch1.q2.ans3':['Ó, tehát alkudni akar! Maga tényleg politikusnak született!','Oh, so you want to haggle! You really were born to be a politician!'],
+    'item.envelope1':['ELSŐ BORÍTÉK','FIRST ENVELOPE'],
+    'npc.unknown':['Ismeretlen hang','Unknown voice'],
+    'npc.lipoti':['Lipóti Dezső','Lipóti Dezső'],
+    'ui.item':['MEGSZERZETT TÁRGY','ITEM ACQUIRED'],
+    'ui.enter':['[ Nyomj Enter-t a folytatáshoz... ]','[ Press Enter to continue... ]']
+  };
+  static SCRIPT = [
+    {k:'title',label:'pro',scene:'void'},
+    {k:'name',scene:'void'},
+    {k:'narr',text:['pro.youAre','pro.teacher'],scene:'void'},
+    {k:'narr',text:['pro.salary'],scene:'void'},
+    {k:'narr',text:['pro.assets','pro.bank'],scene:'void'},
+    {k:'narr',text:['pro.politician'],scene:'void'},
+    {k:'narr',text:['pro.phone'],scene:'phone'},
+    {k:'line',who:'unknown',text:['pro.call'],scene:'phone'},
+    {k:'title',label:'ch1',scene:'cafe'},
+    {k:'narr',text:['ch1.place'],scene:'cafe'},
+    {k:'line',who:'lipoti',text:['ch1.lipoti1'],scene:'cafe'},
+    {k:'line',who:'lipoti',text:['ch1.lipoti2'],scene:'cafe'},
+    {k:'choice',q:'q1',scene:'cafe'},
+    {k:'result',q:'q1',scene:'cafe'},
+    {k:'line',who:'lipoti',text:['ch1.lipoti3'],scene:'cafe'},
+    {k:'narr',text:['ch1.envelope'],scene:'cafe'},
+    {k:'line',who:'lipoti',text:['ch1.lipoti4'],scene:'cafe'},
+    {k:'choice',q:'q2',scene:'cafe'},
+    {k:'result',q:'q2',scene:'cafe'},
+    {k:'end',scene:'cafe'}
+  ];
+  static CHOICES = {
+    q1:{q:'ch1.q1',pct:[46,19,35],opts:[
+      {t:'ch1.q1.opt1',xp:15,exp:10,trust:20,ans:'ch1.q1.ans1',who:'lipoti'},
+      {t:'ch1.q1.opt2',xp:10,exp:5,trust:10,ans:'ch1.q1.ans2',who:'lipoti'},
+      {t:'ch1.q1.opt3',xp:5,exp:0,trust:5,ans:'ch1.q1.ans3',who:'lipoti'}]},
+    q2:{q:'ch1.q2',pct:[52,31,17],opts:[
+      {t:'ch1.q2.opt1',xp:20,exp:15,trust:25,item:'envelope1',ans:'ch1.q2.ans1',who:null},
+      {t:'ch1.q2.opt2',xp:10,exp:5,trust:10,ans:'ch1.q2.ans2',who:'lipoti'},
+      {t:'ch1.q2.opt3',xp:0,exp:-10,trust:-5,ans:'ch1.q2.ans3',who:'lipoti'}]}
+  };
+  static WHO = {
+    unknown:{name:'npc.unknown',ini:'?',title:['A vonal túlsó végén','On the other end of the line']},
+    lipoti:{name:'npc.lipoti',ini:'LD',title:['A toborzó','The recruiter']}
+  };
+  static SCENES = {
+    void:{word:['Mélypont','Rock bottom'],loc:['Prológus','Prologue']},
+    phone:{word:['Telefon','Phone'],loc:['Prológus','Prologue']},
+    cafe:{word:['Kávézó','Café'],loc:['Dohány utca','Dohány Street']}
+  };
+  static fresh() { return {name:'', i:0, choices:{}, xp:0, exp:0, items:[], trust:{lipoti:50}, done:false, at:Date.now()}; }
+  static Typer = function Typer(p) {
+    const len = p.text.length;
+    const [n, setN] = React.useState(p.skip ? len : 0);
+    React.useEffect(() => {
+      if (p.skip) { setN(len); return; }
+      let i = 0; setN(0);
+      const id = setInterval(() => { i = Math.min(len, i + 2); setN(i); if (i >= len) { clearInterval(id); p.onDone && p.onDone(); } }, 18);
+      return () => clearInterval(id);
+    }, [p.text, p.skip]);
+    return React.createElement(React.Fragment, null, p.text.slice(0, n), React.createElement('span', {style:{color:'transparent'}}, p.text.slice(n)));
+  };
+  static CHAPTERS = [
+    {n:0,title:['A mélyPont','Rock Bottom'],quote:['Aki a múltat nem ismeri, az a jövőt sem érti.','He who does not know the past cannot understand the future.']},
+    {n:1,title:['A Toborzás','The Recruitment'],quote:['Az országért mindenkinek tenni kell, nem csak beszélni róla.','Everyone must act for the country, not merely talk about it.']},
+    {n:2,title:['Az első gyűlés','The First Meeting'],quote:['Aki nincs ellenünk, az velünk van.','Whoever is not against us is with us.']},
+    {n:3,title:['A Kongresszusi Próba','The Congress Trial'],quote:['Ha nincs semmi gond, csinálunk valamit, hogy legyen.','If there is no trouble, we will make some.']},
+    {n:4,title:['Az Országos Választmány Árnyai','Shadows of the National Committee'],quote:['A diplomácia nem arról szól, hogy mindig igent mondunk.','Diplomacy is not about always saying yes.']},
+    {n:5,title:['A Parlamenti Útvesztő','The Parliamentary Maze'],quote:['Egyetlen forint közpénzt sem hagyunk kárba veszni.','We will not let a single forint of public money go to waste.']},
+    {n:6,title:['Az Országos Elnökség Kapujában','At the Gates of the National Presidency'],quote:['A demokratikus jogrend nem ad felmentést a felelősség alól.','The democratic rule of law grants no exemption from responsibility.']},
+    {n:7,title:['Az Elnökség Trónján','On the Throne of the Presidency'],quote:['A törvény mindenkire egyformán vonatkozik.','The law applies equally to everyone.']}
+  ];
+  static PLACES = [
+    {n:1,name:['Kávézó a Dohány utcában','The café on Dohány Street'],d:['Egy eldugott kávézó. A falon egy Kossuth portrét és egy rejtélyes grafikát látsz.','A tucked-away café. On the wall you see a portrait of Kossuth and a cryptic chart.']},
+    {n:2,name:['Kerületi pártiroda','District party office'],d:['Egy kerületi irodaépület, piros-fehér-zöld zászlókat látsz mindenhol.','A district office building, red-white-green flags wherever you look.']},
+    {n:3,name:['A Kongresszus','The Congress'],d:['Hatalmas rendezvénycsarnok, ezrek a nézőtéren.','A vast event hall, thousands in the audience.']},
+    {n:4,name:['Irodaház, 5. emelet','Office tower, 5th floor'],d:['Elegáns irodaépület, 5. emelet, panorámás kilátás.','An elegant office building, 5th floor, panoramic view.']},
+    {n:5,name:['A Parlament','Parliament'],d:['Parlament, folyosók és titkos szobák.','Parliament, corridors and secret rooms.']},
+    {n:6,name:['A vadászkastély','The hunting lodge'],d:['Elit vadászkastély, éjszaka, szivarfüst.','An elite hunting lodge, night, cigar smoke.']},
+    {n:7,name:['A pártközpont','Party headquarters'],d:['A párt központja, az elnökségi terem.','Party headquarters, the presidential chamber.']},
+    {n:8,secret:true}
+  ];
+  static ITEMS = [
+    {id:'envelope1',name:['ELSŐ BORÍTÉK','FIRST ENVELOPE'],ch:1,d:['500 ezer magyar forint. Készpénzben.','500 thousand Hungarian forints. In cash.']},
+    {id:'envelopeSmall',name:['KIS BORÍTÉK','SMALL ENVELOPE'],ch:2,d:['A havi közösségi találkozóról.','From the monthly community gathering.']},
+    {id:'lakatosFile',name:['LAKATOS AKTÁJA',"LAKATOS'S FILE"],ch:3,d:['Jutalom a Lakatos Ervin elleni bossfightért.','Reward for the bossfight against Lakatos Ervin.']},
+    {id:'offshore',name:['OFFSHORE SZÁMLA BELÉPÉSI KÓD','OFFSHORE ACCOUNT ACCESS CODE'],ch:4,d:['Egy 800 millió forintos EU-s pályázat mellől.','Found alongside an 800 million forint EU grant.']},
+    {id:'peteriDossier',name:['PÉTERI DOSSZIÉ','PÉTERI DOSSIER'],ch:5,d:['Jutalom a Dr. Péteri elleni bossfightért.','Reward for the bossfight against Dr. Péteri.']},
+    {id:'bossTrust',name:['FŐNÖK BIZALMA',"THE BOSS'S TRUST"],ch:6,d:['Ha aktív, Kapzs támadásai 30%-kal gyengébbek.','While active, Kapzs’s attacks are 30% weaker.']},
+    {id:'parliamentKey',name:['PARLAMENTI TÖBBSÉG KULCSA','KEY TO THE PARLIAMENTARY MAJORITY'],ch:'final',d:['A végső bossfight jutalma.','The reward for the final bossfight.']}
+  ];
+  static BOSSES = [
+    {name:'Lakatos Ervin',where:['3. fejezet','Chapter 3'],moves:[['Ha 3-szor ugyanazt a képességet használod, Lakatos használni fogja a FELJELENTÉS képességét!'],['If you use the same move three times in a row, Lakatos will use his DENUNCIATION move!']]},
+    {name:'Dr. Péteri Katalin',where:['5. fejezet','Chapter 5'],moves:[['Ha nem támadsz, 2 körönként -20 HP sebzést fog okozni Péteri MÉDIABOTRÁNY képessége!'],["If you do not attack, every 2nd round you take -20 HP from Péteri's MEDIA SCANDAL move!"]]},
+    {name:'Kapzs Imre',where:['Végső bossfight','Final bossfight'],moves:[['Média Manipuláció — minden 2. körben -15 HP neked','Hűséges Talpnyalók — 3 körönként +50 HP magának','Végső Szónoklat — HP alatt 50: dupla sebzés'],['Media Manipulation — every 2nd round: -15 HP to you','Loyal Bootlickers — every 3rd round: +50 HP to himself','Final Oration — below 50 HP: double damage']]}
+  ];
+  static norm(v) {
+    if (!v || typeof v !== 'object') return null;
+    const end = Component.SCRIPT.length - 1;
+    const i = Number.isFinite(v.i) ? Math.max(0, Math.min(end, v.i)) : (v.done ? end : 0);
+    return {name:'', xp:0, exp:0, done:false, at:Date.now(), ...v, i,
+      choices: (v.choices && typeof v.choices === 'object') ? v.choices : {},
+      items: Array.isArray(v.items) ? v.items : [],
+      trust: (v.trust && typeof v.trust === 'object') ? v.trust : {lipoti:50}};
+  }
+  static sampleSave(name) {
+    return Component.norm({name, i:Component.SCRIPT.length - 1, done:true, choices:{q1:0,q2:0}, xp:35, exp:25, items:['envelope1'], trust:{lipoti:95}, at:Date.now()});
+  }
+
+  state = {page:'home', lang:'hu', menu:false, w:(typeof window !== 'undefined' && window.innerWidth) || 1280, user:null, save:null};
+  rootEl = null;
+  rootRef = el => { this.rootEl = el; if (el) { this.ensureRO(); this.measure(); } };
+  scrollRef = React.createRef();
+
+  componentDidMount() {
+    const P = this.props, s = {};
+    if (!P.embedded) {
+      try {
+        const g = k => JSON.parse(localStorage.getItem(k) || 'null');
+        const p = g('fz.page'); if (Component.PAGES.includes(p)) s.page = p;
+        const l = g('fz.lang'); if (l === 'en' || l === 'hu') s.lang = l;
+        const u = g('fz.user'); s.user = (u && u.name) ? u : null;
+        s.save = Component.norm(g('fz.save'));
+      } catch (e) {}
+    }
+    if (P.page) s.page = P.page;
+    if (P.lang) s.lang = P.lang;
+    this.setState(s, () => { if (P.demoState === 'Member with save') this.applyDemo(); });
+    this.onWin = () => this.measure();
+    window.addEventListener('resize', this.onWin);
+    this.ensureRO();
+    setTimeout(() => { this.ensureRO(); this.measure(); }, 0);
+    this.onKey = e => {
+      if (this.state.page !== 'play' || this.state.gate) return;
+      const tag = (e.target && e.target.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON') return;
+      const sv = this.state.save || Component.fresh(), st = this.stepOf(sv);
+      if (st.k === 'choice' && sv.choices[st.q] == null && ['1','2','3'].includes(e.key)) { e.preventDefault(); this.choose(st.q, +e.key - 1); return; }
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.advance(); }
+    };
+    window.addEventListener('keydown', this.onKey);
+    this.rm = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    this.setupReveal();
+  }
+  static KF = {
+    up:[{opacity:0, translate:'0 22px'},{opacity:1, translate:'0 0'}],
+    lift:[{translate:'0 22px'},{translate:'0 0'}],
+    fade:[{opacity:0},{opacity:1}],
+    rise:[{opacity:0, translate:'0 34px'},{opacity:1, translate:'0 0'}],
+    slam:[{opacity:0, scale:'1.18'},{opacity:1, scale:'1'}],
+    stamp:[{opacity:0, scale:'2'},{opacity:1, scale:'.95', offset:.72},{opacity:1, scale:'1'}],
+    swing:[{opacity:0, rotate:'7deg', translate:'40px 22px'},{opacity:1, rotate:'0deg', translate:'0 0'}],
+    drop:[{opacity:0, rotate:'-10deg', translate:'0 -20px'},{opacity:1, rotate:'0deg', translate:'0 0'}],
+    bar:[{scale:'0 1'},{scale:'1 1'}],
+    wipe:[{opacity:0, translate:'-18px 0'},{opacity:1, translate:'0 0'}],
+    shake:[{rotate:'0deg'},{rotate:'-14deg'},{rotate:'12deg'},{rotate:'-8deg'},{rotate:'5deg'},{rotate:'0deg'}]
+  };
+  static DUR = {stamp:560, bar:1000, slam:700, swing:950, drop:750, wipe:700, rise:800, shake:700, fade:800};
+  setupReveal() {
+    const root = this.rootEl;
+    if (!root || !root.animate) return;
+    this.pending = this.pending || new Set();
+    const off = this.props.motion === 'Off' || this.rm;
+    root.querySelectorAll('[data-reveal]').forEach(el => {
+      const old = el.__rv;
+      if (old && typeof old === 'object' && old.cancel) {
+        if (old.playState === 'paused') { try { old.cancel(); } catch (e) {} el.__rv = 0; } else el.__rv = 1;
+      }
+      if (el.__rv) return;
+      el.__rv = 1;
+      if (!off) this.pending.add(el);
+    });
+    if (off) { this.pending.clear(); return; }
+    if (!this.onScroll) {
+      this.onScroll = () => {
+        const now = Date.now();
+        if (now - (this.lastChk || 0) > 50) { this.lastChk = now; this.checkReveal(); }
+        clearTimeout(this.scT); this.scT = setTimeout(() => this.checkReveal(), 120);
+      };
+      document.addEventListener('scroll', this.onScroll, true);
+      window.addEventListener('resize', this.onScroll);
+    }
+    this.checkReveal();
+  }
+  checkReveal() {
+    if (!this.pending || !this.pending.size) return;
+    const C = Component, sc = this.scrollRef.current;
+    const box = (this.props.frame === 'Mobile' && sc) ? sc.getBoundingClientRect() : {top:0, bottom:window.innerHeight};
+    const batch = [];
+    this.pending.forEach(el => {
+      if (!el.isConnected) { this.pending.delete(el); return; }
+      const r = el.getBoundingClientRect();
+      if (!r.width && !r.height) return;
+      if (r.top < box.bottom + 30 && r.bottom > box.top - 30) { batch.push(el); this.pending.delete(el); }
+    });
+    const idx = new Map();
+    batch.forEach(el => {
+      const type = el.getAttribute('data-reveal') || 'up';
+      let d = +(el.getAttribute('data-delay') || 0);
+      const par = el.parentElement;
+      if (par && par.hasAttribute('data-stagger')) {
+        const k = idx.get(par) || 0; idx.set(par, k + 1);
+        d += (+par.getAttribute('data-base') || 0) + Math.min(k, 8) * (+par.getAttribute('data-stagger') || 80);
+      }
+      try { el.animate(C.KF[type] || C.KF.up, {duration:C.DUR[type] || 700, delay:d, easing: type === 'stamp' ? 'cubic-bezier(.3,1.45,.5,1)' : 'cubic-bezier(.2,.7,.2,1)', fill:'backwards'}); } catch (e) {}
+    });
+  }
+  measure() {
+    const el = this.rootEl;
+    if (!el) return;
+    const w = Math.round(el.getBoundingClientRect().width);
+    if (w && Math.abs(w - this.state.w) > 2) this.setState({w});
+  }
+  ensureRO() {
+    const el = this.rootEl;
+    if (!el || this.roEl === el) return;
+    if (this.ro) this.ro.disconnect();
+    this.roEl = el;
+    if (window.ResizeObserver) { this.ro = new ResizeObserver(() => this.measure()); this.ro.observe(el); }
+    this.measure();
+  }
+  componentDidUpdate(pp) {
+    this.ensureRO();
+    if (pp.demoState !== this.props.demoState) this.applyDemo();
+    if (pp.page !== this.props.page && this.props.page) this.setState({page:this.props.page});
+    if (pp.frame !== this.props.frame) this.toTop();
+    this.setupReveal();
+  }
+  componentWillUnmount() {
+    this.ro && this.ro.disconnect();
+    window.removeEventListener('resize', this.onWin);
+    window.removeEventListener('keydown', this.onKey);
+    if (this.onScroll) { document.removeEventListener('scroll', this.onScroll, true); window.removeEventListener('resize', this.onScroll); }
+    clearTimeout(this.rvT); clearTimeout(this.scT);
+  }
+
+  persist(k, v) {
+    if (this.props.embedded) return;
+    try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+  }
+  applyDemo() {
+    if (this.props.demoState === 'Member with save') {
+      const user = this.state.user || {name:'Nagy Anna', email:'anna@example.com'};
+      const save = (this.state.save && this.state.save.done) ? this.state.save : Component.sampleSave(user.name);
+      this.setState({user, save}); this.persist('fz.user', user); this.persist('fz.save', save);
+    } else {
+      this.setState({user:null}); this.persist('fz.user', null);
+    }
+  }
+  toTop() {
+    const sc = this.scrollRef.current;
+    if (this.props.frame === 'Mobile' && sc) sc.scrollTop = 0; else window.scrollTo(0, 0);
+  }
+  go(p) {
+    this.setState({page:p, menu:false});
+    this.persist('fz.page', p);
+    this.toTop();
+  }
+  setLang(l) { this.setState({lang:l}); this.persist('fz.lang', l); }
+
+  valsLore(t, li, dk) {
+    const C = Component, s = this.state, tab = s.loreTab || 'party';
+    const chLabel = n => n === 0 ? t.prologue : t.chapterN.replace('%n', n);
+    const lt = {party:tab === 'party', chapters:tab === 'chapters', places:tab === 'places', items:tab === 'items', rules:tab === 'rules'};
+    const loreTabs = [['party',t.tabParty],['chapters',t.tabChapters],['places',t.tabPlaces],['items',t.tabItems],['rules',t.tabRules]]
+      .map(([k, label]) => ({label, go:() => this.setState({loreTab:k}), bg: tab === k ? 'var(--ink)' : 'transparent', fg: tab === k ? 'var(--onInk)' : 'var(--ink)'}));
+    const have = (s.save && s.save.items) || [];
+    return {
+      lt, loreTabs,
+      partyRules:[t.rule1,t.rule2,t.rule3,t.rule4].map((text, i) => ({n:i + 1, text})),
+      loreChapters: C.CHAPTERS.map(c => ({label:chLabel(c.n), title:c.title[li], quote:c.quote[li], status: c.n <= 1 ? t.inBrowser : t.inGame, tagBg: c.n <= 1 ? 'var(--accent)' : 'transparent', tagFg: c.n <= 1 ? 'var(--onAccent)' : 'var(--ink)'})),
+      lorePlaces: C.PLACES.map(p => p.secret ? {label:'??', secret:true, open:false} : {label:chLabel(p.n), name:p.name[li], d:p.d[li], open:true, secret:false}),
+      loreItems: C.ITEMS.map(it => { const f = have.includes(it.id); return {name:it.name[li], where: it.ch === 'final' ? t.finalBoss : chLabel(it.ch), d:it.d[li], status: f ? t.found : t.notFound, stC: f ? 'var(--good)' : 'var(--inkSoft)'}; }),
+      loreRules:[{title:'XP', d:t.xpD},{title:t.exposure, d:t.expD},{title:t.rankT, d:t.rankD}],
+      loreBosses: C.BOSSES.map(b => ({name:b.name, where:b.where[li], moves:b.moves[li]}))
+    };
+  }
+  stepOf(sv) { const n = Component.SCRIPT.length - 1, i = Number.isFinite(sv && sv.i) ? sv.i : 0; return Component.SCRIPT[Math.max(0, Math.min(i, n))]; }
+  setSave(v) { this.setState({save:v}); this.persist('fz.save', v); }
+  advance() {
+    const C = Component, sv = this.state.save || C.fresh(), st = this.stepOf(sv);
+    const talk = ['narr','line','result'].includes(st.k);
+    if (!talk && st.k !== 'title' && !(st.k === 'choice' && sv.choices[st.q] != null)) return;
+    if (talk && !this.state.typed) { this.setState({typed:true}); return; }
+    const ni = Math.min(sv.i + 1, C.SCRIPT.length - 1), end = C.SCRIPT[ni].k === 'end';
+    this.setSave({...sv, i:ni, done: sv.done || end, at:Date.now()});
+    this.setState({typed:false, gate: end && !this.state.user ? true : this.state.gate});
+  }
+  choose(q, k) {
+    const C = Component, sv = this.state.save || C.fresh();
+    if (sv.choices[q] != null) return;
+    const o = C.CHOICES[q].opts[k], tr = (sv.trust && sv.trust.lipoti != null) ? sv.trust.lipoti : 50;
+    this.setSave({...sv, choices:{...sv.choices, [q]:k}, xp:sv.xp + o.xp, exp:sv.exp + o.exp, items: o.item ? [...sv.items, o.item] : sv.items, trust:{...sv.trust, lipoti:Math.max(0, Math.min(100, tr + o.trust))}, at:Date.now()});
+  }
+  submitName() {
+    const sv = this.state.save || Component.fresh();
+    const name = (this.state.nameDraft || '').trim() || (this.state.lang === 'en' ? 'Player' : 'Játékos');
+    this.setSave({...sv, name, i:sv.i + 1, at:Date.now()});
+    this.setState({typed:false});
+  }
+  restart() { this.setSave(Component.fresh()); this.setState({typed:false, nameDraft:''}); }
+  valsPlay(t, li) {
+    const C = Component, s = this.state, sv = s.save || C.fresh(), st = this.stepOf(sv);
+    const i = C.SCRIPT.indexOf(st), sc = C.SCENES[st.scene];
+    const g = k => ((C.G[k] || ['',''])[li] || '').replace(/%s/g, sv.name || '');
+    let who = null, text = '', narr = false, hasItem = false, itemName = '';
+    if (st.k === 'narr') { text = st.text.map(g).join('\n'); narr = true; }
+    if (st.k === 'line') { who = st.who; text = st.text.map(g).join('\n'); }
+    if (st.k === 'result') { const o = C.CHOICES[st.q].opts[sv.choices[st.q] || 0]; who = o.who; narr = !o.who; text = g(o.ans); if (o.item) { hasItem = true; itemName = g('item.' + o.item); } }
+    const W = who ? C.WHO[who] : null;
+    const isTalk = ['narr','line','result'].includes(st.k);
+    const expC = Math.max(0, Math.min(100, sv.exp));
+    const sign = n => (n > 0 ? '+' : n < 0 ? '−' : '±') + Math.abs(n);
+    let opts = [], revealed = false, q = '', delta = '';
+    if (st.k === 'choice') {
+      const cq = C.CHOICES[st.q], pk = sv.choices[st.q];
+      revealed = pk != null; q = g(cq.q);
+      opts = cq.opts.map((o, k) => ({n:k + 1, text:g(o.t), go: e => { e && e.stopPropagation(); this.choose(st.q, k); },
+        barW: revealed ? cq.pct[k] + '%' : '0%', barC: pk === k ? 'color-mix(in srgb, var(--accent) 28%, transparent)' : 'var(--paper2)',
+        delay:(120 + k * 90) + 'ms', bd: pk === k ? 'var(--accent)' : 'var(--ink)', pctTxt: revealed ? cq.pct[k] + '%' : '', mineTxt: pk === k ? t.yourChoice : '', cursor: revealed ? 'default' : 'pointer'}));
+      if (revealed) { const o = cq.opts[pk]; delta = sign(o.xp) + ' XP · ' + sign(o.exp) + ' ' + t.exposure.toUpperCase(); }
+    }
+    const tt = st.k === 'title' ? (st.label === 'pro' ? [t.prologue, C.CHAPTERS[0].title[li], g('pro.quote')] : [t.chapterN.replace('%n', 1), C.CHAPTERS[1].title[li], g('ch1.quote')]) : ['','',''];
+    const summary = ['q1','q2'].filter(k => sv.choices[k] != null).map(k => { const cq = C.CHOICES[k], pk = sv.choices[k]; return {q:g(cq.q), a:g(cq.opts[pk].t), pctTxt:t.samePct.replace('%p', cq.pct[pk])}; });
+    return {
+      vn: {
+        chapter: i >= 8 ? t.chapterN.replace('%n', 1) + ' · ' + C.CHAPTERS[1].title[li] : t.prologue + ' · ' + C.CHAPTERS[0].title[li],
+        xp: sv.xp, expTxt: expC + '/100', expW: expC + '%', itemCount: sv.items.length, progW: Math.round(i / (C.SCRIPT.length - 1) * 100) + '%',
+        word: sc.word[li], loc: sc.loc[li],
+        isTalk, isTitle: st.k === 'title', isName: st.k === 'name', isChoice: st.k === 'choice', isEnd: st.k === 'end',
+        hasSpeaker: !!W, speaker: W ? g(W.name) : '', ini: W ? W.ini : '', whoTitle: W ? W.title[li] : '',
+        showPortrait: !!W && s.w >= 980, fontStyle: narr ? 'italic' : 'normal',
+        typed: isTalk ? React.createElement(C.Typer, {key: i + '-' + s.lang, text, skip: !!s.typed, onDone: () => this.setState({typed:true})}) : null,
+        enterHint: g('ui.enter'), hintOp: s.typed ? 1 : .35,
+        hasItem, itemLabel: g('ui.item'), itemName,
+        q, opts, revealed, delta, chooseHint: t.chooseHint,
+        tLabel: tt[0], tTitle: tt[1], tQuote: tt[2],
+        namePrompt: g('pro.namePrompt').trim(),
+        cursor: (isTalk || st.k === 'title') ? 'pointer' : 'default',
+        summary, endTitle: C.CHAPTERS[1].title[li],
+        endItems: sv.items.length ? sv.items.map(k => g('item.' + k)).join(', ') : '—',
+        loggedIn: !!s.user, loggedOut: !s.user
+      },
+      vnStageClick: () => { if (isTalk || st.k === 'title') this.advance(); },
+      vnNext: e => { e && e.stopPropagation(); this.advance(); },
+      vnRestart: e => { e && e.stopPropagation(); this.restart(); },
+      nameDraft: s.nameDraft || '',
+      onNameInput: e => this.setState({nameDraft:e.target.value}),
+      onNameKey: e => { if (e.key === 'Enter') { e.preventDefault(); this.submitName(); } },
+      submitName: e => { e && e.stopPropagation(); this.submitName(); },
+      stop: e => e.stopPropagation(),
+      gateOpen: !!s.gate,
+      closeGate: () => this.setState({gate:false}),
+      gateRegister: () => { this.setState({gate:false, authMode:'register'}); this.go('auth'); },
+      gateLogin: () => { this.setState({gate:false, authMode:'login'}); this.go('auth'); }
+    };
+  }
+  login() {
+    const s = this.state, sv = s.save;
+    const raw = (s.fUser || '').trim();
+    const name = (s.authMode === 'login' ? raw.split('@')[0] : raw) || (sv && sv.name) || (s.lang === 'en' ? 'Player' : 'Játékos');
+    const user = {name, email:(s.fEmail || '').trim()};
+    this.setState({user, fPass:''}); this.persist('fz.user', user); this.go('dashboard');
+  }
+  logout() { this.setState({user:null}); this.persist('fz.user', null); this.go('home'); }
+  valsAccount(t, li) {
+    const C = Component, s = this.state, sv = s.save, user = s.user;
+    const g = k => ((C.G[k] || ['',''])[li] || '');
+    const chLabel = n => n === 0 ? t.prologue : t.chapterN.replace('%n', n);
+    const sign = n => (n > 0 ? '+' : n < 0 ? '−' : '±') + Math.abs(n);
+    const go = p => () => this.go(p);
+    const mode = s.authMode || 'register', isReg = mode === 'register';
+    const nDec = sv ? Object.keys(sv.choices || {}).length : 0;
+    const sel = a => a ? ['var(--ink)','var(--onInk)'] : ['transparent','var(--ink)'];
+    const auth = {
+      isReg, isLogin:!isReg, title: isReg ? t.authRegTitle : t.authLoginTitle,
+      regBg:sel(isReg)[0], regFg:sel(isReg)[1], logBg:sel(!isReg)[0], logFg:sel(!isReg)[1],
+      toReg:() => this.setState({authMode:'register'}), toLogin:() => this.setState({authMode:'login'}),
+      openReg:() => { this.setState({authMode:'register'}); this.go('auth'); }, openLogin:() => { this.setState({authMode:'login'}); this.go('auth'); },
+      swap:() => this.setState({authMode: isReg ? 'login' : 'register'}), swapLabel: isReg ? t.haveAcc : t.noAcc,
+      hasSave: nDec > 0, saveNote: t.saveMove.replace('%n', nDec),
+      user:s.fUser || '', email:s.fEmail || '', pass:s.fPass || '',
+      onUser:e => this.setState({fUser:e.target.value}), onEmail:e => this.setState({fEmail:e.target.value}), onPass:e => this.setState({fPass:e.target.value}),
+      submitLabel: isReg ? t.submitReg : t.submitLogin,
+      submit:e => { e.preventDefault(); this.login(); },
+      skip: go(sv && sv.done ? 'play' : 'home'),
+      cardName:(s.fUser || '').trim() || (sv && sv.name) || t.cardNamePh,
+      cardXp: sv ? sv.xp : 0
+    };
+    const has = !!(sv && sv.i > 1), done = !!(sv && sv.done);
+    const xp = sv ? sv.xp : 0, expC = sv ? Math.max(0, Math.min(100, sv.exp)) : 0;
+    const proDone = has && sv.i >= 8;
+    const segs = [0,1,2,3,4,5,6,7].map(n => {
+      const st = n === 0 ? (proDone ? 'done' : 'next') : n === 1 ? (done ? 'done' : proDone ? 'next' : 'lock') : n === 2 ? (done ? 'next' : 'lock') : 'lock';
+      const m = {done:['var(--accent)','var(--accent)','var(--onAccent)'], next:['transparent','var(--onInk)','var(--onInk)'], lock:['transparent','color-mix(in srgb,var(--onInk) 25%,transparent)','color-mix(in srgb,var(--onInk) 50%,transparent)']}[st];
+      return {n: n === 0 ? 'P' : n, bg:m[0], bd:m[1], fg:m[2]};
+    });
+    const timeline = [];
+    if (has) {
+      timeline.push({label:t.prologue, q:t.tlName, a:sv.name, hasDelta:false, hasDist:false, dot:'var(--accent)', op:1});
+      ['q1','q2'].forEach(k => {
+        if (sv.choices[k] == null) return;
+        const cq = C.CHOICES[k], pk = sv.choices[k], o = cq.opts[pk];
+        timeline.push({label:chLabel(1), q:g(cq.q), a:g(o.t), hasDelta:true,
+          delta: sign(o.xp) + ' XP · ' + sign(o.exp) + ' ' + t.exposure.toUpperCase() + (o.item ? ' · + ' + g('item.' + o.item) : ''),
+          hasDist:true, dist: cq.pct.map((p, j) => ({n:j + 1, p:p + '%', w:p + '%', bg: j === pk ? 'var(--accent)' : (j % 2 ? 'var(--paper2)' : 'var(--sheet)'), fg: j === pk ? 'var(--onAccent)' : 'var(--ink)'})),
+          pctTxt: t.samePct.replace('%p', cq.pct[pk]), dot:'var(--accent)', op:1});
+      });
+      timeline.push({label:chLabel(2), q:C.CHAPTERS[2].title[li], a:t.tlNext, hasDelta:false, hasDist:false, dot:'var(--sheet)', op:1});
+      timeline.push({label:t.tlLater, q:C.CHAPTERS.slice(3).map(c => c.title[li]).join(' · '), a:t.tlLocked, hasDelta:false, hasDist:false, dot:'var(--line)', op:.5});
+    }
+    const trustV = sv && sv.trust && sv.trust.lipoti != null ? sv.trust.lipoti : 50;
+    const met = has && sv.i >= 10;
+    const rel = C.CHARS.slice(1).map(c => {
+      const on = c.id === 'lipoti' && met;
+      return {ini:c.ini, name:c.name[li], status: on ? (trustV >= 75 ? t.trustHi : trustV >= 45 ? t.trustMid : t.trustLo) : t.notMet + ' · ' + chLabel(c.ch),
+        w: on ? trustV + '%' : '0%', val: on ? trustV : '—', bg: on ? 'var(--accent)' : 'transparent', fg: on ? 'var(--onAccent)' : 'var(--inkSoft)'};
+    });
+    const items = C.ITEMS.map(it => {
+      const f = !!(sv && sv.items.includes(it.id));
+      return {name: f ? it.name[li] : '? · ' + (it.ch === 'final' ? t.finalShort : chLabel(it.ch)), bs: f ? 'solid' : 'dashed', bc: f ? 'var(--ink)' : 'var(--inkSoft)', bg: f ? 'var(--accent)' : 'transparent', fg: f ? 'var(--onAccent)' : 'var(--inkSoft)'};
+    });
+    const empty = n => ({n, title:t.emptySlot, meta:t.emptyMeta, bd:'1px dashed var(--inkSoft)', bg:'transparent', btn:t.newGame, go:go('download'), btnBg:'transparent', btnFg:'var(--ink)'});
+    const date = sv ? new Date(sv.at || Date.now()).toLocaleDateString(li ? 'en-GB' : 'hu-HU') : '';
+    const slots = [
+      has ? {n:1, title:sv.name + ' · ' + (done ? t.slotDone : t.slotProg), meta:t.webSave + ' · ' + date, bd:'var(--bw) solid var(--ink)', bg:'var(--paper2)', btn:t.dashContinue, go:go(done ? 'download' : 'play'), btnBg:'var(--accent)', btnFg:'var(--onAccent)'} : empty(1),
+      empty(2), empty(3)
+    ];
+    const dash = {
+      out:!user, in:!!user, has: !!user && has, empty: !!user && !has,
+      hello: user ? t.hello.replace('%s', user.name) : '',
+      nextTitle: done ? t.nextCh2 : t.contCh1, contNote: done ? t.contNoteDone : t.contNoteProg,
+      cont: go(done ? 'download' : 'play'),
+      replay: () => { this.restart(); this.go('play'); },
+      progTxt: ((proDone ? 1 : 0) + (done ? 1 : 0)) + '/8', segs,
+      xp, level: xp >= 50 ? 2 : 1, rank: xp >= 50 ? t.rankLocal : t.rankNone, rankNote: xp >= 50 ? '' : t.rankNote,
+      expTxt: expC + '/100', expW: expC + '%',
+      itemsTxt: (sv ? sv.items.length : 0) + '/7', items, rel, timeline, slots,
+      endTxt: t.endingsSub.replace('%n', 0),
+      endings: [t.end1, t.end2, t.end3].map((hint, j) => ({n:t.endingN.replace('%n', j + 1), hint}))
+    };
+    const dl = {
+      out:!user, in:!!user, signedTxt: user ? t.signedAs.replace('%s', user.name) : '',
+      platforms: [['win','Windows',t.dlWin],['mac','macOS',t.dlMac],['linux','Linux',t.dlLinux]].map(([k, name, file]) => ({
+        name, file, ver:t.dlVer || t.dlKicker, op: user ? 1 : .55,
+        btn: !user ? t.dlLockedBtn : s.dlDone === k ? t.dlStarted : t.dlBtn,
+        bg: user ? 'var(--accent)' : 'transparent', fg: user ? 'var(--onAccent)' : 'var(--ink)', cursor: user ? 'pointer' : 'not-allowed',
+        go: () => { if (user) this.setState({dlDone:k}); }
+      })),
+      steps:[t.dlStep1,t.dlStep2,t.dlStep3].map((text, i) => ({n:'0' + (i + 1), text}))
+    };
+    return {auth, dash, dl, logout: () => this.logout(), kofiPending: !(this.props.kofiUrl || '').trim()};
+  }
+
+  renderVals() {
+    const s = this.state, P = this.props, C = Component;
+    const li = s.lang === 'en' ? 1 : 0, t = {};
+    for (const k in C.S) t[k] = C.S[k][li];
+    const dk = String(P.direction || '').indexOf('ossier') > -1 ? 'dossier' : 'campaign';
+    const pk = {'Party orange':'orange','Terminal gold':'gold','Newsprint':'newsprint'}[P.palette] || 'tricolour';
+    const pal = C.PAL[pk], themeVars = {};
+    for (const k in pal) themeVars['--' + k] = pal[k];
+    Object.assign(themeVars, C.DIR[dk]);
+    const mob = P.frame === 'Mobile';
+    const stageStyle = mob ? {minHeight:'100vh', background:'#2B2A27', display:'flex', justifyContent:'center', alignItems:'flex-start', padding:'32px 16px'} : {};
+    const frameStyle = mob ? {width:390, height:844, maxHeight:'calc(100vh - 64px)', borderRadius:44, border:'10px solid #0B0B0B', overflow:'hidden', transform:'translateZ(0)', boxShadow:'0 30px 80px -20px rgba(0,0,0,.6)', background:pal.paper, flex:'none'} : {};
+    const scrollStyle = mob ? {height:'100%', overflowY:'auto', overflowX:'hidden'} : {};
+    const wide = s.w >= 980;
+    const g3 = s.w >= 860 ? 'repeat(3,minmax(0,1fr))' : 'minmax(0,1fr)';
+    const g4 = s.w >= 1000 ? 'repeat(4,minmax(0,1fr))' : s.w >= 600 ? 'repeat(2,minmax(0,1fr))' : 'minmax(0,1fr)';
+    const pg = {}; C.PAGES.forEach(p => pg[p] = s.page === p);
+    const go = p => () => this.go(p);
+    const navItems = [['characters',t.navChars],['lore',t.navLore],['play',t.navPlay],['download',t.navDownload],['support',t.navSupport]]
+      .map(([k, label]) => ({label, go:go(k), bar: s.page === k ? 'var(--accent)' : 'transparent'}));
+    const chLabel = n => n === 0 ? t.prologue : t.chapterN.replace('%n', n);
+    const cols = dk === 'dossier' ? [['var(--paper2)','var(--ink)']] : [['var(--accent)','var(--onAccent)'],['var(--ink)','var(--onInk)'],['var(--second)','var(--onSecond)']];
+    const oq = li ? '“' : '„';
+    const cast = C.CHARS.map((c, i) => ({id:c.id, ini:c.ini, num:String(i).padStart(2,'0'), name:c.name[li], title:c.title[li], quote:c.quote[li], q:oq + c.quote[li] + '”', first:chLabel(c.ch), ch:c.ch, boss:!!c.boss, bg:cols[i % cols.length][0], fg:cols[i % cols.length][1]}));
+    const on = 'var(--ink)', onFg = 'var(--onInk)';
+    const kofiUrl = (P.kofiUrl || '').trim();
+    return {
+      t, pg, themeVars, stageStyle, frameStyle, scrollStyle, g3, g4,
+      rootRef:this.rootRef, scrollRef:this.scrollRef,
+      wide, narrow:!wide, menuOpen: !wide && s.menu,
+      menuLabel: s.menu ? t.close : t.menu,
+      toggleMenu: () => this.setState({menu:!s.menu}),
+      navItems,
+      goHome:go('home'), goPlay:go('play'), goDownload:go('download'), goCharacters:go('characters'), goLore:go('lore'), goSupport:go('support'), goAuth:go('auth'), goDashboard:go('dashboard'),
+      goAccount: go(s.user ? 'dashboard' : 'auth'),
+      accountLabel: s.user ? s.user.name : t.login,
+      setHu:() => this.setLang('hu'), setEn:() => this.setLang('en'),
+      huBg: li ? 'transparent' : on, huFg: li ? 'var(--ink)' : onFg,
+      enBg: li ? on : 'transparent', enFg: li ? onFg : 'var(--ink)',
+      caseFields:[{k:t.fSubject,v:t.fSubjectV},{k:t.fOcc,v:t.fOccV},{k:t.fAssets,v:t.fAssetsV},{k:t.fDebt,v:t.fDebtV},{k:t.fNote,v:t.bank}],
+      bandQuotes: C.CHAPTERS.slice(1, 6).map(c => c.quote[li]),
+      anim: (P.motion === 'Off' || this.rm)
+        ? {marquee:'none', drift:'none', pulse:'none', word:'none'}
+        : {marquee:'fzMarquee 70s linear infinite', drift:'fzDrift 14s ease-in-out infinite alternate', pulse:'fzPulse 1.5s ease-out infinite', word:'fzWord 20s ease-in-out infinite alternate'},
+      premise:[t.pro1,t.pro2,t.pro3,t.pro4,t.pro5].map((text, i) => ({text, c: i === 4 ? 'var(--accentText)' : 'inherit'})),
+      cast, roster: cast.slice(1),
+      sampleOpts:[t.sampleO1,t.sampleO2,t.sampleO3].map((text, i) => ({n:i+1, text})),
+      saveSteps:[t.save1,t.save2,t.save3,t.save4].map((text, i) => ({n:'0'+(i+1), text})),
+      kofiHref: kofiUrl || '#', kofiLabel: kofiUrl ? t.kofi : t.kofiSoon,
+      kofiClick: e => { if (!kofiUrl) e.preventDefault(); },
+      creators: C.CREATORS.map(c => ({name:c.name[li], handle:c.handle, url:c.url, ini:c.name[1].split(' ').map(w => w[0]).join('')})),
+      ...this.valsLore(t, li, dk),
+      ...this.valsPlay(t, li, dk),
+      ...this.valsAccount(t, li, dk)
+    };
+  }
+}
+</script>
+</body>
+</html>

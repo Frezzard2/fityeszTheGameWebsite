@@ -1,0 +1,176 @@
+{
+  "chapters": [
+    {
+      "number": 1,
+      "title": {
+        "hu": "A Toborzás",
+        "en": "The Recruitment"
+      },
+      "quote": {
+        "hu": "Az országért mindenkinek tenni kell, nem csak beszélni róla.",
+        "en": "Everyone must act for the country, not merely talk about it."
+      },
+      "place": {
+        "hu": "Helyszín: egy eldugott kávézó. A falon egy Kossuth portrét és egy rejtélyes grafikát látsz.",
+        "en": "Location: a tucked-away café. On the wall you see a portrait of Kossuth and a cryptic chart."
+      },
+      "free": true
+    },
+    {
+      "number": 2,
+      "title": {
+        "hu": "Az első gyűlés",
+        "en": "The First Meeting"
+      },
+      "quote": {
+        "hu": "Aki nincs ellenünk, az velünk van.",
+        "en": "Whoever is not against us is with us."
+      },
+      "place": {
+        "hu": "Helyszín: Egy kerületi irodaépület, piros-fehér-zöld zászlókat látsz mindenhol.",
+        "en": "Location: A district office building, red-white-green flags wherever you look."
+      },
+      "free": false
+    },
+    {
+      "number": 3,
+      "title": {
+        "hu": "A Kongresszusi Próba",
+        "en": "The Congress Trial"
+      },
+      "quote": {
+        "hu": "Ha nincs semmi gond, csinálunk valamit, hogy legyen.",
+        "en": "If there is no trouble, we will make some."
+      },
+      "place": {
+        "hu": "Helyszín: Hatalmas rendezvénycsarnok, ezrek a nézőtéren.",
+        "en": "Location: A vast event hall, thousands in the audience."
+      },
+      "free": false
+    },
+    {
+      "number": 4,
+      "title": {
+        "hu": "Az Országos Választmány Árnyai",
+        "en": "Shadows of the National Committee"
+      },
+      "quote": {
+        "hu": "A diplomácia nem arról szól, hogy mindig igent mondunk.",
+        "en": "Diplomacy is not about always saying yes."
+      },
+      "place": {
+        "hu": "Helyszín: Elegáns irodaépület, 5. emelet, panorámás kilátás.",
+        "en": "Location: An elegant office building, 5th floor, panoramic view."
+      },
+      "free": false
+    },
+    {
+      "number": 5,
+      "title": {
+        "hu": "A Parlamenti Útvesztő",
+        "en": "The Parliamentary Maze"
+      },
+      "quote": {
+        "hu": "Egyetlen forint közpénzt sem hagyunk kárba veszni.",
+        "en": "We will not let a single forint of public money go to waste."
+      },
+      "place": {
+        "hu": "Helyszín: Parlament, folyosók és titkos szobák.",
+        "en": "Location: Parliament, corridors and secret rooms."
+      },
+      "free": false
+    },
+    {
+      "number": 6,
+      "title": {
+        "hu": "Az Országos Elnökség Kapujában",
+        "en": "At the Gates of the National Presidency"
+      },
+      "quote": {
+        "hu": "A demokratikus jogrend nem ad felmentést a felelősség alól.",
+        "en": "The democratic rule of law grants no exemption from responsibility."
+      },
+      "place": {
+        "hu": "Helyszín: Elit vadászkastély, éjszaka, szivarfüst.",
+        "en": "Location: An elite hunting lodge, night, cigar smoke."
+      },
+      "free": false
+    },
+    {
+      "number": 7,
+      "title": {
+        "hu": "Az Elnökség Trónján",
+        "en": "On the Throne of the Presidency"
+      },
+      "quote": {
+        "hu": "A törvény mindenkire egyformán vonatkozik.",
+        "en": "The law applies equally to everyone."
+      },
+      "place": {
+        "hu": "Helyszín: A párt központja, az elnökségi terem.",
+        "en": "Location: Party headquarters, the presidential chamber."
+      },
+      "free": false
+    }
+  ],
+  "items": [
+    {
+      "id": "envelope1",
+      "name": {
+        "hu": "ELSŐ BORÍTÉK",
+        "en": "FIRST ENVELOPE"
+      }
+    },
+    {
+      "id": "envelopeSmall",
+      "name": {
+        "hu": "KIS BORÍTÉK",
+        "en": "SMALL ENVELOPE"
+      }
+    },
+    {
+      "id": "lakatosFile",
+      "name": {
+        "hu": "LAKATOS AKTÁJA",
+        "en": "LAKATOS'S FILE"
+      }
+    },
+    {
+      "id": "offshore",
+      "name": {
+        "hu": "OFFSHORE SZÁMLA BELÉPÉSI KÓD",
+        "en": "OFFSHORE ACCOUNT ACCESS CODE"
+      }
+    },
+    {
+      "id": "peteriDossier",
+      "name": {
+        "hu": "PÉTERI DOSSZIÉ",
+        "en": "PÉTERI DOSSIER"
+      }
+    },
+    {
+      "id": "bossTrust",
+      "name": {
+        "hu": "FŐNÖK BIZALMA",
+        "en": "THE BOSS'S TRUST"
+      }
+    },
+    {
+      "id": "parliamentKey",
+      "name": {
+        "hu": "PARLAMENTI TÖBBSÉG KULCSA",
+        "en": "KEY TO THE PARLIAMENTARY MAJORITY"
+      }
+    }
+  ],
+  "ranks": [
+    {
+      "id": "localMember",
+      "name": {
+        "hu": "HELYI PÁRTTAG",
+        "en": "LOCAL PARTY MEMBER"
+      }
+    }
+  ]
+}
