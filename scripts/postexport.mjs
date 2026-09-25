@@ -12,6 +12,15 @@ import { join } from 'node:path'
 const OUT = join(process.cwd(), 'out')
 const DEFAULT_LOCALE = 'hu'
 
+/**
+ * Redirect http:// to https:// in the generated .htaccess.
+ *
+ * Leave this false until the host has actually issued a certificate — turning
+ * it on first sends every visitor to an https:// URL that cannot be served,
+ * which looks exactly like the site going down.
+ */
+const FORCE_HTTPS = false
+
 if (!existsSync(OUT)) {
   console.error('postexport: out/ not found — did `next build` run?')
   process.exit(1)
@@ -34,7 +43,27 @@ const html = `<!DOCTYPE html>
 
 writeFileSync(join(OUT, 'index.html'), html, 'utf8')
 
-const htaccess = `# Serve the Hungarian site at the domain root.
+const httpsBlock = FORCE_HTTPS
+  ? `# Force https. Requires a certificate to already be installed.
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# Tell browsers to remember it. Start at 300s; raise to 31536000 once you are
+# certain https works everywhere, because this is hard to undo in a browser
+# that has already cached it.
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=300"
+</IfModule>
+
+`
+  : `# https redirect is off. Install a certificate at your host, confirm the
+# site loads over https, then set FORCE_HTTPS = true in
+# scripts/postexport.mjs and rebuild.
+
+`
+
+const htaccess = `${httpsBlock}# Serve the Hungarian site at the domain root.
 #
 # The target is relative on purpose, so this works whether the site sits at
 # the document root or inside a subdirectory.
