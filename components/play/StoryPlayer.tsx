@@ -40,6 +40,18 @@ export type PlayLabels = {
   enterHint: string
 }
 
+/**
+ * The title without its own label prefix.
+ *
+ * The game names the prologue "Prológus: A mélyPont", so printing it under a
+ * PROLÓGUS label says the word twice. Chapter titles have no prefix and pass
+ * through untouched.
+ */
+function bareTitle(title: string): string {
+  const at = title.indexOf(': ')
+  return at === -1 ? title : title.slice(at + 2)
+}
+
 /** The game's text uses printf placeholders; the player's name is the only argument. */
 function fill(text: string, name: string): string {
   return text.replace(/%s/g, name)
@@ -467,8 +479,11 @@ export function StoryPlayer({
                 maskImage: 'linear-gradient(to top,#000,transparent)',
               }}
             />
+            <div style={{ position: 'relative', font: '700 14px/1 var(--fL)', letterSpacing: '.24em', textTransform: 'uppercase' }}>
+              {beat.number === 0 ? labels.prologue : labels.chapterN.replace('%n', String(beat.number))}
+            </div>
             <div className="fz-slam" style={{ position: 'relative', ...DISPLAY, fontSize: 'clamp(46px,9cqw,132px)', lineHeight: 0.98 }}>
-              {beat.title[locale]}
+              {bareTitle(beat.title[locale])}
             </div>
             <div className="fz-in fz-d4" style={{ position: 'relative', maxWidth: '30em', fontSize: 'clamp(16px,1.6cqw,21px)', fontStyle: 'italic' }}>
               &bdquo;{beat.quote[locale]}&rdquo;
@@ -657,7 +672,7 @@ export function StoryPlayer({
             <div className="fz-in" style={{ width: '100%', maxWidth: 860, background: 'var(--sheet)', color: 'var(--ink)', border: 'var(--bw) solid var(--onInk)', boxShadow: 'var(--shS)' }}>
               <div style={{ background: 'var(--accent)', color: 'var(--onAccent)', padding: 'clamp(20px,3cqw,32px)' }}>
                 <div style={{ font: '700 12px/1 var(--fL)', letterSpacing: '.16em', textTransform: 'uppercase' }}>{labels.endKicker}</div>
-                <div style={{ marginTop: 10, ...DISPLAY, fontSize: 'clamp(36px,6cqw,80px)' }}>{currentCard ? currentCard.title[locale] : ''}</div>
+                <div style={{ marginTop: 10, ...DISPLAY, fontSize: 'clamp(36px,6cqw,80px)' }}>{currentCard ? bareTitle(currentCard.title[locale]) : ''}</div>
               </div>
               <div style={{ padding: 'clamp(18px,3cqw,32px)' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }}>
