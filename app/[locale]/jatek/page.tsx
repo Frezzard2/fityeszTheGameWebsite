@@ -36,6 +36,9 @@ export default async function PlayPage({
     gateSkipNote: t('gateSkipNote'),
     exposed: t('exposed'),
     pressfound: t('pressfound'),
+    prologue: t('prologue'),
+    chapterN: t('chapterN'),
+    found: t('found'),
   }
 
   return (

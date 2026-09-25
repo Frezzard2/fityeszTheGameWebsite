@@ -7,7 +7,11 @@
   --paper: #F4EFE6;  --paper2: #E8DFD0;  --sheet: #FBF8F2;
   --ink: #161616;    --inkSoft: #4A4640; --line: #CFC6B6;
   --accent: #C8102E; --accentText: #B10E28; --onAccent: #FFF8F0;
-  --second: #1F6B3A; --onInk: #F4EFE6;
+  --second: #1F6B3A; --onSecond: #F4EFE6; --onInk: #F4EFE6;
+
+  /* Semantic aliases from the prototype's palette definition. */
+  --danger: var(--accent);
+  --good: var(--second);
 
   --fD: var(--font-antonio), 'Arial Narrow', sans-serif;
   --fB: var(--font-public-sans), system-ui, sans-serif;

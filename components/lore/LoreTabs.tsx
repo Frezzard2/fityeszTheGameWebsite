@@ -4,7 +4,7 @@ import { useId, useRef, useState } from 'react'
 
 export type TabPanel = { id: string; label: string; content: React.ReactNode }
 
-export function LoreTabs({ panels }: { panels: TabPanel[] }) {
+export function LoreTabs({ panels, ariaLabel = 'Lexikon' }: { panels: TabPanel[]; ariaLabel?: string }) {
   const [active, setActive] = useState(0)
   const base = useId()
   const refs = useRef<(HTMLButtonElement | null)[]>([])
@@ -24,40 +24,54 @@ export function LoreTabs({ panels }: { panels: TabPanel[] }) {
 
   return (
     <div>
+      {/* Ported from the prototype's tab strip: heavy-border buttons, active
+          tab inverted to ink/onInk. Wraps rather than scrolling so five tabs
+          never force horizontal overflow on a phone. */}
       <div
         role="tablist"
-        aria-label="Lexikon"
+        aria-label={ariaLabel}
         onKeyDown={onKeyDown}
-        style={{ display: 'flex', flexWrap: 'wrap', gap: 0, borderBottom: '1px solid var(--line)' }}
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 8,
+          margin: '36px 0',
+          paddingBottom: 18,
+          borderBottom: 'var(--bw) solid var(--ink)',
+        }}
       >
-        {panels.map((p, n) => (
-          <button
-            key={p.id}
-            ref={(el) => {
-              refs.current[n] = el
-            }}
-            role="tab"
-            id={`${base}-tab-${p.id}`}
-            aria-selected={n === active}
-            aria-controls={`${base}-panel-${p.id}`}
-            tabIndex={n === active ? 0 : -1}
-            onClick={() => setActive(n)}
-            style={{
-              padding: '10px 14px',
-              border: 0,
-              borderBottom: n === active ? '3px solid var(--accent)' : '3px solid transparent',
-              background: 'none',
-              color: n === active ? 'var(--ink)' : 'var(--inkSoft)',
-              fontFamily: 'var(--fL)',
-              fontSize: 13,
-              letterSpacing: '.1em',
-              textTransform: 'uppercase',
-              cursor: 'pointer',
-            }}
-          >
-            {p.label}
-          </button>
-        ))}
+        {panels.map((p, n) => {
+          const isActive = n === active
+          return (
+            <button
+              key={p.id}
+              ref={(el) => {
+                refs.current[n] = el
+              }}
+              role="tab"
+              id={`${base}-tab-${p.id}`}
+              aria-selected={isActive}
+              aria-controls={`${base}-panel-${p.id}`}
+              tabIndex={isActive ? 0 : -1}
+              onClick={() => setActive(n)}
+              className="fz-btn"
+              style={{
+                border: 'var(--bw) solid var(--ink)',
+                cursor: 'pointer',
+                padding: '10px 14px 9px',
+                fontFamily: 'var(--fD)',
+                fontWeight: 'var(--dW)' as never,
+                fontSize: 20,
+                lineHeight: 1.14,
+                textTransform: 'uppercase',
+                background: isActive ? 'var(--ink)' : 'transparent',
+                color: isActive ? 'var(--onInk)' : 'var(--ink)',
+              }}
+            >
+              {p.label}
+            </button>
+          )
+        })}
       </div>
 
       <div
@@ -66,7 +80,6 @@ export function LoreTabs({ panels }: { panels: TabPanel[] }) {
         className="fz-tab"
         id={`${base}-panel-${panels[active].id}`}
         aria-labelledby={`${base}-tab-${panels[active].id}`}
-        style={{ paddingTop: 24 }}
       >
         {panels[active].content}
       </div>

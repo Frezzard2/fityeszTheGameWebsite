@@ -101,3 +101,50 @@
     translate: none;
   }
 }
+
+/* --- scroll reveals --------------------------------------------------- *
+ * Ported from the prototype's data-reveal attribute. <Reveal> sets
+ * data-reveal="<kind>" immediately and adds data-shown once the element
+ * scrolls into view; the animation hangs off data-shown.
+ *
+ * Anything not yet shown is invisible, so the fallbacks in Reveal.tsx that
+ * force data-shown (reduced motion, no IntersectionObserver) are what keep
+ * content from disappearing for good.
+ * --------------------------------------------------------------------- */
+
+[data-reveal]:not([data-shown]) { opacity: 0; }
+
+@keyframes fzRevUp    { from { opacity: 0; translate: 0 16px; }            to { opacity: 1; translate: 0 0; } }
+@keyframes fzRevRise  { from { opacity: 0; translate: 0 30px; }            to { opacity: 1; translate: 0 0; } }
+@keyframes fzRevDrop  { from { opacity: 0; translate: 0 -26px; rotate: -3deg; } to { opacity: 1; translate: 0 0; rotate: 0deg; } }
+@keyframes fzRevLift  { from { opacity: 0; translate: 0 24px; scale: .98; } to { opacity: 1; translate: 0 0; scale: 1; } }
+@keyframes fzRevSwing { from { opacity: 0; rotate: -5deg; scale: .95; }     to { opacity: 1; rotate: var(--swing, 1.2deg); scale: 1; } }
+@keyframes fzRevBar   { from { opacity: 1; scale: 0 1; }                    to { opacity: 1; scale: 1 1; } }
+@keyframes fzRevWipe  { from { opacity: 1; clip-path: inset(0 100% 0 0); }  to { opacity: 1; clip-path: inset(0 0 0 0); } }
+@keyframes fzRevShake {
+  0%   { opacity: 0; translate: 0 0; }
+  20%  { opacity: 1; translate: -6px 0; }
+  40%  { translate: 5px 0; }
+  60%  { translate: -3px 0; }
+  80%  { translate: 2px 0; }
+  100% { translate: 0 0; }
+}
+
+[data-reveal][data-shown] { animation-duration: .55s; animation-fill-mode: both; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+
+[data-reveal='up'][data-shown]    { animation-name: fzRevUp; }
+[data-reveal='rise'][data-shown]  { animation-name: fzRevRise; animation-duration: .65s; }
+[data-reveal='fade'][data-shown]  { animation-name: fzFade; animation-duration: .5s; animation-timing-function: ease; }
+[data-reveal='drop'][data-shown]  { animation-name: fzRevDrop; }
+[data-reveal='slam'][data-shown]  { animation-name: fzSlam; animation-duration: .8s; }
+[data-reveal='stamp'][data-shown] { animation-name: fzStampIn; animation-duration: .6s; animation-timing-function: cubic-bezier(.3,1.5,.5,1); }
+[data-reveal='swing'][data-shown] { animation-name: fzRevSwing; animation-duration: .7s; animation-timing-function: cubic-bezier(.3,1.4,.5,1); }
+[data-reveal='lift'][data-shown]  { animation-name: fzRevLift; }
+[data-reveal='bar'][data-shown]   { animation-name: fzRevBar; transform-origin: left center; animation-duration: .9s; }
+[data-reveal='wipe'][data-shown]  { animation-name: fzRevWipe; animation-duration: .7s; }
+[data-reveal='shake'][data-shown] { animation-name: fzRevShake; animation-duration: .6s; animation-timing-function: ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] { opacity: 1 !important; }
+  [data-reveal][data-shown] { animation: none !important; }
+}

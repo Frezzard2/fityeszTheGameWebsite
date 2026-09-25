@@ -1,6 +1,14 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
 import { CHARACTERS } from '@/lib/design/characters'
+import { Reveal } from '@/components/Reveal'
+
+/** Cycles the card header colour per card, ported from the prototype's `cols` array. */
+const HEADER_COLORS = [
+  { bg: 'var(--accent)', fg: 'var(--onAccent)' },
+  { bg: 'var(--ink)', fg: 'var(--onInk)' },
+  { bg: 'var(--second)', fg: 'var(--onSecond)' },
+] as const
 
 export default async function CharactersPage({
   params,
@@ -11,118 +19,236 @@ export default async function CharactersPage({
   setRequestLocale(locale as Locale)
   const t = await getTranslations()
   const l = locale as Locale
+  const openQuote = l === 'en' ? '“' : '„'
 
   return (
-    <div style={{ padding: 'clamp(24px,4cqw,48px) clamp(16px,3cqw,40px)' }}>
-      <div style={{ maxWidth: 1320, margin: '0 auto' }}>
-        <p style={{ fontSize: 12, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--inkSoft)' }}>
-          {t('charsKicker')}
-        </p>
-        <h1
-          style={{
-            fontFamily: 'var(--fD)',
-            fontSize: 'clamp(38px,8vw,88px)',
-            lineHeight: 0.9,
-            textTransform: 'uppercase',
-            margin: '10px 0 0',
-          }}
-        >
-          {t('navChars')}
-        </h1>
-        <p
-          style={{
-            marginTop: 16,
-            maxWidth: '36em',
-            fontStyle: 'italic',
-            borderLeft: '4px solid var(--accent)',
-            paddingLeft: 14,
-          }}
-        >
-          {t('charsQuote')}
-        </p>
+    <div
+      style={{
+        maxWidth: 1320,
+        margin: '0 auto',
+        padding: 'clamp(40px,6cqw,88px) clamp(16px,3cqw,40px) clamp(56px,7cqw,104px)',
+      }}
+    >
+      <div
+        style={{
+          fontWeight: 700,
+          fontSize: 13,
+          lineHeight: 1.3,
+          fontFamily: 'var(--fL)',
+          letterSpacing: '.14em',
+          textTransform: 'uppercase',
+          color: 'var(--accentText)',
+        }}
+      >
+        {t('charsKicker')}
+      </div>
 
-        {/* A ledger, one subject per row — not a grid of identical cards */}
-        <div style={{ marginTop: 32, borderTop: 'var(--bw) solid var(--ink)' }}>
-          {CHARACTERS.map((c, n) => (
-            <article
+      <Reveal
+        kind="rise"
+        as="h1"
+        style={{
+          margin: '12px 0 0',
+          fontFamily: 'var(--fD)',
+          fontWeight: 'var(--dW)' as unknown as number,
+          textTransform: 'uppercase',
+          lineHeight: 0.98,
+          fontSize: 'clamp(56px,9cqw,140px)',
+        }}
+      >
+        {t('navChars')}
+      </Reveal>
+
+      <p
+        style={{
+          margin: '18px 0 0',
+          maxWidth: '30em',
+          fontSize: 'clamp(18px,1.6cqw,22px)',
+          lineHeight: 1.45,
+          fontStyle: 'italic',
+        }}
+      >
+        {t('charsQuote')}
+      </p>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,300px),1fr))',
+          gap: 28,
+          marginTop: 44,
+        }}
+      >
+        {CHARACTERS.map((c, n) => {
+          const { bg, fg } = HEADER_COLORS[n % HEADER_COLORS.length]
+          const num = String(n).padStart(2, '0')
+          const first = c.chapter === 0 ? t('prologue') : t('chapterN').replace('%n', String(c.chapter))
+
+          return (
+            <Reveal
               key={c.id}
-              className="fz-in"
+              kind="up"
+              delay={n * 90}
+              as="article"
+              className="fz-lift"
               style={{
-                animationDelay: `${n * 70}ms`,
-                display: 'grid',
-                gridTemplateColumns: 'minmax(64px,auto) minmax(0,1fr) minmax(0,1.1fr)',
-                gap: 'clamp(12px,3vw,28px)',
-                alignItems: 'start',
-                padding: '22px 0',
-                borderBottom: '1px solid var(--line)',
+                background: 'var(--sheet)',
+                border: 'var(--bw) solid var(--ink)',
+                boxShadow: 'var(--sh)',
+                display: 'flex',
+                flexDirection: 'column',
+                minWidth: 0,
               }}
             >
               <div
-                aria-hidden
                 style={{
-                  fontFamily: 'var(--fD)',
-                  fontSize: 'clamp(28px,5vw,46px)',
-                  lineHeight: 1,
-                  color: 'var(--onAccent)',
-                  background: c.boss ? 'var(--accent)' : 'var(--ink)',
-                  border: 'var(--bw) solid var(--ink)',
-                  padding: '10px 12px',
-                  textAlign: 'center',
+                  position: 'relative',
+                  height: 220,
+                  overflow: 'hidden',
+                  background: bg,
+                  color: fg,
+                  borderBottom: 'var(--bw) solid var(--ink)',
                 }}
               >
-                {c.initials}
-              </div>
-
-              <div>
-                <p
+                <div
+                  aria-hidden
                   style={{
-                    margin: 0,
-                    fontSize: 11,
-                    letterSpacing: '.18em',
-                    textTransform: 'uppercase',
-                    color: 'var(--inkSoft)',
+                    position: 'absolute',
+                    inset: 0,
+                    backgroundImage: `radial-gradient(circle,${fg} 1px,transparent 1.6px)`,
+                    backgroundSize: '8px 8px',
+                    opacity: 0.3,
+                    WebkitMaskImage: 'linear-gradient(200deg,#000 10%,transparent 70%)',
+                    maskImage: 'linear-gradient(200deg,#000 10%,transparent 70%)',
+                  }}
+                />
+                <div
+                  aria-hidden
+                  style={{
+                    position: 'absolute',
+                    right: -6,
+                    bottom: 10,
+                    fontFamily: 'var(--fD)',
+                    fontWeight: 'var(--dW)' as unknown as number,
+                    fontSize: 200,
+                    lineHeight: 1,
+                    letterSpacing: '-.03em',
+                    backgroundImage: `radial-gradient(circle,${fg} 2.4px,transparent 3px)`,
+                    backgroundSize: '7px 7px',
+                    WebkitBackgroundClip: 'text',
+                    backgroundClip: 'text',
+                    color: 'transparent',
                   }}
                 >
-                  {t('fileNo')} FK-{String(n + 1).padStart(2, '0')}
-                  {c.boss ? ` · ${t('finalBoss').split(' ')[0]}` : ''}
-                </p>
+                  {c.initials}
+                </div>
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: 16,
+                    top: 16,
+                    fontFamily: 'var(--fL)',
+                    fontWeight: 700,
+                    fontSize: 12,
+                    lineHeight: 1,
+                    letterSpacing: '.14em',
+                    textTransform: 'uppercase',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {num} · {first}
+                </div>
+                {c.boss && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      right: 14,
+                      top: 14,
+                      padding: '6px 8px',
+                      background: 'var(--ink)',
+                      color: 'var(--onInk)',
+                      fontFamily: 'var(--fL)',
+                      fontWeight: 700,
+                      fontSize: 11,
+                      lineHeight: 1,
+                      letterSpacing: '.12em',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {t('bossfight')}
+                  </div>
+                )}
+              </div>
+
+              <div
+                style={{
+                  padding: '20px 22px 22px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 10,
+                  flex: 1,
+                }}
+              >
                 <h2
                   style={{
-                    margin: '6px 0 0',
+                    margin: 0,
                     fontFamily: 'var(--fD)',
-                    fontSize: 'clamp(22px,3.4vw,34px)',
+                    fontWeight: 'var(--dW)' as unknown as number,
                     textTransform: 'uppercase',
-                    lineHeight: 1.05,
+                    fontSize: 44,
+                    lineHeight: 1.14,
                   }}
                 >
                   {c.name[l]}
                 </h2>
-                <p style={{ margin: '4px 0 0', color: 'var(--inkSoft)' }}>{c.title[l]}</p>
-                <p style={{ margin: '10px 0 0', fontSize: 12, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--inkSoft)' }}>
-                  {t('firstSeen')}:{' '}
-                  <span style={{ color: 'var(--ink)' }}>
-                    {c.chapter === 0 ? t('prologue') : t('chapterN').replace('%n', String(c.chapter))}
-                  </span>
+                <div
+                  style={{
+                    fontFamily: 'var(--fL)',
+                    fontWeight: 700,
+                    fontSize: 12,
+                    lineHeight: 1.35,
+                    letterSpacing: '.12em',
+                    textTransform: 'uppercase',
+                    color: 'var(--accentText)',
+                  }}
+                >
+                  {c.title[l]}
+                </div>
+                <p
+                  style={{
+                    margin: '6px 0 0',
+                    fontSize: 17,
+                    lineHeight: 1.45,
+                    fontStyle: 'italic',
+                  }}
+                >
+                  {openQuote}
+                  {c.quote[l]}
+                  {'”'}
                 </p>
+                <div
+                  style={{
+                    marginTop: 'auto',
+                    paddingTop: 14,
+                    borderTop: '1px solid var(--line)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: 12,
+                    fontFamily: 'var(--fL)',
+                    fontWeight: 600,
+                    fontSize: 12,
+                    lineHeight: 1.2,
+                    letterSpacing: '.08em',
+                    textTransform: 'uppercase',
+                    color: 'var(--inkSoft)',
+                  }}
+                >
+                  <span>{t('firstSeen')}</span>
+                  <span>{first}</span>
+                </div>
               </div>
-
-              <blockquote
-                style={{
-                  margin: 0,
-                  background: 'var(--sheet)',
-                  border: '1px solid var(--line)',
-                  padding: '14px 16px',
-                  fontSize: 16,
-                  lineHeight: 1.6,
-                }}
-              >
-                &bdquo;{c.quote[l]}&rdquo;
-              </blockquote>
-            </article>
-          ))}
-        </div>
-
-        <p style={{ marginTop: 18, fontSize: 13, color: 'var(--inkSoft)' }}>{t('noPhoto')}</p>
+            </Reveal>
+          )
+        })}
       </div>
     </div>
   )

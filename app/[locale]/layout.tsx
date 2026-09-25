@@ -10,6 +10,7 @@ import { DOWNLOAD_ENABLED } from '@/lib/features'
 import { SITE_TITLE, type Locale } from '@/lib/constants'
 import { FlagRail } from '@/components/FlagRail'
 import { LocaleToggleClient } from '@/components/LocaleToggleClient'
+import { NavLink } from '@/components/NavLink'
 import '../globals.css'
 
 // Self-hosted via next/font/google: no request ever reaches Google at runtime.
@@ -76,6 +77,90 @@ const ctaStyle: CSSProperties = {
   whiteSpace: 'nowrap',
 }
 
+const loginLinkStyle: CSSProperties = {
+  padding: '8px 6px',
+  font: '600 13px/1 var(--fL)',
+  letterSpacing: '.07em',
+  textTransform: 'uppercase',
+  color: 'var(--ink)',
+  textDecoration: 'underline',
+  textUnderlineOffset: 4,
+  whiteSpace: 'nowrap',
+}
+
+// The mobile disclosure panel reuses the prototype's `menuOpen` branch
+// styling, which runs noticeably larger than the desktop nav.
+const mobileNavLinkStyle: CSSProperties = {
+  display: 'block',
+  width: '100%',
+  textAlign: 'left',
+  borderBottom: '1px solid var(--line)',
+  padding: '14px 0 12px',
+  fontFamily: 'var(--fD)',
+  fontWeight: 'var(--dW)' as unknown as number,
+  fontSize: 30,
+  lineHeight: 1.14,
+  textTransform: 'uppercase',
+  color: 'var(--ink)',
+  textDecoration: 'none',
+}
+
+const mobileLoginStyle: CSSProperties = {
+  display: 'inline-block',
+  padding: '12px 16px 11px',
+  background: 'transparent',
+  color: 'var(--ink)',
+  border: 'var(--bw) solid var(--ink)',
+  fontFamily: 'var(--fD)',
+  fontWeight: 'var(--dW)' as unknown as number,
+  fontSize: 18,
+  lineHeight: 1.14,
+  textTransform: 'uppercase',
+  textDecoration: 'none',
+}
+
+const mobileCtaStyle: CSSProperties = {
+  display: 'inline-block',
+  padding: '12px 16px 11px',
+  background: 'var(--accent)',
+  color: 'var(--onAccent)',
+  border: 'var(--bw) solid var(--ink)',
+  boxShadow: 'var(--shS)',
+  fontFamily: 'var(--fD)',
+  fontWeight: 'var(--dW)' as unknown as number,
+  fontSize: 18,
+  lineHeight: 1.14,
+  textTransform: 'uppercase',
+  textDecoration: 'none',
+}
+
+// There is no JS breakpoint state in this static export (the prototype's
+// `wide`/`narrow` sc-if branches), so the header's two layouts are plain CSS:
+// below this width the desktop nav/login/CTA are replaced by a
+// details/summary disclosure, styled to match the prototype's mobile menu.
+const HEADER_NARROW_CSS = `
+.fz-hdr-wide { }
+.fz-hdr-narrow { display: none; }
+@media (max-width: 899px) {
+  .fz-hdr-wide { display: none !important; }
+  .fz-hdr-narrow { display: block; }
+}
+.fz-hdr-menu > summary { list-style: none; cursor: pointer; }
+.fz-hdr-menu > summary::-webkit-details-marker { display: none; }
+.fz-hdr-menu > summary .fz-hdr-menu-open-label { display: none; }
+.fz-hdr-menu[open] > summary .fz-hdr-menu-open-label { display: inline; }
+.fz-hdr-menu[open] > summary .fz-hdr-menu-closed-label { display: none; }
+.fz-hdr-menu-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  border-top: var(--bw) solid var(--ink);
+  background: var(--desk);
+  padding: 6px clamp(16px,3cqw,40px) 22px;
+}
+`
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
@@ -119,6 +204,7 @@ export default async function LocaleLayout({
                   borderBottom: 'var(--bw) solid var(--ink)',
                 }}
               >
+                <style>{HEADER_NARROW_CSS}</style>
                 <FlagRail />
                 <div
                   style={{
@@ -170,34 +256,67 @@ export default async function LocaleLayout({
                     </span>
                   </Link>
 
-                  <nav style={{ display: 'flex', alignItems: 'center', gap: 2, marginLeft: 'auto', flexWrap: 'wrap' }}>
-                    {NAV_ITEMS.map((item) => (
-                      <Link key={item.href} href={localePath(item.href, locale)} style={navLinkStyle}>
-                        {t(item.labelKey)}
-                      </Link>
-                    ))}
-                  </nav>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <LocaleToggleClient current={locale} />
-                    <Link
-                      href={localePath('/belepes', locale)}
-                      style={{
-                        padding: '8px 6px',
-                        font: '600 13px/1 var(--fL)',
-                        letterSpacing: '.07em',
-                        textTransform: 'uppercase',
-                        color: 'var(--ink)',
-                        textDecoration: 'underline',
-                        textUnderlineOffset: 4,
-                        whiteSpace: 'nowrap',
-                      }}
+                  {/*
+                    Grouping the wide nav and the right-hand controls under one
+                    always-rendered `marginLeft: auto` wrapper (rather than
+                    putting the auto margin on `nav` itself, as the prototype
+                    does) keeps everything right-aligned even once the nav is
+                    hidden at narrow widths, without needing the prototype's
+                    JS-driven spacer div.
+                  */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginLeft: 'auto', flexWrap: 'wrap' }}>
+                    <nav
+                      className="fz-hdr-wide"
+                      style={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}
                     >
-                      {t('login')}
-                    </Link>
-                    <Link href={localePath('/jatek', locale)} style={ctaStyle}>
-                      {t('playFree')}
-                    </Link>
+                      {NAV_ITEMS.map((item) => (
+                        <NavLink key={item.href} href={localePath(item.href, locale)} style={navLinkStyle}>
+                          {t(item.labelKey)}
+                        </NavLink>
+                      ))}
+                    </nav>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <LocaleToggleClient current={locale} />
+                      <Link href={localePath('/belepes', locale)} className="fz-hdr-wide" style={loginLinkStyle}>
+                        {t('login')}
+                      </Link>
+                      <Link href={localePath('/jatek', locale)} className="fz-hdr-wide fz-btn" style={ctaStyle}>
+                        {t('playFree')}
+                      </Link>
+
+                      <details className="fz-hdr-narrow fz-hdr-menu">
+                        <summary
+                          style={{
+                            border: 'var(--bw) solid var(--ink)',
+                            background: 'var(--ink)',
+                            color: 'var(--onInk)',
+                            padding: '8px 12px',
+                            font: '700 12px/1 var(--fL)',
+                            letterSpacing: '.1em',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          <span className="fz-hdr-menu-closed-label">{t('menu')}</span>
+                          <span className="fz-hdr-menu-open-label">{t('close')}</span>
+                        </summary>
+                        <div className="fz-hdr-menu-panel">
+                          {NAV_ITEMS.map((item) => (
+                            <Link key={item.href} href={localePath(item.href, locale)} style={mobileNavLinkStyle}>
+                              {t(item.labelKey)}
+                            </Link>
+                          ))}
+                          <div style={{ display: 'flex', gap: 10, marginTop: 18, flexWrap: 'wrap' }}>
+                            <Link href={localePath('/belepes', locale)} style={mobileLoginStyle}>
+                              {t('login')}
+                            </Link>
+                            <Link href={localePath('/jatek', locale)} className="fz-btn" style={mobileCtaStyle}>
+                              {t('playFree')}
+                            </Link>
+                          </div>
+                        </div>
+                      </details>
+                    </div>
                   </div>
                 </div>
               </header>
@@ -222,7 +341,7 @@ export default async function LocaleLayout({
                         fontWeight: 'var(--dW)' as unknown as number,
                         textTransform: 'uppercase',
                         lineHeight: 1.14,
-                        fontSize: 'calc(var(--dS) * 56px)',
+                        fontSize: 56,
                       }}
                     >
                       Fityesz

@@ -246,5 +246,6 @@
   "repoT": "The project on GitHub",
   "namePrompt": "Enter your name:",
   "exposed": "You've been exposed!",
-  "pressfound": "The press has uncovered everything."
+  "pressfound": "The press has uncovered everything.",
+  "bossfight": "BOSSFIGHT"
 }
