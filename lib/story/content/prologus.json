@@ -1,0 +1,79 @@
+{
+  "id": "prologus",
+  "chapter": 0,
+  "beats": [
+    {
+      "kind": "chapterCard",
+      "number": 0,
+      "title": {
+        "hu": "Prológus: A mélyPont",
+        "en": "Prologue: Rock Bottom"
+      },
+      "quote": {
+        "hu": "Aki a múltat nem ismeri, az a jövőt sem érti.",
+        "en": "He who does not know the past cannot understand the future."
+      },
+      "place": {
+        "hu": "",
+        "en": ""
+      }
+    },
+    {
+      "kind": "narration",
+      "text": {
+        "hu": "Te %s vagy.",
+        "en": "You are %s."
+      }
+    },
+    {
+      "kind": "narration",
+      "text": {
+        "hu": "Volt középiskolai tanár vagy.",
+        "en": "You are a former secondary school teacher."
+      }
+    },
+    {
+      "kind": "narration",
+      "text": {
+        "hu": "A havi 180 ezres fizetésből nem jött ki a matek.",
+        "en": "On a salary of 180 thousand a month, the maths never added up."
+      }
+    },
+    {
+      "kind": "narration",
+      "text": {
+        "hu": "Van 3 kiflid, 380 Forintod és 4 millió forint adósságod.",
+        "en": "You own 3 bread rolls, 380 forints and 4 million forints of debt."
+      }
+    },
+    {
+      "kind": "narration",
+      "text": {
+        "hu": "A bank már keres.",
+        "en": "The bank is already looking for you."
+      }
+    },
+    {
+      "kind": "narration",
+      "text": {
+        "hu": "Ezért politikusnak állsz.",
+        "en": "So you go into politics."
+      }
+    },
+    {
+      "kind": "narration",
+      "text": {
+        "hu": "Csörög a telefonod",
+        "en": "Your phone rings"
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "unknown",
+      "text": {
+        "hu": "%s? Hallottam a helyzetéről. Van egy ajánlatom, amit nem fog tudni visszautasítani.\nTalálkozzunk a Dohány utcai kávézóban, holnap délben. Kérdezzen Lipóti úr után.",
+        "en": "%s? I have heard about your situation. I have an offer you will not be able to refuse.\nMeet me at the café on Dohány Street, tomorrow at noon. Ask for Mr. Lipóti."
+      }
+    }
+  ]
+}
