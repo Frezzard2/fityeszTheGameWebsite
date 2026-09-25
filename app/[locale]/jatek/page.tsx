@@ -39,6 +39,9 @@ export default async function PlayPage({
     prologue: t('prologue'),
     chapterN: t('chapterN'),
     found: t('found'),
+    decisions: t('decisions'),
+    savedLocal: t('savedLocal'),
+    replay: t('replay'),
   }
 
   return (

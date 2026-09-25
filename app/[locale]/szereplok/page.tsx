@@ -155,7 +155,21 @@ export default async function CharactersPage({
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {num} · {first}
+                  {t('fileNo')} {num} · {first}
+                </div>
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: 16,
+                    bottom: 12,
+                    fontFamily: 'var(--fL)',
+                    fontSize: 11,
+                    letterSpacing: '.12em',
+                    textTransform: 'uppercase',
+                    opacity: 0.65,
+                  }}
+                >
+                  {t('noPhoto')}
                 </div>
                 {c.boss && (
                   <div

@@ -34,6 +34,12 @@ export type PlayLabels = {
   chapterN: string
   /** `found` — reused from the Lexikon's item-acquired tag; the prototype's own `ui.item` string has no message key. */
   found: string
+  /** `decisions` — heading over the chapter-end recap of what the player chose. */
+  decisions: string
+  /** `savedLocal` — this run lives in this browser only; there are no accounts yet. */
+  savedLocal: string
+  /** `replay` — start the chapter again from the beginning. */
+  replay: string
 }
 
 /** `Lang.java` uses printf placeholders; the player's name is the only argument. */
@@ -230,6 +236,23 @@ export function StoryPlayer({
     setRestored(true)
   }, [restored, startName])
   /* eslint-enable react-hooks/set-state-in-effect */
+
+  /**
+   * The chapter-end recap. `history` records which option index was taken at
+   * each choice point; the text lives on the beat, so it is resolved here
+   * rather than duplicated into the save.
+   */
+  const decisionLog = state.history.map((h) => {
+    const source = allBeats.find((b) => b.kind === 'choice' && b.id === h.choicePointId)
+    const option =
+      source && source.kind === 'choice' ? source.options[h.optionIndex] : undefined
+    return {
+      id: h.choicePointId,
+      text: option ? option.text[locale] : '',
+      xp: option ? option.xp : 0,
+      lebukas: option ? option.lebukas : 0,
+    }
+  })
 
   const beat = queue[i]
   const finished = i >= queue.length
@@ -657,6 +680,46 @@ export function StoryPlayer({
                   </div>
                 </div>
                 <p style={{ marginTop: 16, ...MONO, fontSize: 14 }}>{labels.endNext}</p>
+
+                {decisionLog.length > 0 && (
+                  <div style={{ marginTop: 20 }}>
+                    <div style={CAP}>{labels.decisions}</div>
+                    <ol style={{ listStyle: 'none', margin: '10px 0 0', padding: 0 }}>
+                      {decisionLog.map((d, n) => (
+                        <li
+                          key={`${d.id}-${n}`}
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            gap: 12,
+                            flexWrap: 'wrap',
+                            padding: '10px 0',
+                            borderTop: '1px solid var(--line)',
+                            ...MONO,
+                            fontSize: 13,
+                          }}
+                        >
+                          <span style={{ flex: '1 1 14em' }}>
+                            <span style={{ color: 'var(--accentText)', fontWeight: 700 }}>
+                              [{n + 1}]
+                            </span>{' '}
+                            {d.text}
+                          </span>
+                          <span style={{ color: 'var(--inkSoft)', whiteSpace: 'nowrap' }}>
+                            {d.xp > 0 ? `+${d.xp} XP` : '—'}
+                            {d.lebukas !== 0
+                              ? ` · ${d.lebukas > 0 ? '+' : ''}${d.lebukas} ${labels.exposure}`
+                              : ''}
+                          </span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                )}
+
+                <p style={{ marginTop: 16, ...MONO, fontSize: 12, color: 'var(--inkSoft)' }}>
+                  {labels.savedLocal}
+                </p>
               </div>
             </div>
           </div>
@@ -688,7 +751,7 @@ export function StoryPlayer({
             cursor: 'pointer',
           }}
         >
-          {labels.restart}
+          {finished && !exposed ? labels.replay : labels.restart}
         </button>
       )}
     </div>
