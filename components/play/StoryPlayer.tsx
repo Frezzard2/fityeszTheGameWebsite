@@ -59,61 +59,67 @@ const DISPLAY: CSSProperties = {
   lineHeight: 1.14,
 }
 
-/** Reveals text a character at a time, unless the reader asked for less motion. */
+/**
+ * Reveals `text` a character at a time.
+ *
+ * The count is the state, and the component slices the CURRENT text with it,
+ * so a stale count can only ever render a prefix — never the wrong string and
+ * never nothing. The timer lives in a ref so skipping can stop it; an earlier
+ * version set the text to complete without clearing the interval, and the next
+ * tick overwrote the finished line with a short prefix.
+ */
 function useTypewriter(text: string, enabled: boolean) {
-  const [shown, setShown] = useState(text)
-  const doneRef = useRef(true)
-  /** Held so `finish` can stop the timer. Without this the interval keeps
-   *  ticking after a skip and overwrites the completed line with a short
-   *  prefix — the text visibly collapses and starts typing again. */
+  const [count, setCount] = useState(text.length)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const textRef = useRef(text)
 
-  // Typing IS the effect: the text arrives over time from a timer, which is
-  // exactly the external-system case useEffect exists for.
-  /* eslint-disable react-hooks/set-state-in-effect */
-  useEffect(() => {
-    const reduced =
-      typeof window !== 'undefined' &&
-      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-
-    if (!enabled || reduced) {
-      setShown(text)
-      doneRef.current = true
-      return
-    }
-    setShown('')
-    doneRef.current = false
-    let n = 0
-    const id = setInterval(() => {
-      n += 1
-      setShown(text.slice(0, n))
-      if (n >= text.length) {
-        doneRef.current = true
-        clearInterval(id)
-        timerRef.current = null
-      }
-    }, 18)
-    timerRef.current = id
-    return () => {
-      clearInterval(id)
-      timerRef.current = null
-    }
-  }, [text, enabled])
-  /* eslint-enable react-hooks/set-state-in-effect */
-
-  /** Skip to the end. Returns true if there was anything left to skip. */
-  const finish = useCallback(() => {
-    if (doneRef.current) return false
+  const stop = useCallback(() => {
     if (timerRef.current !== null) {
       clearInterval(timerRef.current)
       timerRef.current = null
     }
-    doneRef.current = true
-    setShown(text)
-    return true
-  }, [text])
+  }, [])
 
-  return { shown, finish }
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    // Typing IS the effect: the text arrives over time from a timer, which is
+    // the external-system case useEffect exists for.
+    textRef.current = text
+    stop()
+
+    const reduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
+    if (!enabled || reduced || text.length === 0) {
+      setCount(text.length)
+      return
+    }
+
+    setCount(0)
+    timerRef.current = setInterval(() => {
+      setCount((c) => {
+        const next = c + 1
+        if (next >= textRef.current.length) stop()
+        return next
+      })
+    }, 18)
+
+    return stop
+  }, [text, enabled, stop])
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  /** Jump to the end. Returns true if there was anything left to reveal. */
+  const finish = useCallback(() => {
+    if (count >= text.length) return false
+    stop()
+    setCount(text.length)
+    return true
+  }, [count, text.length, stop])
+
+  // Slicing here — rather than storing the sliced string — is what makes a
+  // stale count harmless.
+  return { shown: text.slice(0, count), typing: count < text.length, finish }
 }
 
 export function StoryPlayer({
@@ -172,7 +178,7 @@ export function StoryPlayer({
 
   const isTalk = beat?.kind === 'narration' || beat?.kind === 'dialogue'
   const talkText = isTalk && name ? fill(beat.text[locale], name) : ''
-  const { shown: typed, finish } = useTypewriter(talkText, isTalk)
+  const { shown: typed, typing, finish } = useTypewriter(talkText, isTalk)
 
   const speakerCard =
     beat?.kind === 'dialogue' ? CHARACTERS.find((c) => c.id === beat.speaker) : undefined
@@ -220,6 +226,9 @@ export function StoryPlayer({
   useEffect(() => {
     if (name === null) return
     const onKey = (e: KeyboardEvent) => {
+      // Held keys repeat; without this, leaning on Enter tears through several
+      // beats at once and the text looks like it is vanishing.
+      if (e.repeat) return
       if (e.key === 'Enter' || e.key === ' ') {
         advance()
         return
@@ -458,9 +467,6 @@ export function StoryPlayer({
                 maskImage: 'linear-gradient(to top,#000,transparent)',
               }}
             />
-            <div style={{ position: 'relative', font: '700 14px/1 var(--fL)', letterSpacing: '.24em', textTransform: 'uppercase' }}>
-              {beat.number === 0 ? labels.prologue : labels.chapterN.replace('%n', String(beat.number))}
-            </div>
             <div className="fz-slam" style={{ position: 'relative', ...DISPLAY, fontSize: 'clamp(46px,9cqw,132px)', lineHeight: 0.98 }}>
               {beat.title[locale]}
             </div>
@@ -502,7 +508,7 @@ export function StoryPlayer({
                 }}
               >
                 {typed}
-                {typed.length < talkText.length && <span className="fz-caret">&#9611;</span>}
+                {typing && <span className="fz-caret">&#9611;</span>}
               </div>
               <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-end', font: '600 12px/1.2 var(--fL)', color: 'var(--inkSoft)' }}>
                 {labels.enterHint}
