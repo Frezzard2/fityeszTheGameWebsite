@@ -4,12 +4,10 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { Antonio, IBM_Plex_Mono, Public_Sans } from 'next/font/google'
-import localFont from 'next/font/local'
+import { Antonio, Public_Sans } from 'next/font/google'
 import { routing, localePath } from '@/i18n/routing'
 import { DOWNLOAD_ENABLED } from '@/lib/features'
 import { SITE_TITLE, type Locale } from '@/lib/constants'
-import { DirectionScope } from '@/components/DirectionScope'
 import { FlagRail } from '@/components/FlagRail'
 import { LocaleToggleClient } from '@/components/LocaleToggleClient'
 import '../globals.css'
@@ -30,30 +28,11 @@ const publicSans = Public_Sans({
   variable: '--font-public-sans',
 })
 
-const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ['latin', 'latin-ext'],
-  weight: ['400', '500', '600', '700'],
-  style: ['normal', 'italic'],
-  display: 'swap',
-  variable: '--font-ibm-plex-mono',
-})
-
 // Saira Stencil One isn't in next/font/google's bundled catalogue (only the
 // unrelated variable "Saira Stencil" family is). Self-hosted locally instead;
-// see app/fonts/SairaStencilOne-OFL.txt for the licence, which travels with it.
-const sairaStencilOne = localFont({
-  src: '../fonts/SairaStencilOne-Regular.ttf',
-  weight: '400',
-  style: 'normal',
-  display: 'swap',
-  variable: '--font-saira-stencil-one',
-})
-
 const fontVariables = [
   antonio.variable,
   publicSans.variable,
-  ibmPlexMono.variable,
-  sairaStencilOne.variable,
 ].join(' ')
 
 const NAV_ITEMS = [
@@ -130,7 +109,6 @@ export default async function LocaleLayout({
     <html lang={locale} className={fontVariables}>
       <body>
         <NextIntlClientProvider>
-          <DirectionScope value="campaign">
             <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
               <header
                 style={{
@@ -318,7 +296,6 @@ export default async function LocaleLayout({
                 </div>
               </footer>
             </div>
-          </DirectionScope>
         </NextIntlClientProvider>
       </body>
     </html>

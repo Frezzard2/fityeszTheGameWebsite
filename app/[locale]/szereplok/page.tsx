@@ -46,7 +46,9 @@ export default async function CharactersPage({
           {CHARACTERS.map((c, n) => (
             <article
               key={c.id}
+              className="fz-in"
               style={{
+                animationDelay: `${n * 70}ms`,
                 display: 'grid',
                 gridTemplateColumns: 'minmax(64px,auto) minmax(0,1fr) minmax(0,1.1fr)',
                 gap: 'clamp(12px,3vw,28px)',

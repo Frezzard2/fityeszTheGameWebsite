@@ -1,0 +1,103 @@
+/*
+ * Motion, ported from the design prototype's keyframes.
+ *
+ * Every animation and transition here is switched off under
+ * prefers-reduced-motion at the bottom of this file. Motion on this site is
+ * decoration — nothing communicates state through movement alone.
+ */
+
+@keyframes fzIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes fzFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fzSlam {
+  0%   { opacity: 0; scale: 1.18; }
+  100% { opacity: 1; scale: 1; }
+}
+@keyframes fzStampIn {
+  0%   { opacity: 0; scale: 1.9; }
+  65%  { opacity: 1; scale: .95; }
+  100% { scale: 1; }
+}
+@keyframes fzTab {
+  from { opacity: 0; translate: 0 12px; }
+  to   { opacity: 1; translate: 0 0; }
+}
+@keyframes fzCaret {
+  50% { opacity: 0; }
+}
+@keyframes fzMarquee {
+  to { transform: translateX(-50%); }
+}
+@keyframes fzDrift {
+  from { background-position: 0 0; }
+  to   { background-position: 72px 36px; }
+}
+@keyframes fzWord {
+  from { translate: 0 0; }
+  to   { translate: -9% 0; }
+}
+@keyframes fzPulse {
+  0%   { box-shadow: 0 0 0 0 var(--accent); }
+  70%  { box-shadow: 0 0 0 9px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+/* --- entrances ------------------------------------------------------- */
+
+.fz-in    { animation: fzIn .4s ease both; }
+.fz-fade  { animation: fzFade .25s ease both; }
+.fz-slam  { animation: fzSlam .8s cubic-bezier(.2,.7,.2,1) both .12s; }
+.fz-stamp { animation: fzStampIn .6s cubic-bezier(.3,1.5,.5,1) both; }
+.fz-tab   { animation: fzTab .3s cubic-bezier(.2,.7,.2,1) both; }
+
+/* Stagger a group so a section resolves in sequence rather than all at once. */
+.fz-d1 { animation-delay: .12s; }
+.fz-d2 { animation-delay: .24s; }
+.fz-d3 { animation-delay: .36s; }
+.fz-d4 { animation-delay: .48s; }
+.fz-d5 { animation-delay: .60s; }
+
+/* --- continuous ------------------------------------------------------ */
+
+/* The halftone field drifts slowly. Long duration on purpose: at speed it
+   reads as a glitch rather than as printed texture. */
+.fz-drift { animation: fzDrift 32s linear infinite; }
+.fz-pulse { animation: fzPulse 2.4s ease-out infinite; }
+.fz-caret { animation: fzCaret 1s step-end infinite; }
+
+/* --- interaction ----------------------------------------------------- */
+
+/* A campaign button sits on a hard offset shadow; hovering slides it into
+   that shadow, so the poster looks pressed rather than merely highlighted. */
+.fz-btn {
+  transition: transform .15s ease, background-color .15s ease, color .15s ease;
+}
+.fz-btn:hover { transform: translate(-2px, -2px); }
+.fz-btn:active { transform: translate(1px, 1px); }
+
+.fz-lift { transition: translate .25s cubic-bezier(.2,.7,.2,1); }
+.fz-lift:hover { translate: 0 -6px; }
+
+/* Meters fill rather than jump, so a change in XP or exposure is legible. */
+.fz-meter { transition: width .9s cubic-bezier(.2,.7,.2,1); }
+
+/* --- reduced motion --------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .fz-in, .fz-fade, .fz-slam, .fz-stamp, .fz-tab,
+  .fz-drift, .fz-pulse, .fz-caret {
+    animation: none !important;
+  }
+  .fz-btn, .fz-lift, .fz-meter {
+    transition: none !important;
+  }
+  .fz-btn:hover, .fz-lift:hover {
+    transform: none;
+    translate: none;
+  }
+}

@@ -37,10 +37,12 @@ export default async function HomePage({
       >
         <div
           aria-hidden
+          className="fz-drift"
           style={{ position: 'absolute', inset: 0, left: '36%', pointerEvents: 'none', ...HALFTONE }}
         />
         <div style={{ position: 'relative', maxWidth: 1320, margin: '0 auto' }}>
           <p
+            className="fz-stamp"
             style={{
               display: 'inline-block',
               transform: 'rotate(-2deg)',
@@ -57,6 +59,7 @@ export default async function HomePage({
           </p>
 
           <h1
+            className="fz-slam"
             style={{
               fontFamily: 'var(--fD)',
               fontWeight: 'var(--dW)' as never,
@@ -73,13 +76,14 @@ export default async function HomePage({
             <span style={{ color: 'var(--accent)' }}>{t('slogan2')}</span>
           </h1>
 
-          <p style={{ marginTop: 20, maxWidth: '34em', fontSize: 17, lineHeight: 1.6 }}>
+          <p className="fz-in fz-d2" style={{ marginTop: 20, maxWidth: '34em', fontSize: 17, lineHeight: 1.6 }}>
             {t('heroSub')}
           </p>
 
-          <div style={{ marginTop: 26, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <div className="fz-in fz-d3" style={{ marginTop: 26, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             <Link
               href={href('/jatek')}
+              className="fz-btn"
               style={{
                 padding: '15px 24px',
                 background: 'var(--accent)',
@@ -97,6 +101,7 @@ export default async function HomePage({
             </Link>
             <Link
               href={href(DOWNLOAD_ENABLED ? '/letoltes' : '/lexikon')}
+              className="fz-btn"
               style={{
                 padding: '15px 22px',
                 border: 'var(--bw) solid var(--ink)',
@@ -111,7 +116,7 @@ export default async function HomePage({
               {DOWNLOAD_ENABLED ? t('cta2') : t('navLore')}
             </Link>
           </div>
-          <p style={{ marginTop: 16, fontSize: 14, color: 'var(--inkSoft)' }}>{t('heroNote')}</p>
+          <p className="fz-in fz-d4" style={{ marginTop: 16, fontSize: 14, color: 'var(--inkSoft)' }}>{t('heroNote')}</p>
         </div>
       </section>
 
@@ -240,6 +245,7 @@ export default async function HomePage({
             {CHARACTERS.filter((c) => c.id !== 'you').map((c) => (
               <li
                 key={c.id}
+                className="fz-lift"
                 style={{
                   border: 'var(--bw) solid var(--ink)',
                   background: 'var(--sheet)',

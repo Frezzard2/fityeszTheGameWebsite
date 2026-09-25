@@ -1,6 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
-import { DirectionScope } from '@/components/DirectionScope'
 import { StoryPlayer, type PlayLabels } from '@/components/play/StoryPlayer'
 import type { Scene } from '@/lib/story/types'
 import prologus from '@/lib/story/content/prologus.json'
@@ -40,18 +39,15 @@ export default async function PlayPage({
   }
 
   return (
-    <DirectionScope value="dossier">
       <div
         style={{
           padding: 'clamp(24px,4cqw,48px) clamp(16px,3cqw,40px)',
           maxWidth: 820,
           margin: '0 auto',
-          backgroundImage: 'var(--tex)',
           minHeight: '70vh',
         }}
       >
         <StoryPlayer scenes={SCENES} labels={labels} locale={locale as Locale} />
       </div>
-    </DirectionScope>
   )
 }

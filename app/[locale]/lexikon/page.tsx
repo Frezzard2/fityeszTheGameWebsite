@@ -1,6 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
-import { DirectionScope } from '@/components/DirectionScope'
 import { LoreTabs, type TabPanel } from '@/components/lore/LoreTabs'
 import codex from '@/lib/story/content/codex.json'
 
@@ -153,11 +152,9 @@ export default async function LorePage({
   ]
 
   return (
-    <DirectionScope value="dossier">
       <div
         style={{
           padding: 'clamp(24px,4cqw,48px) clamp(16px,3cqw,40px)',
-          backgroundImage: 'var(--tex)',
           minHeight: '70vh',
         }}
       >
@@ -192,6 +189,5 @@ export default async function LorePage({
           <LoreTabs panels={panels} />
         </div>
       </div>
-    </DirectionScope>
   )
 }

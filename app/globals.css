@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "../lib/design/tokens.css";
+@import '../lib/design/motion.css';
 
 html,
 body {

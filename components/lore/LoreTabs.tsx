@@ -62,6 +62,8 @@ export function LoreTabs({ panels }: { panels: TabPanel[] }) {
 
       <div
         role="tabpanel"
+        key={panels[active].id}
+        className="fz-tab"
         id={`${base}-panel-${panels[active].id}`}
         aria-labelledby={`${base}-tab-${panels[active].id}`}
         style={{ paddingTop: 24 }}

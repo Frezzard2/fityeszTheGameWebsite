@@ -67,7 +67,7 @@ function Meter({
         </span>
       </div>
       <div style={{ height: 6, background: 'var(--paper2)', border: '1px solid var(--line)', marginTop: 4 }}>
-        <div style={{ width: `${pct}%`, height: '100%', background: color }} />
+        <div className="fz-meter" style={{ width: `${pct}%`, height: '100%', background: color }} />
       </div>
     </div>
   )
@@ -247,6 +247,7 @@ export function StoryPlayer({
         <button
           type="submit"
           data-testid="name-confirm"
+          className="fz-btn"
           style={{
             marginTop: 12,
             padding: '10px 20px',
@@ -270,6 +271,8 @@ export function StoryPlayer({
       <StatusBar state={state} labels={labels} locale={locale} />
 
       <div
+        key={i}
+        className="fz-in"
         onClick={advance}
         style={{ cursor: beat?.kind === 'choice' ? 'default' : 'pointer', minHeight: 220 }}
       >
@@ -336,6 +339,7 @@ export function StoryPlayer({
                 <button
                   key={n}
                   data-testid={`choice-${n + 1}`}
+                  className="fz-btn"
                   onClick={() => choose(n)}
                   style={{
                     textAlign: 'left',
@@ -372,6 +376,7 @@ export function StoryPlayer({
 
       {(finished || exposed) && (
         <button
+          className="fz-btn"
           onClick={() => {
             clearLocalSave()
             setState(initialState(name))
