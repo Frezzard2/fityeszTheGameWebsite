@@ -1,12 +1,14 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import type { Locale } from '@/lib/constants'
+import { LOCALES, type Locale } from '@/lib/constants'
 import { LocaleToggle } from '@/components/LocaleToggle'
 
 function stripLocalePrefix(pathname: string): string {
-  if (pathname === '/en') return '/'
-  if (pathname.startsWith('/en/')) return pathname.slice(3)
+  for (const l of LOCALES) {
+    if (pathname === `/${l}`) return '/'
+    if (pathname.startsWith(`/${l}/`)) return pathname.slice(l.length + 1)
+  }
   return pathname
 }
 

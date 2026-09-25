@@ -6,10 +6,10 @@ describe('locale helpers', () => {
     expect(otherLocale('hu')).toBe('en')
     expect(otherLocale('en')).toBe('hu')
   })
-  it('leaves Hungarian paths unprefixed and prefixes English ones', () => {
-    expect(localePath('/jatek', 'hu')).toBe('/jatek')
+  it('prefixes every path with its locale', () => {
+    expect(localePath('/jatek', 'hu')).toBe('/hu/jatek')
     expect(localePath('/jatek', 'en')).toBe('/en/jatek')
+    expect(localePath('/', 'hu')).toBe('/hu')
     expect(localePath('/', 'en')).toBe('/en')
-    expect(localePath('/', 'hu')).toBe('/')
   })
 })

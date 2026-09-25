@@ -4,7 +4,8 @@ import { LOCALES, DEFAULT_LOCALE, type Locale } from '@/lib/constants'
 export const routing = defineRouting({
   locales: LOCALES,
   defaultLocale: DEFAULT_LOCALE,
-  localePrefix: 'as-needed',
+  // Static export has no middleware, so every locale carries its prefix.
+  localePrefix: 'always',
 })
 
 export function otherLocale(l: Locale): Locale {
@@ -12,6 +13,5 @@ export function otherLocale(l: Locale): Locale {
 }
 
 export function localePath(path: string, l: Locale): string {
-  if (l === DEFAULT_LOCALE) return path
-  return path === '/' ? '/en' : `/en${path}`
+  return path === '/' ? `/${l}` : `/${l}${path}`
 }
