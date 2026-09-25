@@ -247,5 +247,6 @@
   "namePrompt": "Add meg a neved:",
   "exposed": "Lebuktál!",
   "pressfound": "A sajtó mindent kiderített.",
-  "bossfight": "BOSSFIGHT"
+  "bossfight": "BOSSFIGHT",
+  "enterHint": "[ Nyomj Enter-t a folytatáshoz... ]"
 }

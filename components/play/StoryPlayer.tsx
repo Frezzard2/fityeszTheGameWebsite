@@ -1,9 +1,10 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import type { CSSProperties } from 'react'
 import type { Locale } from '@/lib/constants'
 import { applyChoice, initialState, EXPOSURE_LIMIT } from '@/lib/story/engine'
-import type { Beat, CharacterId, PlayerState, Scene } from '@/lib/story/types'
+import type { Beat, PlayerState, Scene } from '@/lib/story/types'
 import { CHARACTERS, speakerName } from '@/lib/design/characters'
 import { loadLocalSave, saveLocalSave, clearLocalSave } from '@/lib/story/localSave'
 import codex from '@/lib/story/content/codex.json'
@@ -28,177 +29,78 @@ export type PlayLabels = {
   gateSkipNote: string
   exposed: string
   pressfound: string
-  /** `ui.prologue` in the design prototype — kicker on the name prompt and the prologue's chapter card. */
   prologue: string
-  /** `chapterN` — `%n` is replaced with the chapter number, same placeholder convention as `fill()`. */
+  /** `%n` is replaced with the chapter number. */
   chapterN: string
-  /** `found` — reused from the Lexikon's item-acquired tag; the prototype's own `ui.item` string has no message key. */
   found: string
-  /** `decisions` — heading over the chapter-end recap of what the player chose. */
   decisions: string
-  /** `savedLocal` — this run lives in this browser only; there are no accounts yet. */
   savedLocal: string
-  /** `replay` — start the chapter again from the beginning. */
   replay: string
+  /** `ui.enter` from the game — the "press Enter to continue" hint. */
+  enterHint: string
 }
 
-/** `Lang.java` uses printf placeholders; the player's name is the only argument. */
+/** The game's text uses printf placeholders; the player's name is the only argument. */
 function fill(text: string, name: string): string {
   return text.replace(/%s/g, name)
 }
 
-/** Same convention as `fill()`, for the chapter-number placeholder in `chapterN`. */
-function fillN(text: string, n: number): string {
-  return text.replace(/%n/g, String(n))
-}
-
-const MONO = { fontFamily: 'var(--fB)' } as const
-
 const CAP: CSSProperties = {
-  fontFamily: 'var(--fB)',
-  fontWeight: 700,
-  fontSize: 11,
+  font: '700 12px/1 var(--fL)',
   letterSpacing: '.12em',
   textTransform: 'uppercase',
   color: 'var(--inkSoft)',
 }
 
-const CHAR_BY_ID = new Map(CHARACTERS.map((c) => [c.id, c]))
-
-const ITEM_NAMES = new Map(
-  (codex.items as { id: string; name: Record<string, string> }[]).map((it) => [it.id, it.name]),
-)
-
-function Meter({
-  label,
-  value,
-  max,
-  color,
-}: {
-  label: string
-  value: number
-  max: number
-  color: string
-}) {
-  const pct = Math.min(100, Math.round((value / max) * 100))
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <span style={{ color: 'var(--inkSoft)' }}>{label}</span>
-      <div style={{ width: 88, height: 8, border: '1px solid var(--ink)', background: 'var(--paper2)' }}>
-        <div className="fz-meter" style={{ width: `${pct}%`, height: '100%', background: color }} />
-      </div>
-      <span style={{ color }}>
-        {value}
-        {max === EXPOSURE_LIMIT ? `/${max}` : ''}
-      </span>
-    </div>
-  )
+const DISPLAY: CSSProperties = {
+  fontFamily: 'var(--fD)',
+  fontWeight: 'var(--dW)' as unknown as number,
+  textTransform: 'uppercase',
+  lineHeight: 1.14,
 }
 
-function StatusBar({
-  state,
-  labels,
-  locale,
-  chapterLabel,
-}: {
-  state: PlayerState
-  labels: PlayLabels
-  locale: Locale
-  chapterLabel: string
-}) {
-  return (
-    <div
-      data-testid="status-bar"
-      style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        gap: '10px 24px',
-        padding: '12px 16px',
-        background: 'var(--sheet)',
-        border: 'var(--bw) solid var(--ink)',
-        borderBottom: 0,
-        ...MONO,
-      }}
-    >
-      <div style={{ fontFamily: 'var(--fD)', fontWeight: 'var(--dW)', textTransform: 'uppercase', fontSize: 'clamp(16px,2.4cqw,22px)', lineHeight: 1.14 }}>
-        {chapterLabel}
-      </div>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px 20px',
-          marginLeft: 'auto',
-          flexWrap: 'wrap',
-          fontWeight: 700,
-          fontSize: 12,
-          letterSpacing: '.1em',
-          textTransform: 'uppercase',
-        }}
-      >
-        <Meter label="XP" value={state.xp} max={100} color="var(--second)" />
-        <Meter label={labels.exposure} value={state.lebukas} max={EXPOSURE_LIMIT} color="var(--accentText)" />
-        <div>
-          <div style={{ color: 'var(--inkSoft)' }}>{labels.itemsWord}</div>
-          <div data-testid="status-items" style={{ color: 'var(--ink)', marginTop: 4, fontSize: 15 }}>
-            {state.items.length === 0 ? '—' : state.items.length}
-          </div>
-        </div>
-      </div>
-      <div
-        data-testid="status-xp"
-        style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}
-      >
-        {state.xp}
-      </div>
-      <span hidden>{locale}</span>
-    </div>
-  )
-}
+/** Reveals text a character at a time, unless the reader asked for less motion. */
+function useTypewriter(text: string, enabled: boolean) {
+  const [shown, setShown] = useState(text)
+  const doneRef = useRef(true)
 
-/** The speaker's portrait card — the dossier direction's tilted case-file sheet is dropped. */
-function Portrait({ speaker, locale, name }: { speaker: CharacterId; locale: Locale; name: string }) {
-  const c = CHAR_BY_ID.get(speaker)
-  if (!c) return null
-  return (
-    <div
-      className="fz-in"
-      style={{ position: 'absolute', right: 'clamp(12px,3cqw,32px)', top: 'clamp(12px,3cqw,28px)', width: 'clamp(96px,24cqw,190px)' }}
-    >
-      <div style={{ display: 'block', background: 'var(--accent)', color: 'var(--onAccent)', border: 'var(--bw) solid var(--onInk)' }}>
-        <div style={{ position: 'relative', height: 'clamp(88px,20cqw,160px)', overflow: 'hidden' }}>
-          <div
-            style={{
-              position: 'absolute',
-              right: -6,
-              bottom: 6,
-              fontFamily: 'var(--fD)',
-              fontWeight: 'var(--dW)',
-              fontSize: 'clamp(72px,20cqw,150px)',
-              lineHeight: 1,
-              letterSpacing: '-.03em',
-              backgroundImage: 'radial-gradient(circle,var(--onAccent) 2.2px,transparent 3px)',
-              backgroundSize: '7px 7px',
-              WebkitBackgroundClip: 'text',
-              backgroundClip: 'text',
-              color: 'transparent',
-            }}
-          >
-            {c.initials}
-          </div>
-        </div>
-        <div style={{ padding: '10px 12px', borderTop: 'var(--bw) solid var(--onInk)', background: 'var(--ink)', color: 'var(--onInk)' }}>
-          <div style={{ fontFamily: 'var(--fD)', fontWeight: 'var(--dW)', textTransform: 'uppercase', fontSize: 'clamp(14px,2.6cqw,20px)', lineHeight: 1.14 }}>
-            {speakerName(speaker, name)[locale]}
-          </div>
-          <div style={{ marginTop: 4, fontFamily: 'var(--fB)', fontWeight: 600, fontSize: 10, letterSpacing: '.1em', textTransform: 'uppercase', opacity: 0.85 }}>
-            {c.title[locale]}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+  // Typing IS the effect: the text arrives over time from a timer, which is
+  // exactly the external-system case useEffect exists for.
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    const reduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
+    if (!enabled || reduced) {
+      setShown(text)
+      doneRef.current = true
+      return
+    }
+    setShown('')
+    doneRef.current = false
+    let n = 0
+    const id = setInterval(() => {
+      n += 1
+      setShown(text.slice(0, n))
+      if (n >= text.length) {
+        doneRef.current = true
+        clearInterval(id)
+      }
+    }, 18)
+    return () => clearInterval(id)
+  }, [text, enabled])
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  /** Skip to the end. Returns true if there was anything left to skip. */
+  const finish = useCallback(() => {
+    if (doneRef.current) return false
+    doneRef.current = true
+    setShown(text)
+    return true
+  }, [text])
+
+  return { shown, finish }
 }
 
 export function StoryPlayer({
@@ -223,8 +125,7 @@ export function StoryPlayer({
   const [restored, setRestored] = useState(false)
 
   // localStorage does not exist during SSR, so a persisted run can only be
-  // restored after mount. Seeding useState from it instead would desync
-  // hydration. This is the one place the rule cannot be satisfied cleanly.
+  // restored after mount. Seeding useState from it would desync hydration.
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (restored || startName) return
@@ -237,49 +138,50 @@ export function StoryPlayer({
   }, [restored, startName])
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  /**
-   * The chapter-end recap. `history` records which option index was taken at
-   * each choice point; the text lives on the beat, so it is resolved here
-   * rather than duplicated into the save.
-   */
+  const beat = queue[i]
+  const finished = i >= queue.length
+  const exposed = state.status === 'exposed'
+
+  /** The chapter card most recently passed — drives the header and the watermark. */
+  const currentCard = useMemo(() => {
+    for (let n = Math.min(i, queue.length - 1); n >= 0; n--) {
+      const b = queue[n]
+      if (b?.kind === 'chapterCard') return b
+    }
+    return undefined
+  }, [queue, i])
+
+  const chapterLabel = currentCard
+    ? currentCard.number === 0
+      ? labels.prologue
+      : labels.chapterN.replace('%n', String(currentCard.number))
+    : labels.prologue
+
+  const isTalk = beat?.kind === 'narration' || beat?.kind === 'dialogue'
+  const talkText = isTalk && name ? fill(beat.text[locale], name) : ''
+  const { shown: typed, finish } = useTypewriter(talkText, isTalk)
+
+  const speakerCard =
+    beat?.kind === 'dialogue' ? CHARACTERS.find((c) => c.id === beat.speaker) : undefined
+
   const decisionLog = state.history.map((h) => {
     const source = allBeats.find((b) => b.kind === 'choice' && b.id === h.choicePointId)
-    const option =
-      source && source.kind === 'choice' ? source.options[h.optionIndex] : undefined
+    const option = source && source.kind === 'choice' ? source.options[h.optionIndex] : undefined
     return {
       id: h.choicePointId,
-      text: option ? option.text[locale] : '',
+      question: source && source.kind === 'choice' && name ? fill(source.prompt[locale], name) : '',
+      answer: option ? option.text[locale] : '',
       xp: option ? option.xp : 0,
       lebukas: option ? option.lebukas : 0,
     }
   })
 
-  const beat = queue[i]
-  const finished = i >= queue.length
-  const exposed = state.status === 'exposed'
-
-  // The last chapterCard at or before the current beat — drives the chapter
-  // label and location badge, same as the prototype's per-scene `vn.chapter`
-  // and `vn.loc`, without needing a new field on the story content.
-  const currentCard = useMemo(() => {
-    const upto = Math.min(i, queue.length - 1)
-    for (let idx = upto; idx >= 0; idx--) {
-      const b = queue[idx]
-      if (b?.kind === 'chapterCard') return b
-    }
-    return null
-  }, [queue, i])
-
-  const chapterLabel = currentCard
-    ? `${currentCard.number === 0 ? labels.prologue : fillN(labels.chapterN, currentCard.number)} · ${currentCard.title[locale]}`
-    : ''
-  const locationLabel = currentCard && currentCard.place[locale] ? currentCard.place[locale] : ''
-
   const advance = useCallback(() => {
     if (finished || exposed) return
-    if (beat?.kind === 'choice') return // a choice waits for a number key
+    if (beat?.kind === 'choice') return
+    if (finish()) return // the first press completes the typing
     setI((n) => n + 1)
-  }, [beat, finished, exposed])
+  }, [beat, finished, exposed, finish])
 
   const choose = useCallback(
     (optionIndex: number) => {
@@ -295,6 +197,13 @@ export function StoryPlayer({
     [beat, i, state],
   )
 
+  const restart = useCallback(() => {
+    clearLocalSave()
+    setState(initialState(name ?? ''))
+    setQueue(allBeats)
+    setI(0)
+  }, [allBeats, name])
+
   useEffect(() => {
     if (name === null) return
     const onKey = (e: KeyboardEvent) => {
@@ -309,102 +218,84 @@ export function StoryPlayer({
     return () => window.removeEventListener('keydown', onKey)
   }, [advance, choose, name])
 
-  if (name === null) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '24px 0' }}>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            const v = draft.trim()
-            if (!v) return
-            setName(v)
-            setState(initialState(v))
-          }}
-          style={{
-            width: '100%',
-            maxWidth: 560,
-            background: 'var(--sheet)',
-            color: 'var(--ink)',
-            border: 'var(--bw) solid var(--ink)',
-            boxShadow: 'var(--sh)',
-            padding: 'clamp(22px,3cqw,36px)',
-            ...MONO,
-          }}
-        >
-          <div style={{ fontWeight: 700, fontSize: 12, letterSpacing: '.16em', textTransform: 'uppercase', color: 'var(--accentText)' }}>
-            {labels.prologue}
-          </div>
-          <label
-            htmlFor="player-name"
-            style={{ display: 'block', marginTop: 12, fontFamily: 'var(--fD)', fontWeight: 'var(--dW)', textTransform: 'uppercase', fontSize: 'clamp(26px,4cqw,36px)', lineHeight: 1.14 }}
-          >
-            {labels.namePrompt}
-          </label>
-          <div style={{ display: 'flex', gap: 10, marginTop: 18, flexWrap: 'wrap' }}>
-            <input
-              id="player-name"
-              data-testid="name-input"
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              placeholder={labels.namePh}
-              maxLength={24}
-              style={{
-                flex: '1 1 200px',
-                minWidth: 0,
-                padding: 14,
-                border: 'var(--bw) solid var(--ink)',
-                background: 'var(--paper)',
-                fontSize: 16,
-                color: 'var(--ink)',
-              }}
-            />
-            <button
-              type="submit"
-              data-testid="name-confirm"
-              className="fz-btn"
-              style={{
-                padding: '14px 22px 13px',
-                background: 'var(--accent)',
-                color: 'var(--onAccent)',
-                border: 'var(--bw) solid var(--ink)',
-                boxShadow: 'var(--shS)',
-                fontFamily: 'var(--fD)',
-                fontWeight: 'var(--dW)',
-                textTransform: 'uppercase',
-                fontSize: 18,
-                lineHeight: 1.14,
-                cursor: 'pointer',
-              }}
-            >
-              {labels.confirm}
-            </button>
-          </div>
-          <p style={{ marginTop: 12, fontSize: 13, color: 'var(--inkSoft)' }}>{labels.nameNote}</p>
-        </form>
-      </div>
-    )
+  const progress = queue.length ? Math.min(100, Math.round((i / queue.length) * 100)) : 0
+  const exposurePct = Math.min(100, Math.round((state.lebukas / EXPOSURE_LIMIT) * 100))
+
+  const panelBase: CSSProperties = {
+    position: 'absolute',
+    left: 'clamp(12px,3cqw,40px)',
+    right: 'clamp(12px,3cqw,40px)',
+    bottom: 'clamp(12px,3cqw,32px)',
+    background: 'var(--sheet)',
+    color: 'var(--ink)',
+    border: 'var(--bw) solid var(--onInk)',
+    boxShadow: 'var(--shS)',
   }
 
   return (
-    <div>
-      <StatusBar state={state} labels={labels} locale={locale} chapterLabel={chapterLabel} />
+    <div style={{ containerType: 'inline-size' }}>
       <div
+        data-testid="status-bar"
         style={{
-          height: 5,
-          background: 'var(--line)',
-          borderLeft: 'var(--bw) solid var(--ink)',
-          borderRight: 'var(--bw) solid var(--ink)',
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          gap: '10px 26px',
+          padding: '12px 16px',
+          background: 'var(--sheet)',
+          border: 'var(--bw) solid var(--ink)',
+          borderBottom: 0,
         }}
       >
+        <div style={{ ...DISPLAY, fontSize: 24 }}>{chapterLabel}</div>
         <div
-          className="fz-meter"
-          style={{ height: '100%', width: `${queue.length > 1 ? Math.round((Math.min(i, queue.length) / (queue.length - 1)) * 100) : 100}%`, background: 'var(--accent)' }}
-        />
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px 20px',
+            marginLeft: 'auto',
+            flexWrap: 'wrap',
+            font: '700 12px/1 var(--fL)',
+            letterSpacing: '.1em',
+            textTransform: 'uppercase',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+            XP <span data-testid="status-xp" style={{ fontSize: 18 }}>{state.xp}</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {labels.exposure}
+            <div style={{ width: 100, height: 10, border: '1px solid var(--ink)', background: 'var(--paper2)' }}>
+              <div className="fz-meter" style={{ height: '100%', width: exposurePct + '%', background: 'var(--danger)' }} />
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+            {labels.itemsWord} <span data-testid="status-items" style={{ fontSize: 18 }}>{state.items.length}</span>
+          </div>
+          <button
+            onClick={restart}
+            className="fz-btn"
+            style={{
+              border: '1px solid var(--ink)',
+              background: 'transparent',
+              cursor: 'pointer',
+              padding: '7px 10px',
+              font: '700 11px/1 var(--fL)',
+              letterSpacing: '.1em',
+              textTransform: 'uppercase',
+              color: 'var(--ink)',
+            }}
+          >
+            {labels.restart}
+          </button>
+        </div>
+      </div>
+
+      <div style={{ height: 5, background: 'var(--line)', borderLeft: 'var(--bw) solid var(--ink)', borderRight: 'var(--bw) solid var(--ink)' }}>
+        <div style={{ height: '100%', width: progress + '%', background: 'var(--accent)', transition: 'width .4s' }} />
       </div>
 
       <div
-        key={i}
-        className="fz-in"
         onClick={advance}
         style={{
           position: 'relative',
@@ -412,13 +303,14 @@ export function StoryPlayer({
           background: 'var(--ink)',
           color: 'var(--onInk)',
           border: 'var(--bw) solid var(--ink)',
-          minHeight: 'clamp(360px,52cqw,560px)',
-          cursor: beat?.kind === 'choice' ? 'default' : 'pointer',
+          minHeight: 'clamp(600px,56cqw,700px)',
+          cursor: beat?.kind === 'choice' || finished || name === null ? 'default' : 'pointer',
+          userSelect: 'none',
         }}
       >
         <div
+          aria-hidden
           style={{
-            display: 'block',
             position: 'absolute',
             inset: 0,
             backgroundImage: 'radial-gradient(circle,var(--onInk) 1px,transparent 1.6px)',
@@ -429,58 +321,108 @@ export function StoryPlayer({
           }}
         />
 
-        {locationLabel && !exposed && (
+        {currentCard && (
+          <div
+            aria-hidden
+            style={{
+              position: 'absolute',
+              left: '-.04em',
+              top: '9%',
+              ...DISPLAY,
+              fontSize: '22cqw',
+              lineHeight: 0.8,
+              color: 'var(--accent)',
+              opacity: 0.22,
+              whiteSpace: 'nowrap',
+              pointerEvents: 'none',
+            }}
+          >
+            {currentCard.title[locale]}
+          </div>
+        )}
+
+        {currentCard && currentCard.place[locale] && (
           <div
             style={{
               position: 'absolute',
-              left: 16,
-              top: 16,
+              left: 20,
+              top: 18,
+              right: 20,
               display: 'flex',
               gap: 8,
               alignItems: 'center',
-              ...MONO,
-              fontWeight: 700,
-              fontSize: 12,
+              font: '700 12px/1.3 var(--fL)',
               letterSpacing: '.14em',
               textTransform: 'uppercase',
             }}
           >
-            <span style={{ width: 8, height: 8, background: 'var(--accent)' }} />
-            {locationLabel}
+            <span style={{ flex: 'none', width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)' }} />
+            {currentCard.place[locale]}
           </div>
         )}
 
-        {exposed && (
+        {speakerCard && (
+          <div className="fz-in" style={{ position: 'absolute', right: 'clamp(20px,4cqw,56px)', top: 60, width: 230, maxWidth: '38%' }}>
+            <div style={{ background: 'var(--accent)', color: 'var(--onAccent)', border: 'var(--bw) solid var(--onInk)' }}>
+              <div style={{ position: 'relative', height: 210, overflow: 'hidden' }}>
+                <div
+                  style={{
+                    position: 'absolute',
+                    right: -6,
+                    bottom: 10,
+                    ...DISPLAY,
+                    fontSize: 190,
+                    lineHeight: 1,
+                    letterSpacing: '-.03em',
+                    backgroundImage: 'radial-gradient(circle,var(--onAccent) 2.4px,transparent 3px)',
+                    backgroundSize: '7px 7px',
+                    WebkitBackgroundClip: 'text',
+                    backgroundClip: 'text',
+                    color: 'transparent',
+                  }}
+                >
+                  {speakerCard.initials}
+                </div>
+              </div>
+              <div style={{ padding: '12px 14px', borderTop: 'var(--bw) solid var(--onInk)', background: 'var(--ink)', color: 'var(--onInk)' }}>
+                <div style={{ ...DISPLAY, fontSize: 24 }}>{speakerCard.name[locale]}</div>
+                <div style={{ marginTop: 6, font: '600 11px/1.3 var(--fL)', letterSpacing: '.1em', textTransform: 'uppercase', opacity: 0.85 }}>
+                  {speakerCard.title[locale]}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {beat?.kind === 'item' && (
           <div
-            data-testid="exposed"
+            className="fz-stamp"
             style={{
-              display: 'flex',
               position: 'absolute',
-              inset: 0,
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
+              left: '50%',
+              top: 'clamp(70px,10cqw,130px)',
+              transform: 'translateX(-50%) rotate(-3deg)',
+              background: 'var(--sheet)',
+              color: 'var(--ink)',
+              border: 'var(--bw) solid var(--accentText)',
+              padding: '14px 20px',
               textAlign: 'center',
-              gap: 14,
-              padding: '40px 24px',
-              background: 'var(--accent)',
-              color: 'var(--onAccent)',
+              maxWidth: '86%',
             }}
           >
-            <p className="fz-slam" style={{ fontFamily: 'var(--fD)', fontWeight: 'var(--dW)', textTransform: 'uppercase', fontSize: 'clamp(36px,7cqw,64px)', lineHeight: 1, margin: 0 }}>
-              {labels.exposed}
-            </p>
-            <p style={{ ...MONO, fontSize: 'clamp(15px,1.6cqw,19px)', margin: 0 }}>{labels.pressfound}</p>
+            <div style={{ font: '700 12px/1 var(--fL)', letterSpacing: '.16em', color: 'var(--accentText)' }}>{labels.found}</div>
+            <div style={{ marginTop: 8, ...DISPLAY, fontSize: 'clamp(20px,4cqw,40px)' }}>
+              {codex.items.find((it) => it.id === beat.item)?.name[locale] ?? beat.item}
+            </div>
           </div>
         )}
 
-        {!exposed && beat?.kind === 'chapterCard' && (
+        {beat?.kind === 'chapterCard' && (
           <div
-            data-testid="beat"
             style={{
-              display: 'flex',
               position: 'absolute',
               inset: 0,
+              display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
@@ -491,117 +433,76 @@ export function StoryPlayer({
               color: 'var(--onAccent)',
             }}
           >
-            <div style={{ ...MONO, fontWeight: 700, fontSize: 14, letterSpacing: '.24em', textTransform: 'uppercase' }}>
-              {beat.number === 0 ? labels.prologue : fillN(labels.chapterN, beat.number)}
-            </div>
-            <h2 className="fz-slam" style={{ fontFamily: 'var(--fD)', fontWeight: 'var(--dW)', textTransform: 'uppercase', fontSize: 'clamp(40px,8cqw,88px)', lineHeight: 0.98, margin: 0 }}>
-              {beat.title[locale]}
-            </h2>
-            <p style={{ ...MONO, maxWidth: '30em', fontSize: 'clamp(15px,1.6cqw,19px)', fontStyle: 'italic', margin: 0 }}>
-              &bdquo;{beat.quote[locale]}&rdquo;
-            </p>
-          </div>
-        )}
-
-        {!exposed && beat?.kind === 'item' && (
-          <div
-            data-testid="beat"
-            className="fz-stamp"
-            style={{
-              position: 'absolute',
-              left: '50%',
-              top: 'clamp(50px,10cqw,110px)',
-              transform: 'translateX(-50%) rotate(-3deg)',
-              background: 'var(--sheet)',
-              color: 'var(--ink)',
-              border: 'var(--bw) solid var(--accent)',
-              boxShadow: 'var(--sh)',
-              padding: '16px 26px',
-              textAlign: 'center',
-            }}
-          >
-            <div style={{ ...MONO, fontWeight: 700, fontSize: 12, letterSpacing: '.16em', color: 'var(--accentText)' }}>{labels.found}</div>
-            <div style={{ marginTop: 8, fontFamily: 'var(--fD)', fontWeight: 'var(--dW)', fontSize: 'clamp(22px,4cqw,34px)', lineHeight: 1.14, whiteSpace: 'nowrap' }}>
-              {ITEM_NAMES.get(beat.item)?.[locale] ?? beat.item}
-            </div>
-          </div>
-        )}
-
-        {!exposed && beat?.kind === 'dialogue' && <Portrait speaker={beat.speaker} locale={locale} name={name} />}
-
-        {!exposed && (beat?.kind === 'narration' || beat?.kind === 'dialogue') && (
-          <div
-            data-testid="beat"
-            style={{ position: 'absolute', left: 'clamp(12px,3cqw,32px)', right: 'clamp(12px,3cqw,32px)', bottom: 'clamp(12px,3cqw,26px)' }}
-          >
             <div
+              aria-hidden
               style={{
-                position: 'relative',
-                background: 'var(--sheet)',
-                color: 'var(--ink)',
-                border: 'var(--bw) solid var(--onInk)',
-                boxShadow: 'var(--shS)',
-                padding: '20px clamp(16px,2.4cqw,24px) 16px',
+                position: 'absolute',
+                inset: 0,
+                backgroundImage: 'radial-gradient(circle,var(--onAccent) 1.2px,transparent 1.8px)',
+                backgroundSize: '10px 10px',
+                opacity: 0.16,
+                WebkitMaskImage: 'linear-gradient(to top,#000,transparent)',
+                maskImage: 'linear-gradient(to top,#000,transparent)',
               }}
-            >
+            />
+            <div style={{ position: 'relative', font: '700 14px/1 var(--fL)', letterSpacing: '.24em', textTransform: 'uppercase' }}>
+              {beat.number === 0 ? labels.prologue : labels.chapterN.replace('%n', String(beat.number))}
+            </div>
+            <div className="fz-slam" style={{ position: 'relative', ...DISPLAY, fontSize: 'clamp(46px,9cqw,132px)', lineHeight: 0.98 }}>
+              {beat.title[locale]}
+            </div>
+            <div className="fz-in fz-d4" style={{ position: 'relative', maxWidth: '30em', fontSize: 'clamp(16px,1.6cqw,21px)', fontStyle: 'italic' }}>
+              &bdquo;{beat.quote[locale]}&rdquo;
+            </div>
+            <div style={{ position: 'relative', marginTop: 14, font: '600 12px/1 var(--fL)', letterSpacing: '.06em' }}>{labels.enterHint}</div>
+          </div>
+        )}
+
+        {isTalk && name && (
+          <div data-testid="beat" className="fz-in" style={panelBase}>
+            <div style={{ position: 'relative', padding: '24px clamp(18px,2.4cqw,28px) 16px' }}>
               {beat.kind === 'dialogue' && (
                 <div
                   className="fz-tab"
                   style={{
                     position: 'absolute',
                     left: -3,
-                    top: -34,
-                    padding: '8px 12px 7px',
+                    top: -36,
+                    padding: '9px 14px 8px',
                     background: 'var(--accent)',
                     color: 'var(--onAccent)',
                     border: 'var(--bw) solid var(--onInk)',
-                    fontFamily: 'var(--fD)',
-                    fontWeight: 'var(--dW)',
-                    textTransform: 'uppercase',
-                    fontSize: 18,
-                    lineHeight: 1.14,
+                    ...DISPLAY,
+                    fontSize: 20,
                   }}
                 >
                   {speakerName(beat.speaker, name)[locale]}
                 </div>
               )}
-              <p
+              <div
                 style={{
-                  ...MONO,
-                  fontSize: 'clamp(15px,1.6cqw,18px)',
-                  lineHeight: 1.6,
+                  fontSize: 'clamp(16px,1.6cqw,21px)',
+                  lineHeight: 1.55,
                   whiteSpace: 'pre-line',
+                  minHeight: '3.1em',
                   fontStyle: beat.kind === 'narration' ? 'italic' : 'normal',
-                  margin: 0,
                 }}
               >
-                {fill(beat.text[locale], name)}
-              </p>
+                {typed}
+                {typed.length < talkText.length && <span className="fz-caret">&#9611;</span>}
+              </div>
+              <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-end', font: '600 12px/1.2 var(--fL)', color: 'var(--inkSoft)' }}>
+                {labels.enterHint}
+              </div>
             </div>
           </div>
         )}
 
-        {!exposed && beat?.kind === 'choice' && (
-          <div
-            data-testid="beat"
-            style={{
-              position: 'absolute',
-              left: 'clamp(12px,3cqw,32px)',
-              right: 'clamp(12px,3cqw,32px)',
-              bottom: 'clamp(12px,3cqw,26px)',
-              background: 'var(--sheet)',
-              color: 'var(--ink)',
-              border: 'var(--bw) solid var(--onInk)',
-              boxShadow: 'var(--shS)',
-              padding: 'clamp(16px,2.4cqw,24px)',
-              cursor: 'default',
-            }}
-          >
+        {beat?.kind === 'choice' && name && (
+          <div data-testid="beat" onClick={(e) => e.stopPropagation()} style={{ ...panelBase, padding: 'clamp(16px,2.4cqw,24px)' }}>
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: '8px 16px', alignItems: 'baseline' }}>
-              <div style={{ fontFamily: 'var(--fD)', fontWeight: 'var(--dW)', textTransform: 'uppercase', fontSize: 'clamp(20px,3cqw,28px)', lineHeight: 1.14 }}>
-                {fill(beat.prompt[locale], name)}
-              </div>
-              <div style={{ ...MONO, fontWeight: 700, fontSize: 12, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--inkSoft)' }}>
+              <div style={{ ...DISPLAY, fontSize: 'clamp(19px,3cqw,32px)' }}>{fill(beat.prompt[locale], name)}</div>
+              <div style={{ font: '700 12px/1 var(--fL)', letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--inkSoft)' }}>
                 {labels.chooseHint}
               </div>
             </div>
@@ -609,23 +510,24 @@ export function StoryPlayer({
               {beat.options.map((o, n) => (
                 <button
                   key={n}
-                  data-testid={`choice-${n + 1}`}
-                  className="fz-btn"
+                  data-testid={'choice-' + (n + 1)}
                   onClick={() => choose(n)}
+                  className="fz-in"
                   style={{
+                    animationDelay: n * 90 + 'ms',
+                    transition: 'border-color .2s ease, background-color .2s ease',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 14,
+                    gap: 12,
                     width: '100%',
                     textAlign: 'left',
-                    padding: '13px 16px',
-                    border: 'var(--bw) solid var(--ink)',
-                    background: 'var(--sheet)',
+                    padding: 12,
+                    background: 'var(--paper)',
                     color: 'var(--ink)',
+                    border: '1px solid var(--ink)',
                     cursor: 'pointer',
-                    ...MONO,
-                    fontSize: 16,
-                    lineHeight: 1.35,
+                    font: 'inherit',
+                    fontSize: 'clamp(15px,1.4cqw,17px)',
                   }}
                 >
                   <span
@@ -638,8 +540,7 @@ export function StoryPlayer({
                       justifyContent: 'center',
                       background: 'var(--ink)',
                       color: 'var(--onInk)',
-                      fontWeight: 700,
-                      fontSize: 14,
+                      font: '700 14px/1 var(--fL)',
                     }}
                   >
                     {n + 1}
@@ -651,109 +552,149 @@ export function StoryPlayer({
           </div>
         )}
 
+        {exposed && (
+          <div
+            data-testid="exposed"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              gap: 14,
+              padding: 40,
+              background: 'var(--ink)',
+            }}
+          >
+            <div className="fz-slam" style={{ ...DISPLAY, fontSize: 'clamp(36px,7cqw,96px)', color: 'var(--accent)' }}>{labels.exposed}</div>
+            <p style={{ maxWidth: '30em', fontSize: 18 }}>{labels.pressfound}</p>
+            <button
+              onClick={restart}
+              className="fz-btn"
+              style={{ marginTop: 10, padding: '14px 20px 13px', background: 'var(--accent)', color: 'var(--onAccent)', border: 'var(--bw) solid var(--onInk)', ...DISPLAY, fontSize: 21, cursor: 'pointer' }}
+            >
+              {labels.restart}
+            </button>
+          </div>
+        )}
+
+        {name === null && (
+          <div onClick={(e) => e.stopPropagation()} style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+            <form
+              className="fz-in"
+              onSubmit={(e) => {
+                e.preventDefault()
+                const v = draft.trim()
+                if (!v) return
+                setName(v)
+                setState(initialState(v))
+              }}
+              style={{
+                width: '100%',
+                maxWidth: 560,
+                background: 'var(--sheet)',
+                color: 'var(--ink)',
+                border: 'var(--bw) solid var(--onInk)',
+                boxShadow: 'var(--sh)',
+                padding: 'clamp(22px,3cqw,36px)',
+              }}
+            >
+              <div style={{ font: '700 12px/1 var(--fL)', letterSpacing: '.16em', textTransform: 'uppercase', color: 'var(--accentText)' }}>{labels.prologue}</div>
+              <label htmlFor="player-name" style={{ display: 'block', marginTop: 12, ...DISPLAY, fontSize: 'clamp(24px,4cqw,38px)' }}>
+                {labels.namePrompt}
+              </label>
+              <div style={{ display: 'flex', gap: 10, marginTop: 18, flexWrap: 'wrap' }}>
+                <input
+                  id="player-name"
+                  data-testid="name-input"
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  placeholder={labels.namePh}
+                  maxLength={24}
+                  style={{ flex: '1 1 220px', minWidth: 0, padding: 14, border: 'var(--bw) solid var(--ink)', background: 'var(--paper)', color: 'var(--ink)', font: 'inherit' }}
+                />
+                <button
+                  type="submit"
+                  data-testid="name-confirm"
+                  className="fz-btn"
+                  style={{ padding: '14px 22px 13px', background: 'var(--accent)', color: 'var(--onAccent)', border: 'var(--bw) solid var(--ink)', boxShadow: 'var(--shS)', ...DISPLAY, fontSize: 21, cursor: 'pointer' }}
+                >
+                  {labels.confirm}
+                </button>
+              </div>
+              <p style={{ margin: '12px 0 0', fontSize: 13, color: 'var(--inkSoft)' }}>{labels.nameNote}</p>
+            </form>
+          </div>
+        )}
+
         {!exposed && finished && (
           <div
             data-testid="chapter-end"
-            style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, overflow: 'auto' }}
+            onClick={(e) => e.stopPropagation()}
+            style={{ position: 'relative', padding: '54px clamp(14px,3cqw,40px) clamp(14px,3cqw,40px)', display: 'flex', justifyContent: 'center' }}
           >
-            <div style={{ width: '100%', maxWidth: 640, background: 'var(--sheet)', color: 'var(--ink)', border: 'var(--bw) solid var(--onInk)', boxShadow: 'var(--shS)' }}>
-              <div style={{ background: 'var(--accent)', color: 'var(--onAccent)', padding: 'clamp(18px,3cqw,28px)' }}>
-                <div style={{ ...MONO, fontWeight: 700, fontSize: 12, letterSpacing: '.16em', textTransform: 'uppercase' }}>{labels.endKicker}</div>
+            <div className="fz-in" style={{ width: '100%', maxWidth: 860, background: 'var(--sheet)', color: 'var(--ink)', border: 'var(--bw) solid var(--onInk)', boxShadow: 'var(--shS)' }}>
+              <div style={{ background: 'var(--accent)', color: 'var(--onAccent)', padding: 'clamp(20px,3cqw,32px)' }}>
+                <div style={{ font: '700 12px/1 var(--fL)', letterSpacing: '.16em', textTransform: 'uppercase' }}>{labels.endKicker}</div>
+                <div style={{ marginTop: 10, ...DISPLAY, fontSize: 'clamp(36px,6cqw,80px)' }}>{currentCard ? currentCard.title[locale] : ''}</div>
               </div>
-              <div style={{ padding: 'clamp(16px,3cqw,28px)' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(120px,1fr))', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }}>
-                  <div style={{ background: 'var(--sheet)', padding: 14 }}>
+              <div style={{ padding: 'clamp(18px,3cqw,32px)' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }}>
+                  <div style={{ background: 'var(--sheet)', padding: 16 }}>
                     <div style={CAP}>XP</div>
-                    <div style={{ marginTop: 6, fontFamily: 'var(--fD)', fontWeight: 'var(--dW)', fontSize: 32, lineHeight: 1.14 }}>{state.xp}</div>
+                    <div style={{ marginTop: 8, ...DISPLAY, fontSize: 32 }}>{state.xp}</div>
                   </div>
-                  <div style={{ background: 'var(--sheet)', padding: 14 }}>
+                  <div style={{ background: 'var(--sheet)', padding: 16 }}>
                     <div style={CAP}>{labels.exposure}</div>
-                    <div style={{ marginTop: 6, fontFamily: 'var(--fD)', fontWeight: 'var(--dW)', fontSize: 32, lineHeight: 1.14, color: 'var(--accentText)' }}>
+                    <div style={{ marginTop: 8, ...DISPLAY, fontSize: 32, color: 'var(--accentText)' }}>
                       {state.lebukas}/{EXPOSURE_LIMIT}
                     </div>
                   </div>
-                  <div style={{ background: 'var(--sheet)', padding: 14 }}>
+                  <div style={{ background: 'var(--sheet)', padding: 16 }}>
                     <div style={CAP}>{labels.itemsWord}</div>
-                    <div style={{ marginTop: 8, ...MONO, fontWeight: 700, fontSize: 14 }}>
-                      {state.items.length === 0 ? '—' : state.items.length}
-                    </div>
+                    <div style={{ marginTop: 8, ...DISPLAY, fontSize: 32 }}>{state.items.length}</div>
                   </div>
                 </div>
-                <p style={{ marginTop: 16, ...MONO, fontSize: 14 }}>{labels.endNext}</p>
 
                 {decisionLog.length > 0 && (
-                  <div style={{ marginTop: 20 }}>
-                    <div style={CAP}>{labels.decisions}</div>
-                    <ol style={{ listStyle: 'none', margin: '10px 0 0', padding: 0 }}>
-                      {decisionLog.map((d, n) => (
-                        <li
-                          key={`${d.id}-${n}`}
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            gap: 12,
-                            flexWrap: 'wrap',
-                            padding: '10px 0',
-                            borderTop: '1px solid var(--line)',
-                            ...MONO,
-                            fontSize: 13,
-                          }}
-                        >
-                          <span style={{ flex: '1 1 14em' }}>
-                            <span style={{ color: 'var(--accentText)', fontWeight: 700 }}>
-                              [{n + 1}]
-                            </span>{' '}
-                            {d.text}
-                          </span>
-                          <span style={{ color: 'var(--inkSoft)', whiteSpace: 'nowrap' }}>
-                            {d.xp > 0 ? `+${d.xp} XP` : '—'}
-                            {d.lebukas !== 0
-                              ? ` · ${d.lebukas > 0 ? '+' : ''}${d.lebukas} ${labels.exposure}`
-                              : ''}
-                          </span>
-                        </li>
-                      ))}
-                    </ol>
-                  </div>
+                  <>
+                    <div style={{ ...CAP, marginTop: 24, letterSpacing: '.14em' }}>{labels.decisions}</div>
+                    {decisionLog.map((d, n) => (
+                      <div key={d.id + '-' + n} style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: '4px 16px', padding: '12px 0', borderBottom: '1px solid var(--line)' }}>
+                        <div style={{ minWidth: 0, flex: '1 1 300px' }}>
+                          <div style={{ fontSize: 13, color: 'var(--inkSoft)' }}>{d.question}</div>
+                          <div style={{ fontSize: 17, fontWeight: 600, marginTop: 2 }}>{d.answer}</div>
+                        </div>
+                        <div style={{ font: '600 13px/1.3 var(--fL)', color: 'var(--accentText)', alignSelf: 'center', whiteSpace: 'nowrap' }}>
+                          {d.xp > 0 ? '+' + d.xp + ' XP' : '—'}
+                          {d.lebukas !== 0 ? ' · ' + (d.lebukas > 0 ? '+' : '') + d.lebukas : ''}
+                        </div>
+                      </div>
+                    ))}
+                  </>
                 )}
 
-                <p style={{ marginTop: 16, ...MONO, fontSize: 12, color: 'var(--inkSoft)' }}>
-                  {labels.savedLocal}
-                </p>
+                <div style={{ marginTop: 16, fontSize: 15 }}>{labels.endNext}</div>
+
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 22, alignItems: 'center' }}>
+                  <button
+                    onClick={restart}
+                    className="fz-btn"
+                    style={{ padding: '14px 20px 13px', background: 'transparent', color: 'var(--ink)', border: 'var(--bw) solid var(--ink)', ...DISPLAY, fontSize: 21, cursor: 'pointer' }}
+                  >
+                    {labels.replay}
+                  </button>
+                  <span style={{ fontSize: 13, color: 'var(--inkSoft)' }}>{labels.savedLocal}</span>
+                </div>
               </div>
             </div>
           </div>
         )}
       </div>
 
-      {!finished && !exposed && beat?.kind !== 'choice' && (
-        <p style={{ ...MONO, fontSize: 12, color: 'var(--inkSoft)', marginTop: 16 }}>{labels.playHelp}</p>
-      )}
-
-      {(finished || exposed) && (
-        <button
-          className="fz-btn"
-          onClick={() => {
-            clearLocalSave()
-            setState(initialState(name))
-            setQueue(allBeats)
-            setI(0)
-          }}
-          style={{
-            marginTop: 20,
-            padding: '10px 18px',
-            border: 'var(--bw) solid var(--ink)',
-            background: 'transparent',
-            color: 'var(--ink)',
-            fontFamily: 'var(--fD)',
-            fontWeight: 'var(--dW)',
-            textTransform: 'uppercase',
-            cursor: 'pointer',
-          }}
-        >
-          {finished && !exposed ? labels.replay : labels.restart}
-        </button>
-      )}
+      <p style={{ margin: '14px 0 0', fontSize: 13, color: 'var(--inkSoft)' }}>{labels.playHelp}</p>
     </div>
   )
 }

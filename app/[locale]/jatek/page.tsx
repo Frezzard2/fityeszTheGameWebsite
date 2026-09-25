@@ -42,6 +42,7 @@ export default async function PlayPage({
     decisions: t('decisions'),
     savedLocal: t('savedLocal'),
     replay: t('replay'),
+    enterHint: t('enterHint'),
   }
 
   return (
