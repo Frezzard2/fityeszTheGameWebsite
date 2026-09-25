@@ -123,8 +123,35 @@ async function main() {
     ],
   }
 
+  // The Lexikon's chapter and item data comes from Lang.java too, so the
+  // codex cannot drift from the game the way a retyped list would.
+  const ITEM_KEYS: Record<string, string> = {
+    envelope1: 'item.envelope1',
+    envelopeSmall: 'item.envelopeSmall',
+    lakatosFile: 'item.lakatosFile',
+    offshore: 'item.offshore',
+    peteriDossier: 'item.peteriDossier',
+    bossTrust: 'item.bossTrust',
+    parliamentKey: 'item.parliamentKey',
+  }
+
+  const codex = {
+    chapters: [1, 2, 3, 4, 5, 6, 7].map((n) => ({
+      number: n,
+      title: t(`ch${n}.title`),
+      quote: t(`ch${n}.quote`),
+      place: t(`ch${n}.place`),
+      /** Only Chapter 1 is playable in the browser. */
+      free: n === 1,
+    })),
+    items: Object.entries(ITEM_KEYS).map(([id, key]) => ({ id, name: t(key) })),
+    ranks: [{ id: 'localMember', name: t('rank.localMember') }],
+  }
+
   const dir = join(dirname(fileURLToPath(import.meta.url)), '..', 'lib', 'story', 'content')
   mkdirSync(dir, { recursive: true })
+  writeFileSync(join(dir, 'codex.json'), JSON.stringify(codex, null, 2) + '\n', 'utf8')
+  console.log(`wrote codex.json (${codex.chapters.length} chapters, ${codex.items.length} items)`)
   for (const scene of [prologue, chapter1]) {
     writeFileSync(join(dir, `${scene.id}.json`), JSON.stringify(scene, null, 2) + '\n', 'utf8')
     console.log(`wrote ${scene.id}.json (${scene.beats.length} beats)`)
