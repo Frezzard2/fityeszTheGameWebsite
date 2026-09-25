@@ -48,7 +48,7 @@ Facts taken from the source, not assumed:
 
 | Decision | Choice |
 |---|---|
-| Stack | Next.js 15 (App Router, TypeScript) + Tailwind v4 on Vercel; Supabase for Postgres, Auth, Storage |
+| Stack | Next.js 16 (App Router, TypeScript) + Tailwind v4 on Vercel; Supabase for Postgres, Auth, Storage |
 | Languages | Hungarian and English, user-toggleable, Hungarian default |
 | Web demo scope | Prologue + Chapter 1 |
 | Registration | **Skippable** prompt at the end of Chapter 1 — never a hard wall on play |

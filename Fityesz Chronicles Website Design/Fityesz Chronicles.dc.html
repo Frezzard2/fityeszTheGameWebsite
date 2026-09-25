@@ -20,6 +20,14 @@ a{color:inherit;text-decoration:underline;text-underline-offset:3px}
 a:hover{color:var(--accentText)}
 @keyframes fzCaret{50%{opacity:0}}
 @keyframes fzIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes fzFade{from{opacity:0}to{opacity:1}}
+@keyframes fzMarquee{to{transform:translateX(-50%)}}
+@keyframes fzDrift{from{background-position:0 0}to{background-position:72px 36px}}
+@keyframes fzWord{from{translate:0 0}to{translate:-9% 0}}
+@keyframes fzPulse{0%{box-shadow:0 0 0 0 var(--accent)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
+@keyframes fzStampIn{0%{opacity:0;scale:1.9}65%{opacity:1;scale:.95}100%{opacity:1;scale:1}}
+@keyframes fzSlam{0%{opacity:0;scale:1.18}100%{opacity:1;scale:1}}
+@keyframes fzTab{from{opacity:0;translate:0 12px}to{opacity:1;translate:0 0}}
 </style>
 </helmet>
 <div style="{{ stageStyle }}">
@@ -32,8 +40,8 @@ a:hover{color:var(--accentText)}
 <div style="display:var(--cF);height:6px;"><div style="flex:1;background:var(--accent);"></div><div style="flex:1;background:var(--paper2);"></div><div style="flex:1;background:var(--second);"></div></div>
 <div style="max-width:1320px;margin:0 auto;padding:12px clamp(16px,3cqw,40px);display:flex;align-items:center;gap:18px;">
 <button onClick="{{ goHome }}" style="border:0;background:none;padding:0;cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left;color:var(--ink);">
-<span style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;background:var(--accent);color:var(--onAccent);font-family:var(--fD);font-weight:var(--dW);font-size:26px;line-height:1;border:var(--bw) solid var(--ink);">F</span>
-<span style="display:flex;flex-direction:column;line-height:.92;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;">
+<span style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;background:var(--accent);color:var(--onAccent);font-family:var(--fD);font-weight:var(--dW);font-size:26px;line-height:1.14;border:var(--bw) solid var(--ink);">F</span>
+<span style="display:flex;flex-direction:column;line-height:1.14;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;">
 <span style="font-size:24px;letter-spacing:.02em;">Fityesz</span>
 <span style="font-size:12px;letter-spacing:.26em;color:var(--accentText);margin-top:5px;">{{ t.logoSub }}</span>
 </span>
@@ -41,7 +49,7 @@ a:hover{color:var(--accentText)}
 <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
 <nav style="display:flex;align-items:center;gap:2px;margin-left:auto;">
 <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
-<button onClick="{{ n.go }}" style="border:0;background:none;cursor:pointer;padding:10px 12px;font:600 13px/1 var(--fL);letter-spacing:.07em;text-transform:uppercase;color:var(--ink);box-shadow:inset 0 -3px 0 {{ n.bar }};" style-hover="color:var(--accentText)">{{ n.label }}</button>
+<button onClick="{{ n.go }}" style="border:0;background:none;cursor:pointer;padding:10px 12px;font:600 13px/1 var(--fL);letter-spacing:.07em;text-transform:uppercase;color:var(--ink);transition:box-shadow .2s ease,color .15s ease;box-shadow:inset 0 -3px 0 {{ n.bar }};" style-hover="color:var(--accentText)">{{ n.label }}</button>
 </sc-for>
 </nav>
 </sc-if>
@@ -52,8 +60,8 @@ a:hover{color:var(--accentText)}
 <button onClick="{{ setEn }}" style="border:0;cursor:pointer;padding:7px 9px;font:700 12px/1 var(--fL);letter-spacing:.08em;background:{{ enBg }};color:{{ enFg }};">EN</button>
 </div>
 <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
-<button onClick="{{ goAccount }}" style="border:0;background:none;cursor:pointer;padding:8px 6px;font:600 13px/1 var(--fL);letter-spacing:.07em;text-transform:uppercase;color:var(--ink);text-decoration:underline;text-underline-offset:4px;">{{ accountLabel }}</button>
-<button onClick="{{ goPlay }}" style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px 9px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:17px;line-height:1;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;white-space:nowrap;" style-hover="transform:translate(-2px,-2px)">{{ t.playFree }}</button>
+<button onClick="{{ goAccount }}" style="border:0;background:none;cursor:pointer;padding:8px 6px;font:600 13px/1 var(--fL);letter-spacing:.07em;text-transform:uppercase;color:var(--ink);text-decoration:underline;text-underline-offset:4px;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis;">{{ accountLabel }}</button>
+<button onClick="{{ goPlay }}" style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px 9px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:17px;line-height:1.14;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;white-space:nowrap;transition:transform .15s ease;" style-hover="transform:translate(-2px,-2px)">{{ t.playFree }}</button>
 </sc-if>
 <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
 <button onClick="{{ toggleMenu }}" style="border:var(--bw) solid var(--ink);background:var(--ink);color:var(--onInk);cursor:pointer;padding:8px 12px;font:700 12px/1 var(--fL);letter-spacing:.1em;text-transform:uppercase;">{{ menuLabel }}</button>
@@ -63,11 +71,11 @@ a:hover{color:var(--accentText)}
 <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
 <div style="border-top:var(--bw) solid var(--ink);background:var(--desk);padding:6px clamp(16px,3cqw,40px) 22px;">
 <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
-<button onClick="{{ n.go }}" style="display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;cursor:pointer;padding:14px 0 12px;font-family:var(--fD);font-weight:var(--dW);font-size:30px;line-height:1;text-transform:uppercase;color:var(--ink);">{{ n.label }}</button>
+<button onClick="{{ n.go }}" style="display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;cursor:pointer;padding:14px 0 12px;font-family:var(--fD);font-weight:var(--dW);font-size:30px;line-height:1.14;text-transform:uppercase;color:var(--ink);">{{ n.label }}</button>
 </sc-for>
 <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;">
-<button onClick="{{ goAccount }}" style="padding:12px 16px 11px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:18px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ accountLabel }}</button>
-<button onClick="{{ goPlay }}" style="padding:12px 16px 11px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:18px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ t.playFree }}</button>
+<button onClick="{{ goAccount }}" style="padding:12px 16px 11px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:18px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ accountLabel }}</button>
+<button onClick="{{ goPlay }}" style="padding:12px 16px 11px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:18px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.playFree }}</button>
 </div>
 </div>
 </sc-if>
@@ -75,27 +83,27 @@ a:hover{color:var(--accentText)}
 
 <sc-if value="{{ pg.home }}" hint-placeholder-val="{{ true }}">
 <section data-screen-label="Landing" style="display:var(--cB);position:relative;overflow:hidden;border-bottom:var(--bw) solid var(--ink);">
-<div style="position:absolute;top:0;right:0;bottom:0;width:64%;background-image:radial-gradient(circle,var(--ink) 1.2px,transparent 1.8px);background-size:9px 9px;-webkit-mask-image:linear-gradient(to left,rgba(0,0,0,.3),transparent 85%);mask-image:linear-gradient(to left,rgba(0,0,0,.3),transparent 85%);pointer-events:none;"></div>
+<div style="position:absolute;top:0;right:0;bottom:0;width:64%;background-image:radial-gradient(circle,var(--ink) 1.2px,transparent 1.8px);background-size:9px 9px;animation:{{ anim.drift }};-webkit-mask-image:linear-gradient(to left,rgba(0,0,0,.3),transparent 85%);mask-image:linear-gradient(to left,rgba(0,0,0,.3),transparent 85%);pointer-events:none;"></div>
 <div style="position:relative;max-width:1320px;margin:0 auto;padding:clamp(32px,5cqw,72px) clamp(16px,3cqw,40px) clamp(48px,6cqw,92px);display:flex;flex-wrap:wrap;align-items:flex-end;gap:clamp(36px,5cqw,72px);">
 <div style="flex:1 1 540px;min-width:0;">
-<div style="display:inline-block;transform:rotate(-2deg);background:var(--ink);color:var(--onInk);padding:9px 14px;font:700 13px/1.25 var(--fL);letter-spacing:.1em;text-transform:uppercase;">{{ t.heroKicker }}</div>
-<h1 style="margin:26px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.86;font-size:clamp(60px,10.5cqw,168px);letter-spacing:-.005em;">
-<span style="display:block;">{{ t.slogan1 }}</span>
-<span style="display:block;color:var(--accentText);">{{ t.slogan2 }}</span>
+<div data-reveal="drop" style="display:inline-block;transform:rotate(-2deg);background:var(--ink);color:var(--onInk);padding:9px 14px;font:700 13px/1.25 var(--fL);letter-spacing:.1em;text-transform:uppercase;">{{ t.heroKicker }}</div>
+<h1 style="margin:26px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.98;font-size:clamp(60px,10.5cqw,168px);letter-spacing:-.005em;">
+<span data-reveal="rise" data-delay="120" style="display:block;">{{ t.slogan1 }}</span>
+<span data-reveal="slam" data-delay="360" style="display:block;color:var(--accentText);transform-origin:left bottom;">{{ t.slogan2 }}</span>
 </h1>
-<p style="max-width:32em;margin:28px 0 0;font-size:clamp(17px,1.45cqw,20px);line-height:1.5;text-wrap:pretty;">{{ t.heroSub }}</p>
-<div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:30px;">
-<button onClick="{{ goPlay }}" style="display:inline-flex;align-items:center;gap:12px;padding:15px 24px 14px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;" style-hover="transform:translate(-2px,-2px)"><span style="width:0;height:0;border-left:11px solid currentColor;border-top:7px solid transparent;border-bottom:7px solid transparent;"></span>{{ t.cta1 }}</button>
-<button onClick="{{ goDownload }}" style="display:inline-flex;align-items:center;padding:15px 22px 14px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;" style-hover="background:var(--ink);color:var(--onInk)">{{ t.cta2 }}</button>
+<p data-reveal="up" data-delay="540" style="max-width:32em;margin:28px 0 0;font-size:clamp(17px,1.45cqw,20px);line-height:1.5;text-wrap:pretty;">{{ t.heroSub }}</p>
+<div data-reveal="up" data-delay="660" style="display:flex;flex-wrap:wrap;gap:14px;margin-top:30px;">
+<button onClick="{{ goPlay }}" style="display:inline-flex;align-items:center;gap:12px;padding:15px 24px 14px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1.14;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;transition:transform .15s ease;" style-hover="transform:translate(-2px,-2px)"><span style="width:0;height:0;border-left:11px solid currentColor;border-top:7px solid transparent;border-bottom:7px solid transparent;"></span>{{ t.cta1 }}</button>
+<button onClick="{{ goDownload }}" style="display:inline-flex;align-items:center;padding:15px 22px 14px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1.14;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;transition:background-color .15s ease,color .15s ease;" style-hover="background:var(--ink);color:var(--onInk)">{{ t.cta2 }}</button>
 </div>
-<p style="margin:16px 0 0;font-size:14px;color:var(--inkSoft);">{{ t.heroNote }}</p>
+<p data-reveal="fade" data-delay="840" style="margin:16px 0 0;font-size:14px;color:var(--inkSoft);">{{ t.heroNote }}</p>
 </div>
-<div style="flex:0 1 370px;min-width:260px;background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--sh);transform:rotate(1.2deg);">
-<div style="background:var(--accent);color:var(--onAccent);padding:14px 20px 12px;font-family:var(--fD);font-weight:var(--dW);font-size:28px;line-height:1;text-transform:uppercase;letter-spacing:.02em;border-bottom:var(--bw) solid var(--ink);">{{ t.posterTitle }}</div>
+<div data-reveal="swing" data-delay="300" style="flex:0 1 370px;min-width:260px;background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--sh);transform:rotate(1.2deg);">
+<div style="background:var(--accent);color:var(--onAccent);padding:14px 20px 12px;font-family:var(--fD);font-weight:var(--dW);font-size:28px;line-height:1.14;text-transform:uppercase;letter-spacing:.02em;border-bottom:var(--bw) solid var(--ink);">{{ t.posterTitle }}</div>
 <div style="padding:6px 20px 10px;">
-<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);"><span style="font-family:var(--fD);font-weight:var(--dW);font-size:58px;line-height:1;">3</span><span style="font:700 13px/1.2 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--inkSoft);">{{ t.rolls }}</span></div>
-<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);"><span style="font-family:var(--fD);font-weight:var(--dW);font-size:58px;line-height:1;">{{ t.cashVal }}</span><span style="font:700 13px/1.2 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--inkSoft);">{{ t.cash }}</span></div>
-<div style="display:flex;flex-direction:column;gap:6px;padding:14px 0 6px;"><span style="font:700 13px/1.2 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--inkSoft);">{{ t.debt }}</span><span style="font-family:var(--fD);font-weight:var(--dW);font-size:clamp(40px,4cqw,52px);line-height:1;color:var(--accentText);white-space:nowrap;">{{ t.debtVal }}</span></div>
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);"><span style="font-family:var(--fD);font-weight:var(--dW);font-size:58px;line-height:1.14;">3</span><span style="font:700 13px/1.2 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--inkSoft);">{{ t.rolls }}</span></div>
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);"><span style="font-family:var(--fD);font-weight:var(--dW);font-size:58px;line-height:1.14;">{{ t.cashVal }}</span><span style="font:700 13px/1.2 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--inkSoft);">{{ t.cash }}</span></div>
+<div style="display:flex;flex-direction:column;gap:6px;padding:14px 0 6px;"><span style="font:700 13px/1.2 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--inkSoft);">{{ t.debt }}</span><span style="font-family:var(--fD);font-weight:var(--dW);font-size:clamp(40px,4cqw,52px);line-height:1.14;color:var(--accentText);white-space:nowrap;">{{ t.debtVal }}</span></div>
 </div>
 <div style="background:var(--ink);color:var(--onInk);padding:12px 20px;font:600 14px/1.3 var(--fL);">{{ t.bank }}</div>
 </div>
@@ -105,39 +113,46 @@ a:hover{color:var(--accentText)}
 <section data-screen-label="Landing (dossier)" style="display:var(--dB);position:relative;overflow:hidden;border-bottom:var(--bw) solid var(--ink);">
 <div style="max-width:1180px;margin:0 auto;padding:clamp(28px,5cqw,72px) clamp(16px,3cqw,40px) clamp(44px,6cqw,88px);">
 <div style="position:relative;">
-<div style="position:absolute;top:22px;left:26px;right:-8px;bottom:-16px;background:var(--sheet);border:1px solid var(--line);transform:rotate(1.4deg);box-shadow:var(--shS);"></div>
-<div style="position:relative;background:var(--sheet);background-image:var(--tex);border:1px solid var(--line);box-shadow:var(--sh);padding:clamp(22px,4cqw,56px);transform:rotate(-.4deg);">
+<div data-reveal="fade" data-delay="350" style="position:absolute;top:22px;left:26px;right:-8px;bottom:-16px;background:var(--sheet);border:1px solid var(--line);transform:rotate(1.4deg);box-shadow:var(--shS);"></div>
+<div data-reveal="up" style="position:relative;background:var(--sheet);background-image:var(--tex);border:1px solid var(--line);box-shadow:var(--sh);padding:clamp(22px,4cqw,56px);transform:rotate(-.4deg);">
 <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;font:600 13px/1.3 var(--fL);letter-spacing:.12em;text-transform:uppercase;">
 <span>{{ t.caseNo }}</span>
-<span style="color:var(--accentText);border:2px solid var(--accentText);padding:5px 10px;">{{ t.conf }}</span>
+<span data-reveal="stamp" data-delay="700" style="color:var(--accentText);border:2px solid var(--accentText);padding:5px 10px;">{{ t.conf }}</span>
 </div>
-<h1 style="margin:28px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.95;font-size:clamp(48px,8cqw,120px);">
+<h1 style="margin:28px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:clamp(48px,8cqw,120px);">
 <span style="display:block;">{{ t.titleA }}</span><span style="display:block;">{{ t.titleB }}</span>
 </h1>
 <p style="max-width:40em;margin:24px 0 0;font-size:clamp(15px,1.25cqw,17px);line-height:1.65;">{{ t.heroSub }}</p>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:0 36px;margin-top:26px;">
+<div data-stagger="110" data-base="450" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:0 36px;margin-top:26px;">
 <sc-for list="{{ caseFields }}" as="f" hint-placeholder-count="5">
-<div style="display:flex;gap:12px;align-items:baseline;padding:11px 0;border-bottom:1px dashed var(--inkSoft);font-size:15px;">
+<div data-reveal="wipe" style="display:flex;gap:12px;align-items:baseline;padding:11px 0;border-bottom:1px dashed var(--inkSoft);font-size:15px;">
 <span style="flex:none;width:120px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:12px;color:var(--inkSoft);">{{ f.k }}</span>
 <span style="min-width:0;">{{ f.v }}</span>
 </div>
 </sc-for>
 </div>
 <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:32px;">
-<button onClick="{{ goPlay }}" style="display:inline-flex;align-items:center;gap:12px;padding:15px 24px 14px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:20px;line-height:1;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;" style-hover="transform:translate(-2px,-2px)"><span style="width:0;height:0;border-left:11px solid currentColor;border-top:7px solid transparent;border-bottom:7px solid transparent;"></span>{{ t.cta1 }}</button>
-<button onClick="{{ goDownload }}" style="display:inline-flex;align-items:center;padding:15px 22px 14px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:20px;line-height:1;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;" style-hover="background:var(--ink);color:var(--onInk)">{{ t.cta2 }}</button>
-<div style="margin-left:auto;transform:rotate(-7deg);border:4px double var(--accentText);color:var(--accentText);padding:10px 16px 8px;font-family:var(--fD);font-size:clamp(20px,2.4cqw,32px);text-transform:uppercase;line-height:1;opacity:.88;">{{ t.stampSlogan }}</div>
+<button onClick="{{ goPlay }}" style="display:inline-flex;align-items:center;gap:12px;padding:15px 24px 14px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:20px;line-height:1.14;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;transition:transform .15s ease;" style-hover="transform:translate(-2px,-2px)"><span style="width:0;height:0;border-left:11px solid currentColor;border-top:7px solid transparent;border-bottom:7px solid transparent;"></span>{{ t.cta1 }}</button>
+<button onClick="{{ goDownload }}" style="display:inline-flex;align-items:center;padding:15px 22px 14px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:20px;line-height:1.14;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;transition:background-color .15s ease,color .15s ease;" style-hover="background:var(--ink);color:var(--onInk)">{{ t.cta2 }}</button>
+<div data-reveal="stamp" data-delay="1300" style="margin-left:auto;transform:rotate(-7deg);border:4px double var(--accentText);color:var(--accentText);padding:10px 16px 8px;font-family:var(--fD);font-size:clamp(20px,2.4cqw,32px);text-transform:uppercase;line-height:1.14;opacity:.88;">{{ t.stampSlogan }}</div>
 </div>
 </div>
 </div>
 </div>
 </section>
 
-<section style="background:var(--ink);color:var(--onInk);">
-<div style="max-width:1320px;margin:0 auto;padding:18px clamp(16px,3cqw,40px);display:flex;flex-wrap:wrap;gap:10px 30px;justify-content:center;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:clamp(17px,1.7cqw,23px);line-height:1.15;letter-spacing:.02em;">
-<sc-for list="{{ bandQuotes }}" as="q" hint-placeholder-count="3">
+<section style="background:var(--ink);color:var(--onInk);overflow:hidden;">
+<div style="display:flex;width:max-content;animation:{{ anim.marquee }};font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:clamp(17px,1.7cqw,23px);line-height:1.15;letter-spacing:.02em;white-space:nowrap;" style-hover="animation-play-state:paused">
+<div style="display:flex;gap:30px;padding:18px 15px;">
+<sc-for list="{{ bandQuotes }}" as="q" hint-placeholder-count="5">
 <span style="display:flex;gap:14px;align-items:center;"><span style="color:var(--accent);">★</span><span>{{ q }}</span></span>
 </sc-for>
+</div>
+<div aria-hidden="true" style="display:flex;gap:30px;padding:18px 15px;">
+<sc-for list="{{ bandQuotes }}" as="q" hint-placeholder-count="5">
+<span style="display:flex;gap:14px;align-items:center;"><span style="color:var(--accent);">★</span><span>{{ q }}</span></span>
+</sc-for>
+</div>
 </div>
 </section>
 
@@ -146,35 +161,35 @@ a:hover{color:var(--accentText)}
 <div style="flex:0 1 240px;">
 <div style="font:700 13px/1.3 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.proTitle }}</div>
 </div>
-<div style="flex:1 1 600px;min-width:0;">
+<div data-stagger="130" style="flex:1 1 600px;min-width:0;">
 <sc-for list="{{ premise }}" as="l" hint-placeholder-count="5">
-<p style="margin:0 0 .32em;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(30px,4.3cqw,62px));line-height:1;text-wrap:balance;color:{{ l.c }};">{{ l.text }}</p>
+<p data-reveal="rise" style="margin:0 0 .32em;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(30px,4.3cqw,62px));line-height:1.14;text-wrap:balance;color:{{ l.c }};">{{ l.text }}</p>
 </sc-for>
-<div style="margin-top:40px;border:var(--bw) solid var(--ink);background:var(--sheet);box-shadow:var(--sh);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px 28px;align-items:center;">
+<div data-reveal="up" style="margin-top:40px;border:var(--bw) solid var(--ink);background:var(--sheet);box-shadow:var(--sh);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px 28px;align-items:center;">
 <div style="flex:1 1 320px;min-width:0;">
-<div style="display:flex;align-items:center;gap:8px;font:700 12px/1.2 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);"><span style="width:9px;height:9px;border-radius:50%;background:var(--accent);"></span>{{ t.phone }}</div>
+<div style="display:flex;align-items:center;gap:8px;font:700 12px/1.2 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);"><span style="width:9px;height:9px;border-radius:50%;background:var(--accent);animation:{{ anim.pulse }};"></span>{{ t.phone }}</div>
 <div style="margin-top:10px;font-size:clamp(18px,1.7cqw,22px);line-height:1.45;font-style:italic;">{{ t.offer }}</div>
 </div>
-<button onClick="{{ goPlay }}" style="display:inline-flex;align-items:center;gap:12px;padding:15px 24px 14px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;" style-hover="transform:translate(-2px,-2px)">{{ t.answer }}</button>
+<button onClick="{{ goPlay }}" style="display:inline-flex;align-items:center;gap:12px;padding:15px 24px 14px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1.14;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;transition:transform .15s ease;" style-hover="transform:translate(-2px,-2px)">{{ t.answer }}</button>
 </div>
 </div>
 </div>
 </section>
 
 <section style="border-bottom:var(--bw) solid var(--ink);">
-<div style="max-width:1320px;margin:0 auto;padding:clamp(56px,7cqw,104px) clamp(16px,3cqw,40px);">
+<div data-stagger="70" style="max-width:1320px;margin:0 auto;padding:clamp(56px,7cqw,104px) clamp(16px,3cqw,40px);">
 <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 32px;padding-bottom:18px;border-bottom:var(--bw) solid var(--ink);">
 <div>
-<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.9;font-size:calc(var(--dS) * clamp(44px,6.4cqw,96px));">{{ t.castTitle }}</h2>
+<h2 data-reveal="rise" style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:calc(var(--dS) * clamp(44px,6.4cqw,96px));">{{ t.castTitle }}</h2>
 <p style="margin:12px 0 0;font-size:17px;color:var(--inkSoft);">{{ t.castSub }}</p>
 </div>
 <button onClick="{{ goCharacters }}" style="border:0;background:none;cursor:pointer;padding:6px 0;font:700 14px/1 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--ink);text-decoration:underline;text-underline-offset:5px;">{{ t.castAll }} →</button>
 </div>
 <sc-for list="{{ roster }}" as="c" hint-placeholder-count="5">
-<button onClick="{{ goCharacters }}" style="display:grid;grid-template-columns:minmax(36px,64px) minmax(0,1fr) auto;align-items:center;gap:16px;width:100%;text-align:left;padding:20px 8px 18px 0;border:0;border-bottom:1px solid var(--line);background:none;cursor:pointer;color:var(--ink);" style-hover="background:var(--paper2)">
+<button data-reveal="up" onClick="{{ goCharacters }}" style="transition:background-color .2s ease;display:grid;grid-template-columns:minmax(36px,64px) minmax(0,1fr) auto;align-items:center;gap:16px;width:100%;text-align:left;padding:20px 8px 18px 0;border:0;border-bottom:1px solid var(--line);background:none;cursor:pointer;color:var(--ink);" style-hover="background:var(--paper2)">
 <span style="font:700 14px/1 var(--fL);letter-spacing:.1em;color:var(--inkSoft);padding-left:4px;">{{ c.num }}</span>
 <span style="min-width:0;">
-<span style="display:block;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(30px,4.2cqw,58px));line-height:.95;">{{ c.name }}</span>
+<span style="display:block;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(30px,4.2cqw,58px));line-height:1.14;">{{ c.name }}</span>
 <span style="display:block;margin-top:8px;font-size:15px;color:var(--inkSoft);">{{ c.title }}</span>
 </span>
 <span style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
@@ -188,12 +203,12 @@ a:hover{color:var(--accentText)}
 
 <section style="background:var(--paper2);border-bottom:var(--bw) solid var(--ink);">
 <div style="max-width:1320px;margin:0 auto;padding:clamp(56px,7cqw,104px) clamp(16px,3cqw,40px);">
-<h2 style="margin:0 0 32px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.9;font-size:calc(var(--dS) * clamp(44px,6.4cqw,96px));">{{ t.howTitle }}</h2>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:24px;">
-<div style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);display:flex;flex-direction:column;">
+<h2 data-reveal="rise" style="margin:0 0 32px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:calc(var(--dS) * clamp(44px,6.4cqw,96px));">{{ t.howTitle }}</h2>
+<div data-stagger="120" style="display:grid;grid-template-columns:{{ g3 }};gap:24px;">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);display:flex;flex-direction:column;">
 <div style="padding:24px 24px 0;">
-<div style="font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1;color:var(--accentText);">01</div>
-<h3 style="margin:10px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 30px);line-height:1;">{{ t.how1t }}</h3>
+<div style="font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1.14;color:var(--accentText);">01</div>
+<h3 style="margin:10px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 30px);line-height:1.14;">{{ t.how1t }}</h3>
 <p style="margin:10px 0 0;color:var(--inkSoft);font-size:15px;line-height:1.5;">{{ t.how1d }}</p>
 </div>
 <div style="margin-top:auto;padding:20px 24px 24px;">
@@ -205,30 +220,30 @@ a:hover{color:var(--accentText)}
 </div>
 </div>
 </div>
-<div style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);display:flex;flex-direction:column;">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);display:flex;flex-direction:column;">
 <div style="padding:24px 24px 0;">
-<div style="font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1;color:var(--accentText);">02</div>
-<h3 style="margin:10px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 30px);line-height:1;">{{ t.how2t }}</h3>
+<div style="font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1.14;color:var(--accentText);">02</div>
+<h3 style="margin:10px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 30px);line-height:1.14;">{{ t.how2t }}</h3>
 <p style="margin:10px 0 0;color:var(--inkSoft);font-size:15px;line-height:1.5;">{{ t.how2d }}</p>
 </div>
 <div style="margin-top:auto;padding:20px 24px 24px;">
 <div style="border-top:1px solid var(--line);padding-top:16px;">
 <div style="display:flex;justify-content:space-between;font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;"><span>{{ t.exposure }}</span><span style="color:var(--accentText);">25 / 100</span></div>
-<div style="margin-top:10px;height:20px;border:2px solid var(--ink);position:relative;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),var(--line) calc(10% - 1px) 10%);"><div style="position:absolute;left:0;top:0;bottom:0;width:25%;background:var(--danger);"></div></div>
+<div style="margin-top:10px;height:20px;border:2px solid var(--ink);position:relative;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),var(--line) calc(10% - 1px) 10%);"><div data-reveal="bar" data-delay="350" style="position:absolute;left:0;top:0;bottom:0;width:25%;background:var(--danger);transform-origin:left;"></div></div>
 <div style="margin-top:8px;display:flex;justify-content:space-between;font:600 11px/1 var(--fL);color:var(--inkSoft);"><span>0</span><span>50</span><span>100</span></div>
 </div>
 </div>
 </div>
-<div style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);display:flex;flex-direction:column;">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);display:flex;flex-direction:column;">
 <div style="padding:24px 24px 0;">
-<div style="font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1;color:var(--accentText);">03</div>
-<h3 style="margin:10px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 30px);line-height:1;">{{ t.how3t }}</h3>
+<div style="font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1.14;color:var(--accentText);">03</div>
+<h3 style="margin:10px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 30px);line-height:1.14;">{{ t.how3t }}</h3>
 <p style="margin:10px 0 0;color:var(--inkSoft);font-size:15px;line-height:1.5;">{{ t.how3d }}</p>
 </div>
 <div style="margin-top:auto;padding:20px 24px 24px;">
 <div style="border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:10px;">
-<div style="display:flex;align-items:center;gap:10px;font:700 12px/1 var(--fL);letter-spacing:.08em;text-transform:uppercase;"><span style="width:70px;">{{ t.you }}</span><div style="flex:1;height:12px;background:var(--paper2);border:1px solid var(--line);"><div style="width:100%;height:100%;background:var(--good);"></div></div><span style="width:56px;text-align:right;">100/100</span></div>
-<div style="display:flex;align-items:center;gap:10px;font:700 12px/1 var(--fL);letter-spacing:.08em;text-transform:uppercase;"><span style="width:70px;">Lakatos</span><div style="flex:1;height:12px;background:var(--paper2);border:1px solid var(--line);"><div style="width:75%;height:100%;background:var(--danger);"></div></div><span style="width:56px;text-align:right;">60/80</span></div>
+<div style="display:flex;align-items:center;gap:10px;font:700 12px/1 var(--fL);letter-spacing:.08em;text-transform:uppercase;"><span style="width:70px;">{{ t.you }}</span><div style="flex:1;height:12px;background:var(--paper2);border:1px solid var(--line);"><div data-reveal="bar" data-delay="300" style="width:100%;height:100%;background:var(--good);transform-origin:left;"></div></div><span style="width:56px;text-align:right;">100/100</span></div>
+<div style="display:flex;align-items:center;gap:10px;font:700 12px/1 var(--fL);letter-spacing:.08em;text-transform:uppercase;"><span style="width:70px;">Lakatos</span><div style="flex:1;height:12px;background:var(--paper2);border:1px solid var(--line);"><div data-reveal="bar" data-delay="450" style="width:75%;height:100%;background:var(--danger);transform-origin:left;"></div></div><span style="width:56px;text-align:right;">60/80</span></div>
 <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;">
 <span style="padding:8px 12px;background:var(--ink);color:var(--onInk);font:700 12px/1 var(--fL);letter-spacing:.08em;text-transform:uppercase;">1 · {{ t.attack }}</span>
 <span style="padding:8px 12px;border:1px solid var(--ink);font:700 12px/1 var(--fL);letter-spacing:.08em;text-transform:uppercase;">2 · {{ t.defend }}</span>
@@ -242,17 +257,17 @@ a:hover{color:var(--accentText)}
 
 <section style="border-bottom:var(--bw) solid var(--ink);">
 <div style="max-width:1320px;margin:0 auto;padding:clamp(56px,7cqw,104px) clamp(16px,3cqw,40px);">
-<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.9;font-size:calc(var(--dS) * clamp(44px,6.4cqw,96px));max-width:12em;">{{ t.saveTitle }}</h2>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:1px;background:var(--line);border:var(--bw) solid var(--ink);margin-top:34px;">
+<h2 data-reveal="rise" style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:calc(var(--dS) * clamp(44px,6.4cqw,96px));max-width:12em;">{{ t.saveTitle }}</h2>
+<div data-stagger="110" style="display:grid;grid-template-columns:{{ g4 }};gap:1px;background:var(--line);border:var(--bw) solid var(--ink);margin-top:34px;">
 <sc-for list="{{ saveSteps }}" as="st" hint-placeholder-count="4">
-<div style="background:var(--sheet);padding:24px 24px 28px;">
-<div style="font-family:var(--fD);font-weight:var(--dW);font-size:64px;line-height:.9;color:var(--accentText);">{{ st.n }}</div>
+<div data-reveal="up" style="background:var(--sheet);padding:24px 24px 28px;">
+<div style="font-family:var(--fD);font-weight:var(--dW);font-size:64px;line-height:1.14;color:var(--accentText);">{{ st.n }}</div>
 <p style="margin:16px 0 0;font-size:16px;line-height:1.45;">{{ st.text }}</p>
 </div>
 </sc-for>
 </div>
 <div style="margin-top:28px;">
-<button onClick="{{ goPlay }}" style="display:inline-flex;align-items:center;gap:12px;padding:15px 24px 14px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;" style-hover="transform:translate(-2px,-2px)"><span style="width:0;height:0;border-left:11px solid currentColor;border-top:7px solid transparent;border-bottom:7px solid transparent;"></span>{{ t.saveCta }}</button>
+<button onClick="{{ goPlay }}" style="display:inline-flex;align-items:center;gap:12px;padding:15px 24px 14px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1.14;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;transition:transform .15s ease;" style-hover="transform:translate(-2px,-2px)"><span style="width:0;height:0;border-left:11px solid currentColor;border-top:7px solid transparent;border-bottom:7px solid transparent;"></span>{{ t.saveCta }}</button>
 </div>
 </div>
 </section>
@@ -260,12 +275,12 @@ a:hover{color:var(--accentText)}
 <section style="background:var(--accent);color:var(--onAccent);border-bottom:var(--bw) solid var(--ink);">
 <div style="max-width:1320px;margin:0 auto;padding:clamp(52px,6cqw,92px) clamp(16px,3cqw,40px);display:flex;flex-wrap:wrap;gap:28px 56px;align-items:flex-end;justify-content:space-between;">
 <div style="flex:1 1 520px;min-width:0;">
-<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(44px,6.4cqw,96px));line-height:.9;">{{ t.supTitle }}</h2>
+<h2 data-reveal="rise" style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(44px,6.4cqw,96px));line-height:1.14;">{{ t.supTitle }}</h2>
 <p style="margin:18px 0 0;max-width:34em;font-size:18px;line-height:1.5;">{{ t.supSub }}</p>
 </div>
 <div style="display:flex;flex-wrap:wrap;gap:12px;">
-<a href="{{ kofiHref }}" target="_blank" rel="noopener" onClick="{{ kofiClick }}" style="display:inline-flex;align-items:center;padding:15px 22px 14px;background:var(--ink);color:var(--onInk);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1;text-transform:uppercase;letter-spacing:.03em;text-decoration:none;">{{ kofiLabel }}</a>
-<button onClick="{{ goSupport }}" style="padding:15px 22px 14px;background:transparent;color:var(--onAccent);border:var(--bw) solid var(--onAccent);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;">{{ t.meet }}</button>
+<a href="{{ kofiHref }}" target="_blank" rel="noopener" onClick="{{ kofiClick }}" style="display:inline-flex;align-items:center;padding:15px 22px 14px;background:var(--ink);color:var(--onInk);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;letter-spacing:.03em;text-decoration:none;">{{ kofiLabel }}</a>
+<button onClick="{{ goSupport }}" style="padding:15px 22px 14px;background:transparent;color:var(--onAccent);border:var(--bw) solid var(--onAccent);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;">{{ t.meet }}</button>
 </div>
 </div>
 </section>
@@ -275,26 +290,26 @@ a:hover{color:var(--accentText)}
 <section data-screen-label="Characters" style="border-bottom:var(--bw) solid var(--ink);">
 <div style="max-width:1320px;margin:0 auto;padding:clamp(40px,6cqw,88px) clamp(16px,3cqw,40px) clamp(56px,7cqw,104px);">
 <div style="font:700 13px/1.3 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.charsKicker }}</div>
-<h1 style="margin:12px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.88;font-size:calc(var(--dS) * clamp(56px,9cqw,140px));">{{ t.navChars }}</h1>
+<h1 data-reveal="rise" style="margin:12px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.98;font-size:calc(var(--dS) * clamp(56px,9cqw,140px));">{{ t.navChars }}</h1>
 <p style="margin:18px 0 0;max-width:30em;font-size:clamp(18px,1.6cqw,22px);line-height:1.45;font-style:italic;">{{ t.charsQuote }}</p>
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:28px;margin-top:44px;">
+<div data-stagger="90" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:28px;margin-top:44px;">
 <sc-for list="{{ cast }}" as="c" hint-placeholder-count="6">
-<article style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--sh);display:flex;flex-direction:column;min-width:0;">
+<article data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--sh);display:flex;flex-direction:column;min-width:0;transition:translate .25s cubic-bezier(.2,.7,.2,1);" style-hover="translate:0 -6px">
 <div style="position:relative;height:220px;overflow:hidden;background:{{ c.bg }};color:{{ c.fg }};border-bottom:var(--bw) solid var(--ink);">
 <div style="display:var(--cB);position:absolute;inset:0;background-image:radial-gradient(circle,{{ c.fg }} 1px,transparent 1.6px);background-size:8px 8px;opacity:.3;-webkit-mask-image:linear-gradient(200deg,#000 10%,transparent 70%);mask-image:linear-gradient(200deg,#000 10%,transparent 70%);"></div>
-<div style="display:var(--cB);position:absolute;right:-4px;bottom:-44px;font-family:var(--fD);font-weight:var(--dW);font-size:250px;line-height:1;letter-spacing:-.03em;background-image:radial-gradient(circle,{{ c.fg }} 2.4px,transparent 3px);background-size:7px 7px;-webkit-background-clip:text;background-clip:text;color:transparent;">{{ c.ini }}</div>
-<div style="display:var(--cB);position:absolute;left:16px;top:16px;font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;">{{ c.num }} · {{ c.first }}</div>
+<div style="display:var(--cB);position:absolute;right:-6px;bottom:10px;font-family:var(--fD);font-weight:var(--dW);font-size:200px;line-height:1;letter-spacing:-.03em;background-image:radial-gradient(circle,{{ c.fg }} 2.4px,transparent 3px);background-size:7px 7px;-webkit-background-clip:text;background-clip:text;color:transparent;">{{ c.ini }}</div>
+<div style="display:var(--cB);position:absolute;left:16px;top:16px;font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;">{{ c.num }} · {{ c.first }}</div>
 <div style="display:var(--dF);position:absolute;inset:0;padding:18px;gap:18px;align-items:center;">
 <div style="flex:none;width:118px;height:150px;border:1px dashed var(--inkSoft);display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;font:600 11px/1.35 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);background:var(--sheet);">{{ t.noPhoto }}</div>
 <div style="font:600 12px/1.8 var(--fL);letter-spacing:.08em;text-transform:uppercase;">{{ t.fileNo }} FK-{{ c.num }}<br>{{ c.first }}</div>
 </div>
 <sc-if value="{{ c.boss }}" hint-placeholder-val="{{ false }}">
 <div style="display:var(--cB);position:absolute;right:14px;top:14px;padding:6px 8px;background:var(--ink);color:var(--onInk);font:700 11px/1 var(--fL);letter-spacing:.12em;">BOSSFIGHT</div>
-<div style="display:var(--dB);position:absolute;right:14px;bottom:18px;transform:rotate(-8deg);border:3px double var(--accentText);color:var(--accentText);padding:6px 10px 4px;font-family:var(--fD);font-size:20px;line-height:1;text-transform:uppercase;opacity:.9;">Bossfight</div>
+<div data-reveal="stamp" data-delay="450" style="display:var(--dB);position:absolute;right:14px;bottom:18px;transform:rotate(-8deg);border:3px double var(--accentText);color:var(--accentText);padding:6px 10px 4px;font-family:var(--fD);font-size:20px;line-height:1.14;text-transform:uppercase;opacity:.9;">Bossfight</div>
 </sc-if>
 </div>
 <div style="padding:20px 22px 22px;display:flex;flex-direction:column;gap:10px;flex:1;">
-<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 44px);line-height:.92;">{{ c.name }}</h2>
+<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 44px);line-height:1.14;">{{ c.name }}</h2>
 <div style="font:700 12px/1.35 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--accentText);">{{ c.title }}</div>
 <p style="margin:6px 0 0;font-size:17px;line-height:1.45;font-style:italic;text-wrap:pretty;">{{ c.q }}</p>
 <div style="margin-top:auto;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;font:600 12px/1.2 var(--fL);letter-spacing:.08em;text-transform:uppercase;color:var(--inkSoft);"><span>{{ t.firstSeen }}</span><span>{{ c.first }}</span></div>
@@ -310,47 +325,47 @@ a:hover{color:var(--accentText)}
 <section data-screen-label="Lore" style="border-bottom:var(--bw) solid var(--ink);">
 <div style="max-width:1320px;margin:0 auto;padding:clamp(40px,6cqw,88px) clamp(16px,3cqw,40px) clamp(56px,7cqw,104px);">
 <div style="font:700 13px/1.3 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.loreKicker }}</div>
-<h1 style="margin:12px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.88;font-size:calc(var(--dS) * clamp(56px,9cqw,140px));">{{ t.navLore }}</h1>
+<h1 data-reveal="rise" style="margin:12px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.98;font-size:calc(var(--dS) * clamp(56px,9cqw,140px));">{{ t.navLore }}</h1>
 <p style="margin:18px 0 0;max-width:34em;font-size:clamp(17px,1.5cqw,20px);line-height:1.5;">{{ t.loreSub }}</p>
 <div style="display:flex;flex-wrap:wrap;gap:8px;margin:36px 0;padding-bottom:18px;border-bottom:var(--bw) solid var(--ink);">
 <sc-for list="{{ loreTabs }}" as="tb" hint-placeholder-count="5">
-<button onClick="{{ tb.go }}" style="border:var(--bw) solid var(--ink);cursor:pointer;padding:10px 14px 9px;font-family:var(--fD);font-weight:var(--dW);font-size:calc(var(--dS) * 22px);line-height:1;text-transform:uppercase;background:{{ tb.bg }};color:{{ tb.fg }};">{{ tb.label }}</button>
+<button onClick="{{ tb.go }}" style="border:var(--bw) solid var(--ink);cursor:pointer;padding:10px 14px 9px;font-family:var(--fD);font-weight:var(--dW);font-size:calc(var(--dS) * 22px);line-height:1.14;text-transform:uppercase;background:{{ tb.bg }};color:{{ tb.fg }};">{{ tb.label }}</button>
 </sc-for>
 </div>
 
 <sc-if value="{{ lt.party }}" hint-placeholder-val="{{ true }}">
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:28px;">
-<div style="background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--sh);padding:clamp(24px,3cqw,40px);display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-height:440px;position:relative;overflow:hidden;">
+<div data-reveal="up" style="background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--sh);padding:clamp(24px,3cqw,40px);display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-height:440px;position:relative;overflow:hidden;">
 <div style="display:var(--cB);position:absolute;inset:0;background-image:radial-gradient(circle,var(--onAccent) 1.2px,transparent 1.8px);background-size:9px 9px;opacity:.22;-webkit-mask-image:linear-gradient(to top,#000,transparent 70%);mask-image:linear-gradient(to top,#000,transparent 70%);"></div>
 <div style="position:relative;font:700 12px/1 var(--fL);letter-spacing:.16em;text-transform:uppercase;">Fityesz</div>
-<div style="position:relative;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(64px,8cqw,124px));line-height:.86;">{{ t.slogan1 }}<br>{{ t.slogan2 }}</div>
+<div style="position:relative;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(64px,8cqw,124px));line-height:1.04;">{{ t.slogan1 }}<br>{{ t.slogan2 }}</div>
 <p style="position:relative;margin:0;font-size:15px;line-height:1.5;max-width:28em;">{{ t.partyCaption }}</p>
 </div>
-<div style="display:flex;flex-direction:column;gap:28px;">
-<div style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:26px;">
+<div data-stagger="120" style="display:flex;flex-direction:column;gap:28px;">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:26px;">
 <div style="font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.leaderLabel }}</div>
-<div style="margin-top:12px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(44px,5cqw,68px));line-height:.9;">Kapzs Imre</div>
+<div style="margin-top:12px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(44px,5cqw,68px));line-height:1.14;">Kapzs Imre</div>
 <div style="margin-top:10px;font-size:17px;font-style:italic;">{{ t.leaderTitle }}</div>
 </div>
-<div style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:26px;">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:26px;">
 <div style="font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.mottoLabel }}</div>
-<div style="margin-top:12px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(28px,3cqw,40px));line-height:1;">{{ t.q2 }}</div>
+<div style="margin-top:12px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(28px,3cqw,40px));line-height:1.14;">{{ t.q2 }}</div>
 </div>
-<div style="padding:4px 4px 0 22px;border-left:var(--bw) solid var(--ink);">
+<div data-reveal="up" style="padding:4px 4px 0 22px;border-left:var(--bw) solid var(--ink);">
 <p style="margin:0;font-size:18px;line-height:1.5;font-style:italic;">{{ t.familyQuote }}</p>
 <div style="margin-top:10px;font:600 12px/1 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--inkSoft);">{{ t.familyBy }}</div>
 </div>
 </div>
 </div>
-<div style="margin-top:28px;background:var(--ink);color:var(--onInk);border:var(--bw) solid var(--ink);padding:clamp(24px,3cqw,40px);">
+<div data-reveal="up" style="margin-top:28px;background:var(--ink);color:var(--onInk);border:var(--bw) solid var(--ink);padding:clamp(24px,3cqw,40px);">
 <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;align-items:baseline;">
-<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(32px,3.6cqw,48px));line-height:1;">{{ t.rulesLabel }}</div>
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(32px,3.6cqw,48px));line-height:1.14;">{{ t.rulesLabel }}</div>
 <div style="font:600 12px/1 var(--fL);letter-spacing:.1em;text-transform:uppercase;opacity:.8;">{{ t.rulesBy }}</div>
 </div>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:24px;margin-top:26px;">
+<div data-stagger="120" style="display:grid;grid-template-columns:{{ g4 }};gap:24px;margin-top:26px;">
 <sc-for list="{{ partyRules }}" as="r" hint-placeholder-count="4">
-<div style="border-top:2px solid var(--accent);padding-top:14px;">
-<div style="font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1;color:var(--accent);">{{ r.n }}</div>
+<div data-reveal="up" style="border-top:2px solid var(--accent);padding-top:14px;">
+<div style="font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1.14;color:var(--accent);">{{ r.n }}</div>
 <div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 26px);line-height:1.05;">{{ r.text }}</div>
 </div>
 </sc-for>
@@ -359,12 +374,12 @@ a:hover{color:var(--accentText)}
 </sc-if>
 
 <sc-if value="{{ lt.chapters }}" hint-placeholder-val="{{ false }}">
-<div style="border-top:var(--bw) solid var(--ink);">
+<div data-stagger="60" style="border-top:var(--bw) solid var(--ink);">
 <sc-for list="{{ loreChapters }}" as="ch" hint-placeholder-count="8">
-<div style="display:flex;flex-wrap:wrap;gap:10px 32px;padding:24px 0;border-bottom:1px solid var(--line);align-items:baseline;">
+<div data-reveal="up" style="display:flex;flex-wrap:wrap;gap:10px 32px;padding:24px 0;border-bottom:1px solid var(--line);align-items:baseline;">
 <div style="flex:0 0 150px;font:700 13px/1.2 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--accentText);">{{ ch.label }}</div>
 <div style="flex:1 1 420px;min-width:0;">
-<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(30px,3.6cqw,48px));line-height:.95;">{{ ch.title }}</div>
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(30px,3.6cqw,48px));line-height:1.14;">{{ ch.title }}</div>
 <div style="margin-top:8px;font-size:16px;font-style:italic;color:var(--inkSoft);">{{ ch.quote }}</div>
 </div>
 <div style="flex:0 0 auto;font:700 11px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;padding:6px 8px;border:1px solid var(--ink);background:{{ ch.tagBg }};color:{{ ch.tagFg }};">{{ ch.status }}</div>
@@ -374,19 +389,19 @@ a:hover{color:var(--accentText)}
 </sc-if>
 
 <sc-if value="{{ lt.places }}" hint-placeholder-val="{{ false }}">
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:24px;">
+<div data-stagger="70" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:24px;">
 <sc-for list="{{ lorePlaces }}" as="pl" hint-placeholder-count="8">
-<div style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:22px;display:flex;flex-direction:column;gap:10px;min-height:210px;">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:22px;display:flex;flex-direction:column;gap:10px;min-height:210px;">
 <div style="display:flex;justify-content:space-between;gap:10px;font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);"><span>{{ pl.label }}</span><span>{{ t.placeWord }}</span></div>
 <sc-if value="{{ pl.open }}" hint-placeholder-val="{{ true }}">
-<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 32px);line-height:.95;">{{ pl.name }}</div>
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 32px);line-height:1.14;">{{ pl.name }}</div>
 <p style="margin:0;font-size:15px;line-height:1.5;">{{ pl.d }}</p>
 </sc-if>
 <sc-if value="{{ pl.secret }}" hint-placeholder-val="{{ false }}">
-<div style="height:30px;width:80%;background:var(--ink);"></div>
-<div style="height:14px;width:95%;background:var(--ink);"></div>
-<div style="height:14px;width:62%;background:var(--ink);"></div>
-<div style="margin-top:auto;align-self:flex-start;transform:rotate(-4deg);border:2px solid var(--accentText);color:var(--accentText);padding:5px 8px 3px;font-family:var(--fD);font-size:18px;text-transform:uppercase;line-height:1;">{{ t.censored }}</div>
+<div data-reveal="bar" data-delay="350" style="height:30px;width:80%;background:var(--ink);transform-origin:left;"></div>
+<div data-reveal="bar" data-delay="500" style="height:14px;width:95%;background:var(--ink);transform-origin:left;"></div>
+<div data-reveal="bar" data-delay="650" style="height:14px;width:62%;background:var(--ink);transform-origin:left;"></div>
+<div data-reveal="stamp" data-delay="880" style="margin-top:auto;align-self:flex-start;transform:rotate(-4deg);border:2px solid var(--accentText);color:var(--accentText);padding:5px 8px 3px;font-family:var(--fD);font-size:18px;text-transform:uppercase;line-height:1.14;">{{ t.censored }}</div>
 </sc-if>
 </div>
 </sc-for>
@@ -394,11 +409,11 @@ a:hover{color:var(--accentText)}
 </sc-if>
 
 <sc-if value="{{ lt.items }}" hint-placeholder-val="{{ false }}">
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:24px;">
+<div data-stagger="70" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:24px;">
 <sc-for list="{{ loreItems }}" as="it" hint-placeholder-count="7">
-<div style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:22px;display:flex;flex-direction:column;gap:10px;">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:22px;display:flex;flex-direction:column;gap:10px;">
 <div style="display:flex;justify-content:space-between;gap:10px;font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;"><span style="color:var(--inkSoft);">{{ it.where }}</span><span style="color:{{ it.stC }};">{{ it.status }}</span></div>
-<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 30px);line-height:.98;">{{ it.name }}</div>
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 30px);line-height:1.14;">{{ it.name }}</div>
 <p style="margin:0;font-size:15px;line-height:1.5;color:var(--inkSoft);">{{ it.d }}</p>
 </div>
 </sc-for>
@@ -406,20 +421,20 @@ a:hover{color:var(--accentText)}
 </sc-if>
 
 <sc-if value="{{ lt.rules }}" hint-placeholder-val="{{ false }}">
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:24px;">
+<div data-stagger="110" style="display:grid;grid-template-columns:{{ g3 }};gap:24px;">
 <sc-for list="{{ loreRules }}" as="r" hint-placeholder-count="3">
-<div style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:24px;">
-<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 34px);line-height:1;">{{ r.title }}</div>
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:24px;">
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 34px);line-height:1.14;">{{ r.title }}</div>
 <p style="margin:12px 0 0;font-size:15px;line-height:1.55;">{{ r.d }}</p>
 </div>
 </sc-for>
 </div>
-<h3 style="margin:52px 0 12px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(36px,4.4cqw,60px));line-height:.95;">{{ t.bossT }}</h3>
+<h3 data-reveal="rise" style="margin:52px 0 12px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(36px,4.4cqw,60px));line-height:1.14;">{{ t.bossT }}</h3>
 <p style="margin:0 0 24px;font-size:16px;max-width:40em;">{{ t.bossD }}</p>
-<div style="border-top:var(--bw) solid var(--ink);">
+<div data-stagger="100" style="border-top:var(--bw) solid var(--ink);">
 <sc-for list="{{ loreBosses }}" as="b" hint-placeholder-count="3">
-<div style="display:flex;flex-wrap:wrap;gap:10px 32px;padding:22px 0;border-bottom:1px solid var(--line);">
-<div style="flex:0 0 230px;"><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--accentText);">{{ b.where }}</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 32px);line-height:.95;">{{ b.name }}</div></div>
+<div data-reveal="up" style="display:flex;flex-wrap:wrap;gap:10px 32px;padding:22px 0;border-bottom:1px solid var(--line);">
+<div style="flex:0 0 230px;"><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--accentText);">{{ b.where }}</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 32px);line-height:1.14;">{{ b.name }}</div></div>
 <div style="flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:8px;">
 <sc-for list="{{ b.moves }}" as="m" hint-placeholder-count="1">
 <div style="font-size:16px;line-height:1.5;">{{ m }}</div>
@@ -437,7 +452,7 @@ a:hover{color:var(--accentText)}
 <section data-screen-label="Play Chapter 1" style="border-bottom:var(--bw) solid var(--ink);">
 <div style="max-width:1320px;margin:0 auto;padding:clamp(14px,2.5cqw,32px) clamp(10px,3cqw,40px) clamp(40px,5cqw,72px);">
 <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px;padding:12px 16px;background:var(--sheet);border:var(--bw) solid var(--ink);border-bottom:0;">
-<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 24px);line-height:1;">{{ vn.chapter }}</div>
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 24px);line-height:1.14;">{{ vn.chapter }}</div>
 <div style="display:flex;align-items:center;gap:10px 20px;margin-left:auto;flex-wrap:wrap;font:700 12px/1 var(--fL);letter-spacing:.1em;text-transform:uppercase;">
 <div style="display:flex;align-items:baseline;gap:6px;">XP <span style="font-size:18px;">{{ vn.xp }}</span></div>
 <div style="display:flex;align-items:center;gap:8px;">{{ t.exposure }}<div style="width:100px;height:10px;border:1px solid var(--ink);background:var(--paper2);"><div style="height:100%;width:{{ vn.expW }};background:var(--danger);transition:width .6s;"></div></div><span>{{ vn.expTxt }}</span></div>
@@ -449,41 +464,41 @@ a:hover{color:var(--accentText)}
 <div onClick="{{ vnStageClick }}" style="position:relative;overflow:hidden;background:var(--ink);color:var(--onInk);border:var(--bw) solid var(--ink);min-height:clamp(600px,56cqw,700px);cursor:{{ vn.cursor }};user-select:none;">
 <div style="display:var(--cB);position:absolute;inset:0;background-image:radial-gradient(circle,var(--onInk) 1px,transparent 1.6px);background-size:10px 10px;opacity:.13;-webkit-mask-image:radial-gradient(ellipse at 70% 25%,#000,transparent 72%);mask-image:radial-gradient(ellipse at 70% 25%,#000,transparent 72%);"></div>
 <div style="display:var(--dB);position:absolute;inset:0;background-image:linear-gradient(var(--onInk) 1px,transparent 1px),linear-gradient(90deg,var(--onInk) 1px,transparent 1px);background-size:48px 48px;opacity:.06;"></div>
-<div style="position:absolute;left:-.04em;top:9%;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 22cqw);line-height:.8;color:var(--accent);opacity:.22;white-space:nowrap;pointer-events:none;">{{ vn.word }}</div>
+<div style="position:absolute;left:-.04em;top:9%;animation:{{ anim.word }};font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 22cqw);line-height:.8;color:var(--accent);opacity:.22;white-space:nowrap;pointer-events:none;">{{ vn.word }}</div>
 <div style="position:absolute;left:20px;top:18px;display:flex;gap:8px;align-items:center;font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent);"></span>{{ vn.loc }}</div>
 
 <sc-if value="{{ vn.showPortrait }}" hint-placeholder-val="{{ false }}">
 <div style="position:absolute;right:clamp(20px,4cqw,56px);top:60px;width:230px;animation:fzIn .35s ease both;">
 <div style="display:var(--cB);background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--onInk);">
 <div style="position:relative;height:210px;overflow:hidden;">
-<div style="position:absolute;right:-6px;bottom:-40px;font-family:var(--fD);font-weight:var(--dW);font-size:230px;line-height:1;letter-spacing:-.03em;background-image:radial-gradient(circle,var(--onAccent) 2.4px,transparent 3px);background-size:7px 7px;-webkit-background-clip:text;background-clip:text;color:transparent;">{{ vn.ini }}</div>
+<div style="position:absolute;right:-6px;bottom:10px;font-family:var(--fD);font-weight:var(--dW);font-size:190px;line-height:1;letter-spacing:-.03em;background-image:radial-gradient(circle,var(--onAccent) 2.4px,transparent 3px);background-size:7px 7px;-webkit-background-clip:text;background-clip:text;color:transparent;">{{ vn.ini }}</div>
 </div>
 <div style="padding:12px 14px;border-top:var(--bw) solid var(--onInk);background:var(--ink);color:var(--onInk);">
-<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:24px;line-height:1;">{{ vn.speaker }}</div>
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:24px;line-height:1.14;">{{ vn.speaker }}</div>
 <div style="margin-top:6px;font:600 11px/1.3 var(--fL);letter-spacing:.1em;text-transform:uppercase;opacity:.85;">{{ vn.whoTitle }}</div>
 </div>
 </div>
 <div style="display:var(--dB);background:var(--sheet);color:var(--ink);border:1px solid var(--line);box-shadow:var(--sh);padding:16px;transform:rotate(1.5deg);">
 <div style="font:600 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ t.fileNo }} · FK-{{ vn.ini }}</div>
 <div style="margin-top:12px;height:150px;border:1px dashed var(--inkSoft);display:flex;align-items:center;justify-content:center;font:600 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ t.noPhoto }}</div>
-<div style="margin-top:12px;font-family:var(--fD);text-transform:uppercase;font-size:22px;line-height:1;">{{ vn.speaker }}</div>
+<div style="margin-top:12px;font-family:var(--fD);text-transform:uppercase;font-size:22px;line-height:1.14;">{{ vn.speaker }}</div>
 <div style="margin-top:6px;font:500 12px/1.3 var(--fL);color:var(--inkSoft);">{{ vn.whoTitle }}</div>
 </div>
 </div>
 </sc-if>
 
 <sc-if value="{{ vn.hasItem }}" hint-placeholder-val="{{ false }}">
-<div style="position:absolute;left:50%;top:clamp(70px,10cqw,130px);transform:translateX(-50%) rotate(-3deg);background:var(--sheet);color:var(--ink);border:var(--bw) solid var(--accent);box-shadow:var(--sh);padding:16px 26px;text-align:center;">
+<div style="position:absolute;left:50%;top:clamp(70px,10cqw,130px);transform:translateX(-50%) rotate(-3deg);animation:fzStampIn .6s cubic-bezier(.3,1.5,.5,1) both;background:var(--sheet);color:var(--ink);border:var(--bw) solid var(--accent);box-shadow:var(--sh);padding:16px 26px;text-align:center;">
 <div style="font:700 12px/1 var(--fL);letter-spacing:.16em;color:var(--accentText);">{{ vn.itemLabel }}</div>
-<div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);font-size:calc(var(--dS) * 40px);line-height:1;white-space:nowrap;">{{ vn.itemName }}</div>
+<div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);font-size:calc(var(--dS) * 40px);line-height:1.14;white-space:nowrap;">{{ vn.itemName }}</div>
 </div>
 </sc-if>
 
 <sc-if value="{{ vn.isTalk }}" hint-placeholder-val="{{ false }}">
-<div style="position:absolute;left:clamp(12px,3cqw,40px);right:clamp(12px,3cqw,40px);bottom:clamp(12px,3cqw,32px);">
+<div style="position:absolute;left:clamp(12px,3cqw,40px);right:clamp(12px,3cqw,40px);bottom:clamp(12px,3cqw,32px);animation:fzIn .35s ease both;">
 <div style="position:relative;background:var(--sheet);color:var(--ink);border:var(--bw) solid var(--onInk);box-shadow:var(--shS);padding:24px clamp(18px,2.4cqw,28px) 16px;">
 <sc-if value="{{ vn.hasSpeaker }}" hint-placeholder-val="{{ false }}">
-<div style="position:absolute;left:-3px;top:-36px;padding:9px 14px 8px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--onInk);font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 21px);line-height:1;">{{ vn.speaker }}</div>
+<div style="animation:fzTab .3s cubic-bezier(.2,.7,.2,1) both;position:absolute;left:-3px;top:-36px;padding:9px 14px 8px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--onInk);font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 21px);line-height:1.14;">{{ vn.speaker }}</div>
 </sc-if>
 <div style="font-size:clamp(17px,1.6cqw,21px);line-height:1.55;white-space:pre-line;min-height:3.1em;font-style:{{ vn.fontStyle }};text-wrap:pretty;">{{ vn.typed }}</div>
 <div style="margin-top:12px;display:flex;justify-content:flex-end;font:600 12px/1.2 var(--fL);letter-spacing:.04em;color:var(--inkSoft);opacity:{{ vn.hintOp }};">{{ vn.enterHint }}</div>
@@ -492,14 +507,14 @@ a:hover{color:var(--accentText)}
 </sc-if>
 
 <sc-if value="{{ vn.isChoice }}" hint-placeholder-val="{{ false }}">
-<div onClick="{{ stop }}" style="position:absolute;left:clamp(12px,3cqw,40px);right:clamp(12px,3cqw,40px);bottom:clamp(12px,3cqw,32px);background:var(--sheet);color:var(--ink);border:var(--bw) solid var(--onInk);box-shadow:var(--shS);padding:clamp(18px,2.4cqw,26px);cursor:default;">
+<div onClick="{{ stop }}" style="position:absolute;left:clamp(12px,3cqw,40px);right:clamp(12px,3cqw,40px);bottom:clamp(12px,3cqw,32px);background:var(--sheet);color:var(--ink);border:var(--bw) solid var(--onInk);box-shadow:var(--shS);padding:clamp(18px,2.4cqw,26px);cursor:default;animation:fzIn .35s ease both;">
 <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;align-items:baseline;">
-<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 32px);line-height:1;">{{ vn.q }}</div>
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 32px);line-height:1.14;">{{ vn.q }}</div>
 <div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ vn.chooseHint }}</div>
 </div>
 <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">
 <sc-for list="{{ vn.opts }}" as="o" hint-placeholder-count="3">
-<button onClick="{{ o.go }}" style="position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:13px 16px;border:var(--bw) solid {{ o.bd }};background:var(--sheet);color:var(--ink);cursor:{{ o.cursor }};font-size:17px;line-height:1.35;" style-hover="background:var(--paper2)">
+<button onClick="{{ o.go }}" style="animation:fzIn .4s cubic-bezier(.2,.7,.2,1) both;animation-delay:{{ o.delay }};transition:border-color .2s ease,background-color .2s ease;position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:13px 16px;border:var(--bw) solid {{ o.bd }};background:var(--sheet);color:var(--ink);cursor:{{ o.cursor }};font-size:17px;line-height:1.35;" style-hover="background:var(--paper2)">
 <span style="position:absolute;left:0;top:0;bottom:0;width:{{ o.barW }};background:{{ o.barC }};transition:width .9s cubic-bezier(.2,.7,.2,1);"></span>
 <span style="position:relative;flex:none;width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:var(--ink);color:var(--onInk);font:700 14px/1 var(--fL);">{{ o.n }}</span>
 <span style="position:relative;flex:1;min-width:0;">{{ o.text }}<span style="display:block;font:700 11px/1.4 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--accentText);">{{ o.mineTxt }}</span></span>
@@ -509,8 +524,8 @@ a:hover{color:var(--accentText)}
 </div>
 <sc-if value="{{ vn.revealed }}" hint-placeholder-val="{{ false }}">
 <div style="margin-top:14px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
-<div style="font:700 13px/1.4 var(--fL);letter-spacing:.04em;">{{ t.others }} · <span style="color:var(--accentText);">{{ vn.delta }}</span></div>
-<button onClick="{{ vnNext }}" style="padding:12px 18px 11px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:19px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ t.next }} →</button>
+<div style="font:700 13px/1.4 var(--fL);letter-spacing:.04em;animation:fzIn .4s ease both .45s;">{{ t.others }} · <span style="color:var(--accentText);">{{ vn.delta }}</span></div>
+<button onClick="{{ vnNext }}" style="padding:12px 18px 11px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:19px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.next }} →</button>
 </div>
 </sc-if>
 </div>
@@ -520,17 +535,17 @@ a:hover{color:var(--accentText)}
 <div style="display:var(--cF);position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px 24px;background:var(--accent);color:var(--onAccent);animation:fzIn .4s ease both;">
 <div style="position:absolute;inset:0;background-image:radial-gradient(circle,var(--onAccent) 1.2px,transparent 1.8px);background-size:10px 10px;opacity:.16;-webkit-mask-image:linear-gradient(to top,#000,transparent 80%);mask-image:linear-gradient(to top,#000,transparent 80%);"></div>
 <div style="position:relative;font:700 14px/1 var(--fL);letter-spacing:.24em;text-transform:uppercase;">{{ vn.tLabel }}</div>
-<div style="position:relative;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:clamp(56px,9cqw,132px);line-height:.86;">{{ vn.tTitle }}</div>
-<div style="position:relative;max-width:30em;font-size:clamp(17px,1.6cqw,21px);font-style:italic;">{{ vn.tQuote }}</div>
+<div style="position:relative;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:clamp(56px,9cqw,132px);line-height:.98;animation:fzSlam .8s cubic-bezier(.2,.7,.2,1) both .12s;">{{ vn.tTitle }}</div>
+<div style="position:relative;max-width:30em;font-size:clamp(17px,1.6cqw,21px);font-style:italic;animation:fzIn .5s ease both .55s;">{{ vn.tQuote }}</div>
 <div style="position:relative;margin-top:14px;font:600 12px/1 var(--fL);letter-spacing:.06em;">{{ vn.enterHint }}</div>
 </div>
 <div style="display:var(--dF);position:absolute;inset:0;align-items:center;justify-content:center;padding:32px 20px;">
 <div style="position:relative;background:var(--sheet);color:var(--ink);background-image:var(--tex);border:1px solid var(--line);box-shadow:var(--sh);padding:clamp(28px,4cqw,56px);max-width:720px;width:100%;transform:rotate(-.6deg);">
 <div style="font:600 12px/1 var(--fL);letter-spacing:.16em;text-transform:uppercase;">{{ vn.tLabel }}</div>
-<div style="margin-top:14px;font-family:var(--fD);text-transform:uppercase;font-size:clamp(40px,6cqw,80px);line-height:.95;">{{ vn.tTitle }}</div>
+<div style="margin-top:14px;font-family:var(--fD);text-transform:uppercase;font-size:clamp(40px,6cqw,80px);line-height:1.14;">{{ vn.tTitle }}</div>
 <div style="margin-top:16px;font-size:16px;font-style:italic;">{{ vn.tQuote }}</div>
 <div style="margin-top:22px;font:600 12px/1 var(--fL);letter-spacing:.04em;color:var(--inkSoft);">{{ vn.enterHint }}</div>
-<div style="position:absolute;right:22px;top:20px;transform:rotate(-8deg);border:3px double var(--accentText);color:var(--accentText);padding:6px 10px 4px;font-family:var(--fD);font-size:16px;text-transform:uppercase;line-height:1;">{{ t.conf }}</div>
+<div style="position:absolute;right:22px;top:20px;transform:rotate(-8deg);animation:fzStampIn .55s cubic-bezier(.3,1.5,.5,1) both .45s;border:3px double var(--accentText);color:var(--accentText);padding:6px 10px 4px;font-family:var(--fD);font-size:16px;text-transform:uppercase;line-height:1.14;">{{ t.conf }}</div>
 </div>
 </div>
 </sc-if>
@@ -539,10 +554,10 @@ a:hover{color:var(--accentText)}
 <div onClick="{{ stop }}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;cursor:default;">
 <div style="width:100%;max-width:560px;background:var(--sheet);color:var(--ink);border:var(--bw) solid var(--onInk);box-shadow:var(--sh);padding:clamp(22px,3cqw,36px);animation:fzIn .35s ease both;">
 <div style="font:700 12px/1 var(--fL);letter-spacing:.16em;text-transform:uppercase;color:var(--accentText);">{{ t.prologue }}</div>
-<label style="display:block;margin-top:12px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 38px);line-height:1;">{{ vn.namePrompt }}</label>
+<label style="display:block;margin-top:12px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 38px);line-height:1.14;">{{ vn.namePrompt }}</label>
 <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;">
 <input value="{{ nameDraft }}" onChange="{{ onNameInput }}" onKeyDown="{{ onNameKey }}" placeholder="{{ t.namePh }}" maxLength="24" style="flex:1 1 220px;min-width:0;padding:14px;border:var(--bw) solid var(--ink);background:var(--desk);font-size:18px;outline:none;color:var(--ink);border-radius:0;">
-<button onClick="{{ submitName }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ t.confirm }}</button>
+<button onClick="{{ submitName }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.confirm }}</button>
 </div>
 <p style="margin:12px 0 0;font-size:13px;color:var(--inkSoft);">{{ t.nameNote }}</p>
 </div>
@@ -550,16 +565,16 @@ a:hover{color:var(--accentText)}
 </sc-if>
 
 <sc-if value="{{ vn.isEnd }}" hint-placeholder-val="{{ false }}">
-<div onClick="{{ stop }}" style="position:relative;padding:clamp(14px,3cqw,40px);display:flex;justify-content:center;cursor:default;">
+<div onClick="{{ stop }}" style="position:relative;padding:54px clamp(14px,3cqw,40px) clamp(14px,3cqw,40px);display:flex;justify-content:center;cursor:default;">
 <div style="width:100%;max-width:860px;background:var(--sheet);color:var(--ink);border:var(--bw) solid var(--onInk);box-shadow:var(--shS);animation:fzIn .4s ease both;">
 <div style="background:var(--accent);color:var(--onAccent);padding:clamp(20px,3cqw,32px);">
 <div style="font:700 12px/1 var(--fL);letter-spacing:.16em;text-transform:uppercase;">{{ t.endKicker }}</div>
-<div style="margin-top:10px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(44px,6cqw,80px));line-height:.9;">{{ vn.endTitle }}</div>
+<div style="margin-top:10px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(44px,6cqw,80px));line-height:1.14;">{{ vn.endTitle }}</div>
 </div>
 <div style="padding:clamp(18px,3cqw,32px);">
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);">
-<div style="background:var(--sheet);padding:16px;"><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">XP</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1;">{{ vn.xp }}</div></div>
-<div style="background:var(--sheet);padding:16px;"><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.exposure }}</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1;color:var(--accentText);">{{ vn.expTxt }}</div></div>
+<div style="background:var(--sheet);padding:16px;"><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">XP</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1.14;">{{ vn.xp }}</div></div>
+<div style="background:var(--sheet);padding:16px;"><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.exposure }}</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);font-size:44px;line-height:1.14;color:var(--accentText);">{{ vn.expTxt }}</div></div>
 <div style="background:var(--sheet);padding:16px;"><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.itemsWord }}</div><div style="margin-top:10px;font-size:15px;font-weight:700;line-height:1.3;">{{ vn.endItems }}</div></div>
 </div>
 <div style="margin-top:24px;font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ t.decisions }}</div>
@@ -572,15 +587,15 @@ a:hover{color:var(--accentText)}
 <div style="margin-top:16px;font-size:15px;">{{ t.endNext }}</div>
 <sc-if value="{{ vn.loggedOut }}" hint-placeholder-val="{{ true }}">
 <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:22px;align-items:center;">
-<button onClick="{{ gateRegister }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ t.regSave }}</button>
-<button onClick="{{ vnRestart }}" style="padding:14px 20px 13px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ t.replay }}</button>
+<button onClick="{{ gateRegister }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.regSave }}</button>
+<button onClick="{{ vnRestart }}" style="padding:14px 20px 13px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.replay }}</button>
 <span style="font-size:13px;color:var(--inkSoft);">{{ t.savedLocal }}</span>
 </div>
 </sc-if>
 <sc-if value="{{ vn.loggedIn }}" hint-placeholder-val="{{ false }}">
 <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:22px;align-items:center;">
-<button onClick="{{ goDashboard }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ t.toDash }}</button>
-<button onClick="{{ goDownload }}" style="padding:14px 20px 13px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ t.cta2 }}</button>
+<button onClick="{{ goDashboard }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.toDash }}</button>
+<button onClick="{{ goDownload }}" style="padding:14px 20px 13px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.cta2 }}</button>
 <span style="font:700 13px/1 var(--fL);color:var(--good);">✓ {{ t.savedAcc }}</span>
 </div>
 </sc-if>
@@ -599,10 +614,10 @@ a:hover{color:var(--accentText)}
 <div style="max-width:1180px;margin:0 auto;padding:clamp(36px,5cqw,80px) clamp(16px,3cqw,40px) clamp(56px,7cqw,104px);display:flex;flex-wrap:wrap;gap:44px 64px;align-items:flex-start;">
 <div style="flex:1 1 440px;min-width:0;">
 <div style="display:inline-flex;border:var(--bw) solid var(--ink);max-width:100%;">
-<button onClick="{{ auth.toReg }}" style="border:0;cursor:pointer;padding:10px 16px 9px;font-family:var(--fD);font-weight:var(--dW);font-size:calc(var(--dS) * 20px);line-height:1;text-transform:uppercase;background:{{ auth.regBg }};color:{{ auth.regFg }};">{{ t.tabReg }}</button>
-<button onClick="{{ auth.toLogin }}" style="border:0;cursor:pointer;padding:10px 16px 9px;font-family:var(--fD);font-weight:var(--dW);font-size:calc(var(--dS) * 20px);line-height:1;text-transform:uppercase;background:{{ auth.logBg }};color:{{ auth.logFg }};">{{ t.tabLogin }}</button>
+<button onClick="{{ auth.toReg }}" style="border:0;cursor:pointer;padding:10px 16px 9px;font-family:var(--fD);font-weight:var(--dW);font-size:calc(var(--dS) * 20px);line-height:1.14;text-transform:uppercase;background:{{ auth.regBg }};color:{{ auth.regFg }};">{{ t.tabReg }}</button>
+<button onClick="{{ auth.toLogin }}" style="border:0;cursor:pointer;padding:10px 16px 9px;font-family:var(--fD);font-weight:var(--dW);font-size:calc(var(--dS) * 20px);line-height:1.14;text-transform:uppercase;background:{{ auth.logBg }};color:{{ auth.logFg }};">{{ t.tabLogin }}</button>
 </div>
-<h1 style="margin:26px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.9;font-size:calc(var(--dS) * clamp(48px,6.4cqw,88px));">{{ auth.title }}</h1>
+<h1 data-reveal="rise" style="margin:26px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:calc(var(--dS) * clamp(48px,6.4cqw,88px));">{{ auth.title }}</h1>
 <p style="margin:14px 0 0;font-size:17px;line-height:1.5;max-width:30em;">{{ t.authSub }}</p>
 <sc-if value="{{ auth.hasSave }}" hint-placeholder-val="{{ false }}">
 <div style="margin-top:18px;display:flex;gap:12px;align-items:center;padding:12px 14px;border:var(--bw) solid var(--ink);background:var(--paper2);font-size:15px;line-height:1.4;"><span style="flex:none;width:10px;height:10px;background:var(--accent);"></span>{{ auth.saveNote }}</div>
@@ -616,7 +631,7 @@ a:hover{color:var(--accentText)}
 <label style="display:flex;flex-direction:column;gap:6px;"><span style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;">{{ t.fId }}</span><input value="{{ auth.user }}" onChange="{{ auth.onUser }}" autoComplete="username" style="width:100%;padding:14px;border:var(--bw) solid var(--ink);background:var(--sheet);font-size:17px;outline:none;color:var(--ink);border-radius:0;"></label>
 </sc-if>
 <label style="display:flex;flex-direction:column;gap:6px;"><span style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;">{{ t.fPass }}</span><input type="password" value="{{ auth.pass }}" onChange="{{ auth.onPass }}" autoComplete="current-password" style="width:100%;padding:14px;border:var(--bw) solid var(--ink);background:var(--sheet);font-size:17px;outline:none;color:var(--ink);border-radius:0;"></label>
-<button type="submit" style="margin-top:6px;padding:16px 22px 15px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ auth.submitLabel }}</button>
+<button type="submit" style="margin-top:6px;padding:16px 22px 15px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ auth.submitLabel }}</button>
 </form>
 <div style="margin-top:18px;display:flex;flex-wrap:wrap;gap:10px 22px;">
 <button onClick="{{ auth.swap }}" style="border:0;background:none;padding:0;cursor:pointer;font:600 14px/1.3 var(--fL);color:var(--ink);text-decoration:underline;text-underline-offset:4px;">{{ auth.swapLabel }}</button>
@@ -624,14 +639,14 @@ a:hover{color:var(--accentText)}
 </div>
 </div>
 <div style="flex:0 1 420px;min-width:280px;">
-<div style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--sh);transform:rotate(-1.5deg);overflow:hidden;">
+<div data-reveal="swing" data-delay="200" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--sh);transform:rotate(-1.5deg);overflow:hidden;">
 <div style="display:var(--cF);height:10px;"><div style="flex:1;background:var(--accent);"></div><div style="flex:1;background:var(--paper2);"></div><div style="flex:1;background:var(--second);"></div></div>
 <div style="padding:22px 24px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:1px solid var(--line);">
-<div><div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 30px);line-height:1;">Fityesz</div><div style="margin-top:6px;font:700 11px/1 var(--fL);letter-spacing:.2em;text-transform:uppercase;color:var(--accentText);">{{ t.cardTitle }}</div></div>
+<div><div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 30px);line-height:1.14;">Fityesz</div><div style="margin-top:6px;font:700 11px/1 var(--fL);letter-spacing:.2em;text-transform:uppercase;color:var(--accentText);">{{ t.cardTitle }}</div></div>
 <div style="width:56px;height:56px;flex:none;background:var(--accent);color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:var(--fD);font-weight:var(--dW);font-size:32px;border:var(--bw) solid var(--ink);">F</div>
 </div>
 <div style="padding:18px 24px 22px;display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;">
-<div style="grid-column:1 / -1;"><div style="font:700 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ t.cardName }}</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 40px);line-height:1;overflow-wrap:anywhere;">{{ auth.cardName }}</div></div>
+<div style="grid-column:1 / -1;"><div style="font:700 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ t.cardName }}</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 40px);line-height:1.14;overflow-wrap:anywhere;">{{ auth.cardName }}</div></div>
 <div><div style="font:700 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ t.cardNo }}</div><div style="margin-top:6px;font:700 16px/1.2 var(--fL);">FK-000142</div></div>
 <div><div style="font:700 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ t.cardJoined }}</div><div style="margin-top:6px;font:700 16px/1.2 var(--fL);">2026</div></div>
 <div><div style="font:700 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">XP</div><div style="margin-top:6px;font:700 16px/1.2 var(--fL);">{{ auth.cardXp }}</div></div>
@@ -650,11 +665,11 @@ a:hover{color:var(--accentText)}
 <sc-if value="{{ dash.out }}" hint-placeholder-val="{{ false }}">
 <div style="max-width:720px;background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--sh);padding:clamp(24px,4cqw,48px);">
 <div style="font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.dashKicker }}</div>
-<h1 style="margin:12px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.9;font-size:calc(var(--dS) * clamp(44px,6cqw,80px));">{{ t.dashOutT }}</h1>
+<h1 style="margin:12px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:calc(var(--dS) * clamp(44px,6cqw,80px));">{{ t.dashOutT }}</h1>
 <p style="margin:14px 0 0;font-size:17px;line-height:1.5;">{{ t.dashOutD }}</p>
 <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;">
-<button onClick="{{ auth.openLogin }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ t.tabLogin }}</button>
-<button onClick="{{ auth.openReg }}" style="padding:14px 20px 13px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ t.tabReg }}</button>
+<button onClick="{{ auth.openLogin }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.tabLogin }}</button>
+<button onClick="{{ auth.openReg }}" style="padding:14px 20px 13px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.tabReg }}</button>
 </div>
 </div>
 </sc-if>
@@ -662,34 +677,34 @@ a:hover{color:var(--accentText)}
 <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px 32px;">
 <div style="min-width:0;">
 <div style="font:700 13px/1.3 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.dashKicker }}</div>
-<h1 style="margin:10px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.9;font-size:calc(var(--dS) * clamp(48px,7cqw,104px));overflow-wrap:anywhere;">{{ dash.hello }}</h1>
+<h1 data-reveal="rise" style="margin:10px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:calc(var(--dS) * clamp(48px,7cqw,104px));overflow-wrap:anywhere;">{{ dash.hello }}</h1>
 </div>
 <button onClick="{{ logout }}" style="border:var(--bw) solid var(--ink);background:transparent;cursor:pointer;padding:9px 14px;font:700 12px/1 var(--fL);letter-spacing:.1em;text-transform:uppercase;color:var(--ink);">{{ t.logout }}</button>
 </div>
 
 <sc-if value="{{ dash.empty }}" hint-placeholder-val="{{ false }}">
 <div style="margin-top:32px;background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--sh);padding:clamp(24px,4cqw,44px);display:flex;flex-wrap:wrap;gap:20px 40px;align-items:center;justify-content:space-between;">
-<div style="flex:1 1 360px;min-width:0;"><div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 40px);line-height:.95;">{{ t.dashEmptyT }}</div><p style="margin:10px 0 0;font-size:16px;">{{ t.dashEmptyD }}</p></div>
-<button onClick="{{ goPlay }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ t.cta1 }}</button>
+<div style="flex:1 1 360px;min-width:0;"><div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 40px);line-height:1.14;">{{ t.dashEmptyT }}</div><p style="margin:10px 0 0;font-size:16px;">{{ t.dashEmptyD }}</p></div>
+<button onClick="{{ goPlay }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.cta1 }}</button>
 </div>
 </sc-if>
 
 <sc-if value="{{ dash.has }}" hint-placeholder-val="{{ false }}">
-<div style="margin-top:32px;background:var(--ink);color:var(--onInk);border:var(--bw) solid var(--ink);display:flex;flex-wrap:wrap;">
+<div data-reveal="up" style="margin-top:32px;background:var(--ink);color:var(--onInk);border:var(--bw) solid var(--ink);display:flex;flex-wrap:wrap;">
 <div style="flex:1 1 460px;min-width:0;padding:clamp(22px,3cqw,36px);">
 <div style="font:700 12px/1 var(--fL);letter-spacing:.16em;text-transform:uppercase;color:var(--accent);">{{ t.slotLabel }}</div>
-<div style="margin-top:12px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(34px,4cqw,56px));line-height:.95;">{{ dash.nextTitle }}</div>
+<div style="margin-top:12px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(34px,4cqw,56px));line-height:1.14;">{{ dash.nextTitle }}</div>
 <p style="margin:12px 0 0;font-size:15px;line-height:1.5;opacity:.88;">{{ dash.contNote }}</p>
 <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:22px;">
-<button onClick="{{ dash.cont }}" style="display:inline-flex;align-items:center;gap:12px;padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--accent);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1;text-transform:uppercase;cursor:pointer;"><span style="width:0;height:0;border-left:10px solid currentColor;border-top:6px solid transparent;border-bottom:6px solid transparent;"></span>{{ t.dashContinue }}</button>
-<button onClick="{{ dash.replay }}" style="padding:14px 20px 13px;background:transparent;color:var(--onInk);border:var(--bw) solid var(--onInk);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ t.replay }}</button>
+<button onClick="{{ dash.cont }}" style="display:inline-flex;align-items:center;gap:12px;padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--accent);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;"><span style="width:0;height:0;border-left:10px solid currentColor;border-top:6px solid transparent;border-bottom:6px solid transparent;"></span>{{ t.dashContinue }}</button>
+<button onClick="{{ dash.replay }}" style="padding:14px 20px 13px;background:transparent;color:var(--onInk);border:var(--bw) solid var(--onInk);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.replay }}</button>
 </div>
 </div>
 <div style="flex:1 1 380px;min-width:0;padding:clamp(22px,3cqw,36px);border-left:1px solid color-mix(in srgb,var(--onInk) 20%,transparent);">
 <div style="display:flex;justify-content:space-between;font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;"><span>{{ t.progress }}</span><span>{{ dash.progTxt }}</span></div>
-<div style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:4px;margin-top:14px;">
+<div data-stagger="55" data-base="250" style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:4px;margin-top:14px;">
 <sc-for list="{{ dash.segs }}" as="sg" hint-placeholder-count="8">
-<div style="height:40px;background:{{ sg.bg }};border:2px solid {{ sg.bd }};display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;font:700 11px/1 var(--fL);color:{{ sg.fg }};">{{ sg.n }}</div>
+<div data-reveal="slam" style="height:40px;background:{{ sg.bg }};border:2px solid {{ sg.bd }};display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;font:700 11px/1 var(--fL);color:{{ sg.fg }};">{{ sg.n }}</div>
 </sc-for>
 </div>
 <div style="display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px;font:600 12px/1 var(--fL);letter-spacing:.06em;text-transform:uppercase;">
@@ -700,36 +715,36 @@ a:hover{color:var(--accentText)}
 </div>
 </div>
 
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px;margin-top:24px;">
-<div style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);">
+<div data-stagger="120" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px;margin-top:24px;">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);">
 <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:18px 22px;border-bottom:var(--bw) solid var(--ink);">
-<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 28px);line-height:1;">{{ t.statsT }}</h2>
+<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 28px);line-height:1.14;">{{ t.statsT }}</h2>
 <span style="font:700 11px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.statsSub }}</span>
 </div>
 <div style="padding:20px 22px 24px;display:flex;flex-direction:column;gap:22px;">
 <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;">
-<div><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">XP</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);font-size:48px;line-height:1;">{{ dash.xp }}</div></div>
-<div><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.levelW }}</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);font-size:48px;line-height:1;">{{ dash.level }}</div></div>
+<div><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">XP</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);font-size:48px;line-height:1.14;">{{ dash.xp }}</div></div>
+<div><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.levelW }}</div><div style="margin-top:8px;font-family:var(--fD);font-weight:var(--dW);font-size:48px;line-height:1.14;">{{ dash.level }}</div></div>
 <div style="min-width:0;"><div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.rankW }}</div><div style="margin-top:10px;font:700 15px/1.2 var(--fL);text-transform:uppercase;">{{ dash.rank }}</div><div style="font-size:12px;color:var(--inkSoft);margin-top:4px;">{{ dash.rankNote }}</div></div>
 </div>
 <div>
 <div style="display:flex;justify-content:space-between;font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;"><span>{{ t.exposure }}</span><span style="color:var(--accentText);">{{ dash.expTxt }}</span></div>
-<div style="margin-top:8px;height:18px;border:2px solid var(--ink);position:relative;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),var(--line) calc(10% - 1px) 10%);"><div style="position:absolute;left:0;top:0;bottom:0;width:{{ dash.expW }};background:var(--danger);"></div></div>
+<div style="margin-top:8px;height:18px;border:2px solid var(--ink);position:relative;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),var(--line) calc(10% - 1px) 10%);"><div data-reveal="bar" data-delay="400" style="position:absolute;left:0;top:0;bottom:0;width:{{ dash.expW }};background:var(--danger);transform-origin:left;"></div></div>
 <div style="margin-top:6px;font-size:13px;color:var(--inkSoft);">{{ t.expWarn }}</div>
 </div>
 <div>
 <div style="font:700 12px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.itemsWord }} · {{ dash.itemsTxt }}</div>
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px;margin-top:10px;">
+<div data-stagger="45" data-base="200" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px;margin-top:10px;">
 <sc-for list="{{ dash.items }}" as="it" hint-placeholder-count="7">
-<div style="min-height:66px;padding:10px;border:1px {{ it.bs }} {{ it.bc }};background:{{ it.bg }};color:{{ it.fg }};font:700 11px/1.3 var(--fL);letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:flex-end;">{{ it.name }}</div>
+<div data-reveal="up" style="min-height:66px;padding:10px;border:1px {{ it.bs }} {{ it.bc }};background:{{ it.bg }};color:{{ it.fg }};font:700 11px/1.3 var(--fL);letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:flex-end;">{{ it.name }}</div>
 </sc-for>
 </div>
 </div>
 </div>
 </div>
-<div style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);">
 <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:18px 22px;border-bottom:var(--bw) solid var(--ink);">
-<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 28px);line-height:1;">{{ t.relT }}</h2>
+<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 28px);line-height:1.14;">{{ t.relT }}</h2>
 <span style="font:700 11px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.relSub }}</span>
 </div>
 <div style="padding:6px 22px 22px;">
@@ -738,9 +753,9 @@ a:hover{color:var(--accentText)}
 <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:{{ r.bg }};color:{{ r.fg }};font-family:var(--fD);font-weight:var(--dW);font-size:19px;border:var(--bw) solid var(--ink);">{{ r.ini }}</div>
 <div style="min-width:0;">
 <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 10px;align-items:baseline;"><span style="font-weight:700;font-size:16px;">{{ r.name }}</span><span style="font:700 11px/1.2 var(--fL);letter-spacing:.08em;text-transform:uppercase;color:var(--inkSoft);">{{ r.status }}</span></div>
-<div style="margin-top:8px;height:8px;background:var(--paper2);border:1px solid var(--line);"><div style="height:100%;width:{{ r.w }};background:var(--good);"></div></div>
+<div style="margin-top:8px;height:8px;background:var(--paper2);border:1px solid var(--line);"><div data-reveal="bar" data-delay="350" style="height:100%;width:{{ r.w }};background:var(--good);transform-origin:left;"></div></div>
 </div>
-<div style="font-family:var(--fD);font-weight:var(--dW);font-size:24px;line-height:1;min-width:2em;text-align:right;">{{ r.val }}</div>
+<div style="font-family:var(--fD);font-weight:var(--dW);font-size:24px;line-height:1.14;min-width:2em;text-align:right;">{{ r.val }}</div>
 </div>
 </sc-for>
 <p style="margin:14px 0 0;font-size:13px;line-height:1.45;color:var(--inkSoft);">{{ t.relNote }}</p>
@@ -748,14 +763,14 @@ a:hover{color:var(--accentText)}
 </div>
 </div>
 
-<div style="margin-top:24px;background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);">
+<div data-reveal="up" style="margin-top:24px;background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);">
 <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 12px;padding:18px 22px;border-bottom:var(--bw) solid var(--ink);">
-<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 28px);line-height:1;">{{ t.tlT }}</h2>
+<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 28px);line-height:1.14;">{{ t.tlT }}</h2>
 <span style="font:700 11px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.others }}</span>
 </div>
-<div style="padding:4px 22px 18px;">
+<div data-stagger="90" style="padding:4px 22px 18px;">
 <sc-for list="{{ dash.timeline }}" as="e" hint-placeholder-count="5">
-<div style="display:grid;grid-template-columns:24px minmax(0,1fr);gap:14px;opacity:{{ e.op }};">
+<div data-reveal="lift" style="display:grid;grid-template-columns:24px minmax(0,1fr);gap:14px;opacity:{{ e.op }};">
 <div style="display:flex;flex-direction:column;align-items:center;"><div style="width:14px;height:14px;margin-top:22px;flex:none;background:{{ e.dot }};border:2px solid var(--ink);"></div><div style="flex:1;width:2px;background:var(--line);"></div></div>
 <div style="padding:18px 0;border-bottom:1px solid var(--line);min-width:0;">
 <div style="font:700 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ e.label }}</div>
@@ -763,7 +778,7 @@ a:hover{color:var(--accentText)}
 <div style="margin-top:4px;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 26px);line-height:1.05;">{{ e.a }}</div>
 <sc-if value="{{ e.hasDelta }}" hint-placeholder-val="{{ false }}"><div style="margin-top:8px;font:700 12px/1.3 var(--fL);letter-spacing:.05em;">{{ e.delta }}</div></sc-if>
 <sc-if value="{{ e.hasDist }}" hint-placeholder-val="{{ false }}">
-<div style="margin-top:12px;display:flex;height:24px;border:1px solid var(--ink);max-width:560px;">
+<div data-reveal="wipe" data-delay="300" style="margin-top:12px;display:flex;height:24px;border:1px solid var(--ink);max-width:560px;">
 <sc-for list="{{ e.dist }}" as="d" hint-placeholder-count="3">
 <div style="width:{{ d.w }};background:{{ d.bg }};color:{{ d.fg }};display:flex;align-items:center;padding:0 6px;font:700 11px/1 var(--fL);overflow:hidden;white-space:nowrap;border-right:1px solid var(--ink);">{{ d.n }} · {{ d.p }}</div>
 </sc-for>
@@ -776,32 +791,32 @@ a:hover{color:var(--accentText)}
 </div>
 </div>
 
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px;margin-top:24px;">
-<div style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);">
+<div data-stagger="120" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px;margin-top:24px;">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);">
 <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:18px 22px;border-bottom:var(--bw) solid var(--ink);">
-<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 28px);line-height:1;">{{ t.slotsT }}</h2>
+<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 28px);line-height:1.14;">{{ t.slotsT }}</h2>
 <span style="font:700 11px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ t.slotsSub }}</span>
 </div>
-<div style="padding:16px 22px 22px;display:flex;flex-direction:column;gap:12px;">
+<div data-stagger="90" style="padding:16px 22px 22px;display:flex;flex-direction:column;gap:12px;">
 <sc-for list="{{ dash.slots }}" as="sl" hint-placeholder-count="3">
-<div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;padding:14px 16px;border:{{ sl.bd }};background:{{ sl.bg }};">
-<div style="font-family:var(--fD);font-weight:var(--dW);font-size:34px;line-height:1;width:30px;">{{ sl.n }}</div>
+<div data-reveal="up" style="display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;padding:14px 16px;border:{{ sl.bd }};background:{{ sl.bg }};">
+<div style="font-family:var(--fD);font-weight:var(--dW);font-size:34px;line-height:1.14;width:30px;">{{ sl.n }}</div>
 <div style="flex:1 1 200px;min-width:0;"><div style="font-weight:700;font-size:16px;">{{ sl.title }}</div><div style="font-size:13px;color:var(--inkSoft);margin-top:2px;">{{ sl.meta }}</div></div>
-<button onClick="{{ sl.go }}" style="padding:10px 14px 9px;border:var(--bw) solid var(--ink);background:{{ sl.btnBg }};color:{{ sl.btnFg }};font-family:var(--fD);font-weight:var(--dW);font-size:16px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ sl.btn }}</button>
+<button onClick="{{ sl.go }}" style="padding:10px 14px 9px;border:var(--bw) solid var(--ink);background:{{ sl.btnBg }};color:{{ sl.btnFg }};font-family:var(--fD);font-weight:var(--dW);font-size:16px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ sl.btn }}</button>
 </div>
 </sc-for>
 </div>
 </div>
-<div style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);">
 <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:18px 22px;border-bottom:var(--bw) solid var(--ink);">
-<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 28px);line-height:1;">{{ t.endingsT }}</h2>
+<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 28px);line-height:1.14;">{{ t.endingsT }}</h2>
 <span style="font:700 11px/1 var(--fL);letter-spacing:.12em;text-transform:uppercase;color:var(--inkSoft);">{{ dash.endTxt }}</span>
 </div>
-<div style="padding:16px 22px 22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;">
+<div data-stagger="100" style="padding:16px 22px 22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;">
 <sc-for list="{{ dash.endings }}" as="en" hint-placeholder-count="3">
-<div style="min-height:160px;padding:14px;border:1px dashed var(--inkSoft);display:flex;flex-direction:column;justify-content:space-between;gap:10px;background:repeating-linear-gradient(135deg,transparent 0 10px,color-mix(in srgb,var(--line) 50%,transparent) 10px 11px);">
+<div data-reveal="up" style="min-height:160px;padding:14px;border:1px dashed var(--inkSoft);display:flex;flex-direction:column;justify-content:space-between;gap:10px;background:repeating-linear-gradient(135deg,transparent 0 10px,color-mix(in srgb,var(--line) 50%,transparent) 10px 11px);">
 <div style="font:700 11px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ en.n }}</div>
-<div style="font-family:var(--fD);font-weight:var(--dW);font-size:40px;line-height:1;">???</div>
+<div style="font-family:var(--fD);font-weight:var(--dW);font-size:40px;line-height:1.14;">???</div>
 <div style="font-size:13px;line-height:1.35;">{{ en.hint }}</div>
 </div>
 </sc-for>
@@ -818,37 +833,37 @@ a:hover{color:var(--accentText)}
 <section data-screen-label="Download" style="border-bottom:var(--bw) solid var(--ink);">
 <div style="max-width:1320px;margin:0 auto;padding:clamp(40px,6cqw,88px) clamp(16px,3cqw,40px) clamp(56px,7cqw,104px);">
 <div style="font:700 13px/1.3 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.dlKicker }}</div>
-<h1 style="margin:12px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.88;font-size:calc(var(--dS) * clamp(52px,8cqw,124px));max-width:11em;">{{ t.dlTitle }}</h1>
+<h1 data-reveal="rise" style="margin:12px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.06;font-size:calc(var(--dS) * clamp(52px,8cqw,124px));max-width:11em;">{{ t.dlTitle }}</h1>
 <p style="margin:18px 0 0;max-width:34em;font-size:clamp(17px,1.5cqw,20px);line-height:1.5;">{{ t.dlSub }}</p>
 <sc-if value="{{ dl.out }}" hint-placeholder-val="{{ true }}">
-<div style="margin-top:32px;background:var(--ink);color:var(--onInk);border:var(--bw) solid var(--ink);padding:clamp(20px,3cqw,32px);display:flex;flex-wrap:wrap;gap:18px 32px;align-items:center;justify-content:space-between;">
+<div data-reveal="up" style="margin-top:32px;background:var(--ink);color:var(--onInk);border:var(--bw) solid var(--ink);padding:clamp(20px,3cqw,32px);display:flex;flex-wrap:wrap;gap:18px 32px;align-items:center;justify-content:space-between;">
 <div style="flex:1 1 360px;min-width:0;display:flex;gap:16px;align-items:flex-start;">
-<div style="flex:none;width:34px;height:40px;position:relative;margin-top:2px;"><div style="position:absolute;left:6px;right:6px;top:0;height:22px;border:4px solid var(--accent);border-bottom:0;border-radius:12px 12px 0 0;"></div><div style="position:absolute;left:0;right:0;bottom:0;height:22px;background:var(--accent);"></div></div>
-<div><div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 32px);line-height:1;">{{ t.dlLockedT }}</div><p style="margin:8px 0 0;font-size:15px;opacity:.88;">{{ t.dlLockedD }}</p></div>
+<div data-reveal="shake" data-delay="700" style="flex:none;width:34px;height:40px;position:relative;margin-top:2px;"><div style="position:absolute;left:6px;right:6px;top:0;height:22px;border:4px solid var(--accent);border-bottom:0;border-radius:12px 12px 0 0;"></div><div style="position:absolute;left:0;right:0;bottom:0;height:22px;background:var(--accent);"></div></div>
+<div><div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 32px);line-height:1.14;">{{ t.dlLockedT }}</div><p style="margin:8px 0 0;font-size:15px;opacity:.88;">{{ t.dlLockedD }}</p></div>
 </div>
 <div style="display:flex;flex-wrap:wrap;gap:12px;">
-<button onClick="{{ auth.openReg }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--accent);font-family:var(--fD);font-weight:var(--dW);font-size:20px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ t.tabReg }}</button>
-<button onClick="{{ auth.openLogin }}" style="padding:14px 20px 13px;background:transparent;color:var(--onInk);border:var(--bw) solid var(--onInk);font-family:var(--fD);font-weight:var(--dW);font-size:20px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ t.tabLogin }}</button>
+<button onClick="{{ auth.openReg }}" style="padding:14px 22px 13px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--accent);font-family:var(--fD);font-weight:var(--dW);font-size:20px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.tabReg }}</button>
+<button onClick="{{ auth.openLogin }}" style="padding:14px 20px 13px;background:transparent;color:var(--onInk);border:var(--bw) solid var(--onInk);font-family:var(--fD);font-weight:var(--dW);font-size:20px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.tabLogin }}</button>
 </div>
 </div>
 </sc-if>
 <sc-if value="{{ dl.in }}" hint-placeholder-val="{{ false }}">
 <div style="margin-top:28px;display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border:var(--bw) solid var(--ink);background:var(--sheet);font-size:15px;"><span style="font:700 14px/1 var(--fL);color:var(--good);">✓</span>{{ dl.signedTxt }}</div>
 </sc-if>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:24px;margin-top:28px;">
+<div data-stagger="110" style="display:grid;grid-template-columns:{{ g3 }};gap:24px;margin-top:28px;">
 <sc-for list="{{ dl.platforms }}" as="p" hint-placeholder-count="3">
-<div style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:24px;display:flex;flex-direction:column;gap:12px;min-height:250px;opacity:{{ p.op }};">
+<div data-reveal="lift" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);padding:24px;display:flex;flex-direction:column;gap:12px;min-height:250px;opacity:{{ p.op }};">
 <div style="font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);">{{ p.ver }}</div>
-<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 56px);line-height:.9;">{{ p.name }}</div>
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 56px);line-height:1.14;">{{ p.name }}</div>
 <div style="font-size:15px;">{{ p.file }}</div>
-<button onClick="{{ p.go }}" style="margin-top:auto;padding:14px 18px 13px;background:{{ p.bg }};color:{{ p.fg }};border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:20px;line-height:1;text-transform:uppercase;cursor:{{ p.cursor }};">{{ p.btn }}</button>
+<button onClick="{{ p.go }}" style="margin-top:auto;padding:14px 18px 13px;background:{{ p.bg }};color:{{ p.fg }};border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:20px;line-height:1.14;text-transform:uppercase;cursor:{{ p.cursor }};">{{ p.btn }}</button>
 </div>
 </sc-for>
 </div>
-<h2 style="margin:clamp(48px,6cqw,80px) 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.9;font-size:calc(var(--dS) * clamp(36px,4.6cqw,64px));">{{ t.dlHowT }}</h2>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:1px;background:var(--line);border:var(--bw) solid var(--ink);margin-top:26px;">
+<h2 data-reveal="rise" style="margin:clamp(48px,6cqw,80px) 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:calc(var(--dS) * clamp(36px,4.6cqw,64px));">{{ t.dlHowT }}</h2>
+<div data-stagger="110" style="display:grid;grid-template-columns:{{ g3 }};gap:1px;background:var(--line);border:var(--bw) solid var(--ink);margin-top:26px;">
 <sc-for list="{{ dl.steps }}" as="st" hint-placeholder-count="3">
-<div style="background:var(--sheet);padding:24px 24px 28px;"><div style="font-family:var(--fD);font-weight:var(--dW);font-size:60px;line-height:.9;color:var(--accentText);">{{ st.n }}</div><p style="margin:14px 0 0;font-size:16px;line-height:1.45;">{{ st.text }}</p></div>
+<div data-reveal="up" style="background:var(--sheet);padding:24px 24px 28px;"><div style="font-family:var(--fD);font-weight:var(--dW);font-size:60px;line-height:1.14;color:var(--accentText);">{{ st.n }}</div><p style="margin:14px 0 0;font-size:16px;line-height:1.45;">{{ st.text }}</p></div>
 </sc-for>
 </div>
 </div>
@@ -859,33 +874,33 @@ a:hover{color:var(--accentText)}
 <section data-screen-label="Support the creators" style="border-bottom:var(--bw) solid var(--ink);">
 <div style="max-width:1320px;margin:0 auto;padding:clamp(40px,6cqw,88px) clamp(16px,3cqw,40px) clamp(56px,7cqw,104px);">
 <div style="font:700 13px/1.3 var(--fL);letter-spacing:.14em;text-transform:uppercase;color:var(--accentText);">{{ t.supKicker }}</div>
-<h1 style="margin:12px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.88;font-size:calc(var(--dS) * clamp(52px,8cqw,124px));max-width:10em;">{{ t.supTitle }}</h1>
+<h1 data-reveal="rise" style="margin:12px 0 0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.06;font-size:calc(var(--dS) * clamp(52px,8cqw,124px));max-width:10em;">{{ t.supTitle }}</h1>
 <p style="margin:18px 0 0;max-width:34em;font-size:clamp(17px,1.5cqw,20px);line-height:1.5;">{{ t.supSub }}</p>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:24px;margin-top:40px;align-items:stretch;">
-<div style="background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--sh);padding:clamp(24px,3cqw,36px);display:flex;flex-direction:column;gap:16px;position:relative;overflow:hidden;">
-<div style="display:var(--cB);position:absolute;inset:0;background-image:radial-gradient(circle,var(--onAccent) 1.2px,transparent 1.8px);background-size:9px 9px;opacity:.2;-webkit-mask-image:linear-gradient(to top left,#000,transparent 65%);mask-image:linear-gradient(to top left,#000,transparent 65%);"></div>
+<div data-stagger="120" style="display:grid;grid-template-columns:{{ g3 }};gap:24px;margin-top:40px;align-items:stretch;">
+<div data-reveal="up" style="background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--sh);padding:clamp(24px,3cqw,36px);display:flex;flex-direction:column;gap:16px;position:relative;overflow:hidden;">
+<div style="display:var(--cB);position:absolute;inset:0;background-image:radial-gradient(circle,var(--onAccent) 1.2px,transparent 1.8px);background-size:9px 9px;opacity:.2;animation:{{ anim.drift }};-webkit-mask-image:linear-gradient(to top left,#000,transparent 65%);mask-image:linear-gradient(to top left,#000,transparent 65%);"></div>
 <div style="position:relative;font:700 12px/1 var(--fL);letter-spacing:.16em;text-transform:uppercase;">Ko-fi</div>
-<div style="position:relative;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(40px,4.4cqw,60px));line-height:.92;">{{ t.kofiCardT }}</div>
+<div style="position:relative;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(40px,4.4cqw,60px));line-height:1.14;">{{ t.kofiCardT }}</div>
 <p style="position:relative;margin:0;font-size:16px;line-height:1.5;">{{ t.kofiCardD }}</p>
-<a href="{{ kofiHref }}" target="_blank" rel="noopener" onClick="{{ kofiClick }}" style="position:relative;margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;padding:15px 22px 14px;background:var(--ink);color:var(--onInk);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1;text-transform:uppercase;text-decoration:none;">{{ kofiLabel }}</a>
+<a href="{{ kofiHref }}" target="_blank" rel="noopener" onClick="{{ kofiClick }}" style="position:relative;margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;padding:15px 22px 14px;background:var(--ink);color:var(--onInk);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:21px;line-height:1.14;text-transform:uppercase;text-decoration:none;">{{ kofiLabel }}</a>
 <sc-if value="{{ kofiPending }}" hint-placeholder-val="{{ true }}"><p style="position:relative;margin:0;font-size:13px;line-height:1.45;">{{ t.kofiNote }}</p></sc-if>
 </div>
 <sc-for list="{{ creators }}" as="c" hint-placeholder-count="2">
-<div style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);display:flex;flex-direction:column;">
+<div data-reveal="up" style="background:var(--sheet);border:var(--bw) solid var(--ink);box-shadow:var(--shS);display:flex;flex-direction:column;">
 <div style="position:relative;height:150px;overflow:hidden;background:var(--ink);color:var(--onInk);border-bottom:var(--bw) solid var(--ink);">
-<div style="position:absolute;right:-4px;bottom:-34px;font-family:var(--fD);font-weight:var(--dW);font-size:190px;line-height:1;letter-spacing:-.03em;background-image:radial-gradient(circle,var(--onInk) 2.2px,transparent 2.8px);background-size:7px 7px;-webkit-background-clip:text;background-clip:text;color:transparent;">{{ c.ini }}</div>
+<div style="position:absolute;right:-6px;bottom:8px;font-family:var(--fD);font-weight:var(--dW);font-size:140px;line-height:1;letter-spacing:-.03em;background-image:radial-gradient(circle,var(--onInk) 2.2px,transparent 2.8px);background-size:7px 7px;-webkit-background-clip:text;background-clip:text;color:transparent;">{{ c.ini }}</div>
 <div style="position:absolute;left:16px;top:16px;font:700 12px/1 var(--fL);letter-spacing:.14em;text-transform:uppercase;">{{ t.creatorWord }}</div>
 </div>
 <div style="padding:20px 22px 22px;display:flex;flex-direction:column;gap:8px;flex:1;">
-<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 40px);line-height:.92;">{{ c.name }}</div>
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 40px);line-height:1.14;">{{ c.name }}</div>
 <div style="font:600 14px/1.3 var(--fL);color:var(--inkSoft);">@{{ c.handle }}</div>
-<a href="{{ c.url }}" target="_blank" rel="noopener" style="margin-top:auto;align-self:flex-start;padding:11px 16px 10px;border:var(--bw) solid var(--ink);color:var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:17px;line-height:1;text-transform:uppercase;text-decoration:none;">{{ t.ghBtn }} →</a>
+<a href="{{ c.url }}" target="_blank" rel="noopener" style="margin-top:auto;align-self:flex-start;padding:11px 16px 10px;border:var(--bw) solid var(--ink);color:var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:17px;line-height:1.14;text-transform:uppercase;text-decoration:none;">{{ t.ghBtn }} →</a>
 </div>
 </div>
 </sc-for>
 </div>
-<div style="margin-top:28px;display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;padding:18px 20px;border:var(--bw) solid var(--ink);background:var(--paper2);">
-<span style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 24px);line-height:1;">{{ t.repoT }}</span>
+<div data-reveal="up" style="margin-top:28px;display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;padding:18px 20px;border:var(--bw) solid var(--ink);background:var(--paper2);">
+<span style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * 24px);line-height:1.14;">{{ t.repoT }}</span>
 <a href="https://github.com/djkzea/fityeszthegame" target="_blank" rel="noopener" style="font:600 15px/1.3 var(--fL);">github.com/djkzea/fityeszthegame</a>
 </div>
 </div>
@@ -895,7 +910,7 @@ a:hover{color:var(--accentText)}
 <footer style="background:var(--ink);color:var(--onInk);">
 <div style="max-width:1320px;margin:0 auto;padding:56px clamp(16px,3cqw,40px) 36px;display:flex;flex-wrap:wrap;gap:40px 64px;">
 <div style="flex:1 1 300px;">
-<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:.9;font-size:calc(var(--dS) * 56px);">Fityesz<span style="display:block;font-size:.4em;letter-spacing:.26em;margin-top:6px;color:var(--accent);">{{ t.logoSub }}</span></div>
+<div style="font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;line-height:1.14;font-size:calc(var(--dS) * 56px);">Fityesz<span style="display:block;font-size:.4em;letter-spacing:.26em;margin-top:6px;color:var(--accent);">{{ t.logoSub }}</span></div>
 <p style="margin:16px 0 0;font-size:15px;max-width:22em;">{{ t.footTag }}</p>
 </div>
 <div style="flex:0 1 200px;display:flex;flex-direction:column;align-items:flex-start;gap:10px;">
@@ -917,11 +932,11 @@ a:hover{color:var(--accentText)}
 </footer>
 
 <sc-if value="{{ gateOpen }}" hint-placeholder-val="{{ false }}">
-<div onClick="{{ closeGate }}" style="position:fixed;inset:0;z-index:80;background:color-mix(in srgb,var(--ink) 72%,transparent);display:flex;align-items:center;justify-content:center;padding:20px;">
+<div onClick="{{ closeGate }}" style="animation:fzFade .25s ease both;position:fixed;inset:0;z-index:80;background:color-mix(in srgb,var(--ink) 72%,transparent);display:flex;align-items:center;justify-content:center;padding:20px;">
 <div onClick="{{ stop }}" data-screen-label="Register prompt" style="width:100%;max-width:560px;max-height:calc(100% - 20px);overflow:auto;background:var(--sheet);color:var(--ink);border:var(--bw) solid var(--ink);box-shadow:var(--sh);animation:fzIn .3s ease both;">
 <div style="background:var(--accent);color:var(--onAccent);padding:14px 22px;font:700 12px/1 var(--fL);letter-spacing:.16em;text-transform:uppercase;">{{ t.gateKicker }}</div>
 <div style="padding:26px 26px 24px;">
-<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(38px,4.4cqw,54px));line-height:.92;">{{ t.gateTitle }}</h2>
+<h2 style="margin:0;font-family:var(--fD);font-weight:var(--dW);text-transform:uppercase;font-size:calc(var(--dS) * clamp(38px,4.4cqw,54px));line-height:1.14;">{{ t.gateTitle }}</h2>
 <p style="margin:14px 0 0;font-size:16px;line-height:1.5;">{{ t.gateSub }}</p>
 <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;">
 <span style="padding:7px 10px;border:1px solid var(--ink);font:700 12px/1 var(--fL);letter-spacing:.08em;text-transform:uppercase;">XP {{ vn.xp }}</span>
@@ -929,8 +944,8 @@ a:hover{color:var(--accentText)}
 <span style="padding:7px 10px;border:1px solid var(--ink);font:700 12px/1 var(--fL);letter-spacing:.08em;text-transform:uppercase;">{{ t.itemsWord }} {{ vn.itemCount }}</span>
 </div>
 <div style="display:flex;flex-direction:column;gap:10px;margin-top:22px;">
-<button onClick="{{ gateRegister }}" style="width:100%;padding:15px 22px 14px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ t.gateCta }}</button>
-<button onClick="{{ gateLogin }}" style="width:100%;padding:15px 22px 14px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1;text-transform:uppercase;cursor:pointer;">{{ t.gateLogin }}</button>
+<button onClick="{{ gateRegister }}" style="width:100%;padding:15px 22px 14px;background:var(--accent);color:var(--onAccent);border:var(--bw) solid var(--ink);box-shadow:var(--shS);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.gateCta }}</button>
+<button onClick="{{ gateLogin }}" style="width:100%;padding:15px 22px 14px;background:transparent;color:var(--ink);border:var(--bw) solid var(--ink);font-family:var(--fD);font-weight:var(--dW);font-size:22px;line-height:1.14;text-transform:uppercase;cursor:pointer;">{{ t.gateLogin }}</button>
 </div>
 <div style="margin-top:16px;text-align:center;">
 <button onClick="{{ closeGate }}" style="border:0;background:none;cursor:pointer;padding:6px;font:600 14px/1 var(--fL);color:var(--ink);text-decoration:underline;text-underline-offset:4px;">{{ t.gateSkip }}</button>
@@ -947,7 +962,7 @@ a:hover{color:var(--accentText)}
 </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;direction&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Campaign propaganda&quot;,&quot;Leaked dossier&quot;],&quot;default&quot;:&quot;Campaign propaganda&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;palette&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Tricolour&quot;,&quot;Party orange&quot;,&quot;Terminal gold&quot;,&quot;Newsprint&quot;],&quot;default&quot;:&quot;Tricolour&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;frame&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Desktop&quot;,&quot;Mobile&quot;],&quot;default&quot;:&quot;Desktop&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Preview&quot;},&quot;demoState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Visitor&quot;,&quot;Member with save&quot;],&quot;default&quot;:&quot;Visitor&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Preview&quot;},&quot;kofiUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Links&quot;},&quot;page&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string&quot;},&quot;lang&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string&quot;},&quot;embedded&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;boolean&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;direction&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Campaign propaganda&quot;,&quot;Leaked dossier&quot;],&quot;default&quot;:&quot;Campaign propaganda&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;palette&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Tricolour&quot;,&quot;Party orange&quot;,&quot;Terminal gold&quot;,&quot;Newsprint&quot;],&quot;default&quot;:&quot;Tricolour&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;motion&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;On&quot;,&quot;Off&quot;],&quot;default&quot;:&quot;On&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;frame&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Desktop&quot;,&quot;Mobile&quot;],&quot;default&quot;:&quot;Desktop&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Preview&quot;},&quot;demoState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Visitor&quot;,&quot;Member with save&quot;],&quot;default&quot;:&quot;Visitor&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Preview&quot;},&quot;kofiUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Links&quot;},&quot;page&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string&quot;},&quot;lang&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string&quot;},&quot;embedded&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;boolean&quot;}}">
 class Component extends DCLogic {
   static PAGES = ['home','characters','lore','play','auth','dashboard','download','support'];
   static PAL = {
@@ -987,7 +1002,7 @@ class Component extends DCLogic {
     titleA:['Fityesz','The Fityesz'], titleB:['Krónika','Chronicle'],
     fSubject:['Alany','Subject'], fSubjectV:['Te','You'], fOcc:['Foglalkozás','Occupation'], fOccV:['volt középiskolai tanár','former secondary school teacher'],
     fAssets:['Vagyon','Assets'], fAssetsV:['3 kifli, 380 Ft','3 bread rolls, 380 forints'], fDebt:['Tartozás','Debt'], fDebtV:['4 millió forint','4 million forints'], fNote:['Megjegyzés','Note'],
-    stampSlogan:['Magyarország előre megy nem hátra!','Onwards and upwards!'],
+    stampSlogan:['Csak felfelé!','Onwards and upwards!'],
     q1:['Az országért mindenkinek tenni kell, nem csak beszélni róla.','Everyone must act for the country, not merely talk about it.'],
     q2:['Aki nincs ellenünk, az velünk van.','Whoever is not against us is with us.'],
     q3:['Ha nincs semmi gond, csinálunk valamit, hogy legyen.','If there is no trouble, we will make some.'],
@@ -1025,7 +1040,7 @@ class Component extends DCLogic {
     firstSeen:['Első megjelenés','First appears'], noPhoto:['Nincs fénykép','No photo'], fileNo:['Akta','File'],
     loreKicker:['A világ','The world'], loreSub:['Minden, amit a Fityeszről tudni lehet. És amit jobb nem tudni.','Everything there is to know about the Fityesz. And some things better left unknown.'],
     tabParty:['A párt','The party'], tabChapters:['Fejezetek','Chapters'], tabPlaces:['Helyszínek','Places'], tabItems:['Tárgyak','Items'], tabRules:['Játékszabályok','Mechanics'],
-    partyCaption:['A falon gigantikus Kapzs Imre-portré, alatta a felirat: „Magyarország előre megy nem <hátra></hátra>!”','On the wall a gigantic portrait of Kapzs Imre, beneath it the caption: “ONWARDS AND UPWARDS!”'],
+    partyCaption:['A falon gigantikus Kapzs Imre-portré, alatta a felirat: „CSAK FELFELÉ!”','On the wall a gigantic portrait of Kapzs Imre, beneath it the caption: “ONWARDS AND UPWARDS!”'],
     leaderLabel:['A Főnök','The Boss'], leaderTitle:['a Nemzet Megmentője, a Haza Pajzsa','the Saviour of the Nation, the Shield of the Homeland'],
     mottoLabel:['Jelmondat','Motto'], rulesLabel:['A négy szabály','The four rules'], rulesBy:['Lakatos Ervin, 2. fejezet','Lakatos Ervin, Chapter 2'],
     rule1:['Amit látsz, nem láttad.',"What you see, you didn't see."], rule2:['Amit hallasz, nem hallottad.',"What you hear, you didn't hear."],
@@ -1229,8 +1244,9 @@ class Component extends DCLogic {
     return Component.norm({name, i:Component.SCRIPT.length - 1, done:true, choices:{q1:0,q2:0}, xp:35, exp:25, items:['envelope1'], trust:{lipoti:95}, at:Date.now()});
   }
 
-  state = {page:'home', lang:'hu', menu:false, w:1280, user:null, save:null};
-  rootRef = React.createRef();
+  state = {page:'home', lang:'hu', menu:false, w:(typeof window !== 'undefined' && window.innerWidth) || 1280, user:null, save:null};
+  rootEl = null;
+  rootRef = el => { this.rootEl = el; if (el) { this.ensureRO(); this.measure(); } };
   scrollRef = React.createRef();
 
   componentDidMount() {
@@ -1247,11 +1263,10 @@ class Component extends DCLogic {
     if (P.page) s.page = P.page;
     if (P.lang) s.lang = P.lang;
     this.setState(s, () => { if (P.demoState === 'Member with save') this.applyDemo(); });
-    const el = this.rootRef.current;
-    if (el && window.ResizeObserver) {
-      this.ro = new ResizeObserver(es => { const w = Math.round(es[0].contentRect.width); if (Math.abs(w - this.state.w) > 2) this.setState({w}); });
-      this.ro.observe(el);
-    }
+    this.onWin = () => this.measure();
+    window.addEventListener('resize', this.onWin);
+    this.ensureRO();
+    setTimeout(() => { this.ensureRO(); this.measure(); }, 0);
     this.onKey = e => {
       if (this.state.page !== 'play' || this.state.gate) return;
       const tag = (e.target && e.target.tagName) || '';
@@ -1261,13 +1276,100 @@ class Component extends DCLogic {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.advance(); }
     };
     window.addEventListener('keydown', this.onKey);
+    this.rm = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    this.setupReveal();
+  }
+  static KF = {
+    up:[{opacity:0, translate:'0 22px'},{opacity:1, translate:'0 0'}],
+    lift:[{translate:'0 22px'},{translate:'0 0'}],
+    fade:[{opacity:0},{opacity:1}],
+    rise:[{opacity:0, translate:'0 34px'},{opacity:1, translate:'0 0'}],
+    slam:[{opacity:0, scale:'1.18'},{opacity:1, scale:'1'}],
+    stamp:[{opacity:0, scale:'2'},{opacity:1, scale:'.95', offset:.72},{opacity:1, scale:'1'}],
+    swing:[{opacity:0, rotate:'7deg', translate:'40px 22px'},{opacity:1, rotate:'0deg', translate:'0 0'}],
+    drop:[{opacity:0, rotate:'-10deg', translate:'0 -20px'},{opacity:1, rotate:'0deg', translate:'0 0'}],
+    bar:[{scale:'0 1'},{scale:'1 1'}],
+    wipe:[{opacity:0, translate:'-18px 0'},{opacity:1, translate:'0 0'}],
+    shake:[{rotate:'0deg'},{rotate:'-14deg'},{rotate:'12deg'},{rotate:'-8deg'},{rotate:'5deg'},{rotate:'0deg'}]
+  };
+  static DUR = {stamp:560, bar:1000, slam:700, swing:950, drop:750, wipe:700, rise:800, shake:700, fade:800};
+  setupReveal() {
+    const root = this.rootEl;
+    if (!root || !root.animate) return;
+    this.pending = this.pending || new Set();
+    const off = this.props.motion === 'Off' || this.rm;
+    root.querySelectorAll('[data-reveal]').forEach(el => {
+      const old = el.__rv;
+      if (old && typeof old === 'object' && old.cancel) {
+        if (old.playState === 'paused') { try { old.cancel(); } catch (e) {} el.__rv = 0; } else el.__rv = 1;
+      }
+      if (el.__rv) return;
+      el.__rv = 1;
+      if (!off) this.pending.add(el);
+    });
+    if (off) { this.pending.clear(); return; }
+    if (!this.onScroll) {
+      this.onScroll = () => {
+        const now = Date.now();
+        if (now - (this.lastChk || 0) > 50) { this.lastChk = now; this.checkReveal(); }
+        clearTimeout(this.scT); this.scT = setTimeout(() => this.checkReveal(), 120);
+      };
+      document.addEventListener('scroll', this.onScroll, true);
+      window.addEventListener('resize', this.onScroll);
+    }
+    this.checkReveal();
+  }
+  checkReveal() {
+    if (!this.pending || !this.pending.size) return;
+    const C = Component, sc = this.scrollRef.current;
+    const box = (this.props.frame === 'Mobile' && sc) ? sc.getBoundingClientRect() : {top:0, bottom:window.innerHeight};
+    const batch = [];
+    this.pending.forEach(el => {
+      if (!el.isConnected) { this.pending.delete(el); return; }
+      const r = el.getBoundingClientRect();
+      if (!r.width && !r.height) return;
+      if (r.top < box.bottom + 30 && r.bottom > box.top - 30) { batch.push(el); this.pending.delete(el); }
+    });
+    const idx = new Map();
+    batch.forEach(el => {
+      const type = el.getAttribute('data-reveal') || 'up';
+      let d = +(el.getAttribute('data-delay') || 0);
+      const par = el.parentElement;
+      if (par && par.hasAttribute('data-stagger')) {
+        const k = idx.get(par) || 0; idx.set(par, k + 1);
+        d += (+par.getAttribute('data-base') || 0) + Math.min(k, 8) * (+par.getAttribute('data-stagger') || 80);
+      }
+      try { el.animate(C.KF[type] || C.KF.up, {duration:C.DUR[type] || 700, delay:d, easing: type === 'stamp' ? 'cubic-bezier(.3,1.45,.5,1)' : 'cubic-bezier(.2,.7,.2,1)', fill:'backwards'}); } catch (e) {}
+    });
+  }
+  measure() {
+    const el = this.rootEl;
+    if (!el) return;
+    const w = Math.round(el.getBoundingClientRect().width);
+    if (w && Math.abs(w - this.state.w) > 2) this.setState({w});
+  }
+  ensureRO() {
+    const el = this.rootEl;
+    if (!el || this.roEl === el) return;
+    if (this.ro) this.ro.disconnect();
+    this.roEl = el;
+    if (window.ResizeObserver) { this.ro = new ResizeObserver(() => this.measure()); this.ro.observe(el); }
+    this.measure();
   }
   componentDidUpdate(pp) {
+    this.ensureRO();
     if (pp.demoState !== this.props.demoState) this.applyDemo();
     if (pp.page !== this.props.page && this.props.page) this.setState({page:this.props.page});
     if (pp.frame !== this.props.frame) this.toTop();
+    this.setupReveal();
   }
-  componentWillUnmount() { this.ro && this.ro.disconnect(); window.removeEventListener('keydown', this.onKey); }
+  componentWillUnmount() {
+    this.ro && this.ro.disconnect();
+    window.removeEventListener('resize', this.onWin);
+    window.removeEventListener('keydown', this.onKey);
+    if (this.onScroll) { document.removeEventListener('scroll', this.onScroll, true); window.removeEventListener('resize', this.onScroll); }
+    clearTimeout(this.rvT); clearTimeout(this.scT);
+  }
 
   persist(k, v) {
     if (this.props.embedded) return;
@@ -1352,7 +1454,7 @@ class Component extends DCLogic {
       revealed = pk != null; q = g(cq.q);
       opts = cq.opts.map((o, k) => ({n:k + 1, text:g(o.t), go: e => { e && e.stopPropagation(); this.choose(st.q, k); },
         barW: revealed ? cq.pct[k] + '%' : '0%', barC: pk === k ? 'color-mix(in srgb, var(--accent) 28%, transparent)' : 'var(--paper2)',
-        bd: pk === k ? 'var(--accent)' : 'var(--ink)', pctTxt: revealed ? cq.pct[k] + '%' : '', mineTxt: pk === k ? t.yourChoice : '', cursor: revealed ? 'default' : 'pointer'}));
+        delay:(120 + k * 90) + 'ms', bd: pk === k ? 'var(--accent)' : 'var(--ink)', pctTxt: revealed ? cq.pct[k] + '%' : '', mineTxt: pk === k ? t.yourChoice : '', cursor: revealed ? 'default' : 'pointer'}));
       if (revealed) { const o = cq.opts[pk]; delta = sign(o.xp) + ' XP · ' + sign(o.exp) + ' ' + t.exposure.toUpperCase(); }
     }
     const tt = st.k === 'title' ? (st.label === 'pro' ? [t.prologue, C.CHAPTERS[0].title[li], g('pro.quote')] : [t.chapterN.replace('%n', 1), C.CHAPTERS[1].title[li], g('ch1.quote')]) : ['','',''];
@@ -1501,6 +1603,8 @@ class Component extends DCLogic {
     const frameStyle = mob ? {width:390, height:844, maxHeight:'calc(100vh - 64px)', borderRadius:44, border:'10px solid #0B0B0B', overflow:'hidden', transform:'translateZ(0)', boxShadow:'0 30px 80px -20px rgba(0,0,0,.6)', background:pal.paper, flex:'none'} : {};
     const scrollStyle = mob ? {height:'100%', overflowY:'auto', overflowX:'hidden'} : {};
     const wide = s.w >= 980;
+    const g3 = s.w >= 860 ? 'repeat(3,minmax(0,1fr))' : 'minmax(0,1fr)';
+    const g4 = s.w >= 1000 ? 'repeat(4,minmax(0,1fr))' : s.w >= 600 ? 'repeat(2,minmax(0,1fr))' : 'minmax(0,1fr)';
     const pg = {}; C.PAGES.forEach(p => pg[p] = s.page === p);
     const go = p => () => this.go(p);
     const navItems = [['characters',t.navChars],['lore',t.navLore],['play',t.navPlay],['download',t.navDownload],['support',t.navSupport]]
@@ -1512,7 +1616,7 @@ class Component extends DCLogic {
     const on = 'var(--ink)', onFg = 'var(--onInk)';
     const kofiUrl = (P.kofiUrl || '').trim();
     return {
-      t, pg, themeVars, stageStyle, frameStyle, scrollStyle,
+      t, pg, themeVars, stageStyle, frameStyle, scrollStyle, g3, g4,
       rootRef:this.rootRef, scrollRef:this.scrollRef,
       wide, narrow:!wide, menuOpen: !wide && s.menu,
       menuLabel: s.menu ? t.close : t.menu,
@@ -1525,7 +1629,10 @@ class Component extends DCLogic {
       huBg: li ? 'transparent' : on, huFg: li ? 'var(--ink)' : onFg,
       enBg: li ? on : 'transparent', enFg: li ? onFg : 'var(--ink)',
       caseFields:[{k:t.fSubject,v:t.fSubjectV},{k:t.fOcc,v:t.fOccV},{k:t.fAssets,v:t.fAssetsV},{k:t.fDebt,v:t.fDebtV},{k:t.fNote,v:t.bank}],
-      bandQuotes:[t.q1, t.q2, t.q3],
+      bandQuotes: C.CHAPTERS.slice(1, 6).map(c => c.quote[li]),
+      anim: (P.motion === 'Off' || this.rm)
+        ? {marquee:'none', drift:'none', pulse:'none', word:'none'}
+        : {marquee:'fzMarquee 70s linear infinite', drift:'fzDrift 14s ease-in-out infinite alternate', pulse:'fzPulse 1.5s ease-out infinite', word:'fzWord 20s ease-in-out infinite alternate'},
       premise:[t.pro1,t.pro2,t.pro3,t.pro4,t.pro5].map((text, i) => ({text, c: i === 4 ? 'var(--accentText)' : 'inherit'})),
       cast, roster: cast.slice(1),
       sampleOpts:[t.sampleO1,t.sampleO2,t.sampleO3].map((text, i) => ({n:i+1, text})),

@@ -1,6 +1,9 @@
 .superpowers/
 .idea/
 .DS_Store
+.remember/
+.next/
+
 
 # dependencies
 /node_modules
