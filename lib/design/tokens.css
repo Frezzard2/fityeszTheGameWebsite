@@ -5,17 +5,17 @@
   --second: #1F6B3A; --onInk: #F4EFE6;
 }
 [data-direction='campaign'] {
-  --fD: 'Antonio', 'Arial Narrow', sans-serif;
-  --fB: 'Public Sans', system-ui, sans-serif;
-  --fL: 'Public Sans', system-ui, sans-serif;
+  --fD: var(--font-antonio), 'Arial Narrow', sans-serif;
+  --fB: var(--font-public-sans), system-ui, sans-serif;
+  --fL: var(--font-public-sans), system-ui, sans-serif;
   --dW: 700; --dS: 1; --bw: 3px;
   --sh: 6px 6px 0 var(--ink); --shS: 4px 4px 0 var(--ink);
   --desk: var(--paper); --tex: none;
 }
 [data-direction='dossier'] {
-  --fD: 'Saira Stencil One', sans-serif;
-  --fB: 'IBM Plex Mono', ui-monospace, monospace;
-  --fL: 'IBM Plex Mono', ui-monospace, monospace;
+  --fD: var(--font-saira-stencil-one), sans-serif;
+  --fB: var(--font-ibm-plex-mono), ui-monospace, monospace;
+  --fL: var(--font-ibm-plex-mono), ui-monospace, monospace;
   --dW: 400; --dS: .74; --bw: 1px;
   --sh: 0 1px 0 rgba(0,0,0,.05), 0 22px 44px -26px rgba(0,0,0,.6);
   --shS: 0 12px 26px -18px rgba(0,0,0,.55);
