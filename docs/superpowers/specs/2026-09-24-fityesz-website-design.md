@@ -3,7 +3,7 @@
 **Date:** 2026-09-24
 **Authors:** Zsombor Kukucska ([@Frezzard2](https://github.com/Frezzard2)), Zea Dajka ([@djkzea](https://github.com/djkzea))
 **Game repo:** [djkzea/fityeszthegame](https://github.com/djkzea/fityeszthegame)
-**Status:** approved for planning
+**Status:** Phase 1 partly built and live; superseded in places — read `docs/superpowers/NEXT-SESSION.md` first
 
 ---
 
@@ -56,7 +56,7 @@ Facts taken from the source, not assumed:
 | Packaging | Native installers for Windows, macOS (Intel + Apple Silicon), Linux |
 | Desktop continuation | The downloaded game signs in and loads the web save |
 | Play presentation | Visual novel — dialogue boxes with typographic nameplates, no portrait art |
-| Visual direction | **Campaign propaganda** on Landing, Szereplők, Letöltés, Támogatás, Vezérlőpult; **Leaked dossier** on Lexikon and Játék |
+| Visual direction | **Campaign propaganda everywhere.** Superseded 2026-09-25: the creators saw the live site and asked for one direction across the whole project, including the playable chapter. The leaked-dossier direction is dropped. See `docs/superpowers/NEXT-SESSION.md`. |
 | Palette | **Tricolour** (§6.1), site-wide, both directions |
 | Flag rail | The red/white/green rail stays visible on every page, including the dossier pages, overriding the prototype's `--cF:none` |
 | Design source | The prototype in `Fityesz Chronicles Website Design/` is the visual source of truth (§6) |
