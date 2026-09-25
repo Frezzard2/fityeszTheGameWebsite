@@ -35,14 +35,15 @@ const html = `<!DOCTYPE html>
 writeFileSync(join(OUT, 'index.html'), html, 'utf8')
 
 const htaccess = `# Serve the Hungarian site at the domain root.
+#
+# The target is relative on purpose, so this works whether the site sits at
+# the document root or inside a subdirectory.
 RewriteEngine On
-RewriteRule ^$ /${DEFAULT_LOCALE}/ [R=302,L]
+RewriteRule ^$ ${DEFAULT_LOCALE}/ [R=302,L]
 
-# Directory-style URLs already resolve to index.html; this only covers
-# a request that lost its trailing slash.
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME}/index.html -f
-RewriteRule ^(.*)$ /$1/ [R=301,L]
+# Apache's mod_dir (DirectorySlash) already redirects /hu -> /hu/ on its own.
+# Do NOT add a trailing-slash rule here: one that ignores whether the URI
+# already ends in "/" appends another on every pass and loops forever.
 
 ErrorDocument 404 /${DEFAULT_LOCALE}/404.html
 
