@@ -11,7 +11,6 @@ import { SITE_TITLE, type Locale } from '@/lib/constants'
 import { FlagRail } from '@/components/FlagRail'
 import { LocaleToggleClient } from '@/components/LocaleToggleClient'
 import { NavLink } from '@/components/NavLink'
-import '../globals.css'
 
 // Self-hosted via next/font/google: no request ever reaches Google at runtime.
 const antonio = Antonio({
@@ -191,8 +190,7 @@ export default async function LocaleLayout({
   const li = locale === 'en' ? 1 : 0
 
   return (
-    <html lang={locale} className={fontVariables}>
-      <body>
+    <div lang={locale} className={fontVariables}>
         <NextIntlClientProvider>
             <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
               <header
@@ -416,7 +414,6 @@ export default async function LocaleLayout({
               </footer>
             </div>
         </NextIntlClientProvider>
-      </body>
-    </html>
+    </div>
   )
 }

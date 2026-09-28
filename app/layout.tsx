@@ -1,8 +1,14 @@
 import type { ReactNode } from 'react'
+import { DEFAULT_LOCALE } from '@/lib/constants'
+import './globals.css'
 
-// Next requires a root layout to exist, but it must not render <html>/<body>:
-// app/[locale]/layout.tsx is the only layout that does that (see decision 1,
-// Task 3 dispatch). This is a pure pass-through.
+// Every route renders through this layout, including the 404 for paths with no
+// locale prefix, so the document tags have to live here. app/[locale]/layout.tsx
+// sets the real lang on a wrapper element.
 export default function RootLayout({ children }: { children: ReactNode }) {
-  return children
+  return (
+    <html lang={DEFAULT_LOCALE}>
+      <body>{children}</body>
+    </html>
+  )
 }
