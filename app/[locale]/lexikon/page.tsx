@@ -26,7 +26,6 @@ const HEAD = {
 
 /** repeat(N,1fr)-style prototype grids, without the container-width JS that
  * picked N — auto-fit collapses the same way and never forces overflow. */
-const GRID_4 = 'repeat(auto-fit,minmax(150px,1fr))'
 const GRID_3 = 'repeat(auto-fit,minmax(220px,1fr))'
 
 /** Bossfight XP awards — fityesz1_0.java: xp += 50 / 80 / 120, documented in
@@ -52,94 +51,85 @@ export default async function LorePage({
       id: 'party',
       label: t('tabParty'),
       content: (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,380px),1fr))', gap: 28 }}>
-          <Reveal
-            kind="up"
-            style={{
-              background: 'var(--accent)',
-              color: 'var(--onAccent)',
-              border: 'var(--bw) solid var(--ink)',
-              boxShadow: 'var(--sh)',
-              padding: 'clamp(24px,3cqw,40px)',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              gap: 28,
-              minHeight: 440,
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-          >
-            <div
-              aria-hidden
+        <div style={{ display: 'grid', gap: 22 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 22, alignItems: 'start' }}>
+            {/* The poster on the wall */}
+            <Reveal
+              kind="up"
               style={{
-                display: 'block',
-                position: 'absolute',
-                inset: 0,
-                backgroundImage: 'radial-gradient(circle, var(--onAccent) 1.2px, transparent 1.8px)',
-                backgroundSize: '9px 9px',
-                opacity: 0.22,
-                WebkitMaskImage: 'linear-gradient(to top,#000,transparent 70%)',
-                maskImage: 'linear-gradient(to top,#000,transparent 70%)',
+                background: 'var(--accent)',
+                color: 'var(--onAccent)',
+                border: 'var(--bw) solid var(--ink)',
+                boxShadow: 'var(--sh)',
+                padding: 'clamp(24px,3cqw,40px)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                gap: 28,
+                minHeight: 440,
+                position: 'relative',
+                overflow: 'hidden',
               }}
-            />
-            <div style={{ position: 'relative', ...LABEL }}>Fityesz</div>
-            <div style={{ position: 'relative', ...HEAD, fontSize: 'clamp(34px,7cqw,124px)', lineHeight: 1.04, overflowWrap: 'anywhere', hyphens: 'auto' }}>
-              {t('slogan1')}
-              <br />
-              {t('slogan2')}
-            </div>
-            <p style={{ position: 'relative', margin: 0, fontSize: 15, lineHeight: 1.5, maxWidth: '28em' }}>
-              {t('partyCaption')}
-            </p>
-          </Reveal>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
-            <Reveal kind="up" delay={0} style={{ ...SHEET_CARD, padding: 26 }}>
-              <div style={{ ...LABEL, color: 'var(--accentText)' }}>{t('leaderLabel')}</div>
-              <div style={{ ...HEAD, marginTop: 12, fontSize: 'clamp(44px,5cqw,68px)' }}>Kapzs Imre</div>
-              <div style={{ marginTop: 10, fontSize: 17, fontStyle: 'italic' }}>{t('leaderTitle')}</div>
-            </Reveal>
-
-            <Reveal kind="up" delay={120} style={{ ...SHEET_CARD, padding: 26 }}>
-              <div style={{ ...LABEL, color: 'var(--accentText)' }}>{t('mottoLabel')}</div>
-              <div style={{ ...HEAD, marginTop: 12, fontSize: 'clamp(28px,3cqw,40px)' }}>{t('q2')}</div>
-            </Reveal>
-
-            <Reveal kind="up" delay={240} style={{ padding: '4px 4px 0 22px', borderLeft: 'var(--bw) solid var(--ink)' }}>
-              <p style={{ margin: 0, fontSize: 18, lineHeight: 1.5, fontStyle: 'italic' }}>{t('familyQuote')}</p>
-              <div style={{ font: '600 12px/1 var(--fL)', letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--inkSoft)', marginTop: 10 }}>
-                {t('familyBy')}
+            >
+              <div
+                aria-hidden
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  backgroundImage: 'radial-gradient(circle, var(--onAccent) 1.2px, transparent 1.8px)',
+                  backgroundSize: '9px 9px',
+                  opacity: 0.22,
+                  WebkitMaskImage: 'linear-gradient(to top,#000,transparent 70%)',
+                  maskImage: 'linear-gradient(to top,#000,transparent 70%)',
+                }}
+              />
+              <div style={{ position: 'relative', ...LABEL }}>Fityesz</div>
+              <div style={{ position: 'relative', ...HEAD, fontSize: 'clamp(34px,7cqw,112px)', lineHeight: 1.04, overflowWrap: 'anywhere' }}>
+                {t('slogan1')}
+                <br />
+                {t('slogan2')}
               </div>
+              <p style={{ position: 'relative', margin: 0, fontSize: 15, lineHeight: 1.5, maxWidth: '28em' }}>
+                {t('partyCaption')}
+              </p>
             </Reveal>
+
+            {/* Who runs it, and the motto */}
+            <div style={{ display: 'grid', gap: 18 }}>
+              <Reveal kind="up" delay={120} style={{ border: 'var(--bw) solid var(--ink)', background: 'var(--sheet)', boxShadow: 'var(--shS)', padding: 'clamp(18px,2.4cqw,28px)' }}>
+                <p style={{ ...LABEL, color: 'var(--accentText)', margin: 0 }}>{t('leaderLabel')}</p>
+                <p style={{ margin: '10px 0 0', ...HEAD, fontSize: 'clamp(28px,4.4cqw,52px)' }}>Kapzs Imre</p>
+                <p style={{ margin: '8px 0 0', fontStyle: 'italic', color: 'var(--inkSoft)' }}>{t('leaderTitle')}</p>
+              </Reveal>
+
+              <Reveal kind="up" delay={200} style={{ border: 'var(--bw) solid var(--ink)', background: 'var(--sheet)', boxShadow: 'var(--shS)', padding: 'clamp(18px,2.4cqw,28px)' }}>
+                <p style={{ ...LABEL, color: 'var(--accentText)', margin: 0 }}>{t('mottoLabel')}</p>
+                <p style={{ margin: '10px 0 0', ...HEAD, fontSize: 'clamp(22px,3.2cqw,38px)' }}>{t('q2')}</p>
+              </Reveal>
+
+              <Reveal kind="fade" delay={280} as="blockquote" style={{ margin: 0 }}>
+                <p style={{ margin: 0, fontStyle: 'italic', fontSize: 'clamp(15px,1.6cqw,19px)', lineHeight: 1.5 }}>
+                  {t('familyQuote')}
+                </p>
+                <footer style={{ ...LABEL, marginTop: 8 }}>{t('familyBy')}</footer>
+              </Reveal>
+            </div>
           </div>
 
-          <Reveal
-            kind="up"
-            style={{
-              gridColumn: '1 / -1',
-              background: 'var(--ink)',
-              color: 'var(--onInk)',
-              border: 'var(--bw) solid var(--ink)',
-              padding: 'clamp(24px,3cqw,40px)',
-            }}
-          >
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: '8px 24px', alignItems: 'baseline' }}>
-              <div style={{ ...HEAD, fontSize: 'clamp(32px,3.6cqw,48px)' }}>{t('rulesLabel')}</div>
-              <div style={{ font: '600 12px/1 var(--fL)', letterSpacing: '.1em', textTransform: 'uppercase', opacity: 0.8 }}>
-                {t('rulesBy')}
-              </div>
+          {/* The four rules, as a full-width band */}
+          <Reveal kind="up" delay={200} style={{ background: 'var(--ink)', color: 'var(--onInk)', border: 'var(--bw) solid var(--ink)', padding: 'clamp(20px,3cqw,36px)' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'baseline', gap: '8px 20px' }}>
+              <h3 style={{ margin: 0, ...HEAD, fontSize: 'clamp(26px,4cqw,46px)' }}>{t('rulesLabel')}</h3>
+              <span style={{ ...LABEL, opacity: 0.75 }}>{t('rulesBy')}</span>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: GRID_4, gap: 24, marginTop: 26 }}>
-              {[t('rule1'), t('rule2'), t('rule3'), t('rule4')].map((text, i) => (
-                <Reveal key={text} kind="up" delay={i * 120} style={{ borderTop: '2px solid var(--accent)', paddingTop: 14 }}>
-                  <div style={{ fontFamily: 'var(--fD)', fontWeight: 'var(--dW)' as never, fontSize: 44, lineHeight: 1.14, color: 'var(--accent)' }}>
-                    {i + 1}
-                  </div>
-                  <div style={{ ...HEAD, marginTop: 8, fontSize: 26, lineHeight: 1.05 }}>{text}</div>
-                </Reveal>
+            <ol style={{ listStyle: 'none', margin: '22px 0 0', padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 24 }}>
+              {[t('rule1'), t('rule2'), t('rule3'), t('rule4')].map((rule, n) => (
+                <li key={rule} style={{ borderTop: '2px solid var(--accent)', paddingTop: 12 }}>
+                  <span style={{ display: 'block', ...HEAD, fontSize: 38, color: 'var(--accent)' }}>{n + 1}</span>
+                  <span style={{ display: 'block', marginTop: 6, ...HEAD, fontSize: 'clamp(15px,1.7cqw,20px)' }}>{rule}</span>
+                </li>
               ))}
-            </div>
+            </ol>
           </Reveal>
         </div>
       ),

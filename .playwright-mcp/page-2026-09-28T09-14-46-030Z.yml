@@ -1,0 +1,230 @@
+- generic [ref=f42e8]:
+  - banner [ref=f42e9]:
+    - generic [ref=f42e14]:
+      - button "F Fityesz Krónika" [ref=f42e15] [cursor=pointer]:
+        - generic [ref=f42e16]: F
+        - generic [ref=f42e17]:
+          - generic [ref=f42e18]: Fityesz
+          - generic [ref=f42e19]: Krónika
+      - navigation [ref=f42e20]:
+        - button "Szereplők" [ref=f42e21] [cursor=pointer]
+        - button "Lexikon" [ref=f42e22] [cursor=pointer]
+        - button "Játék" [ref=f42e23] [cursor=pointer]
+        - button "Letöltés" [ref=f42e24] [cursor=pointer]
+        - button "Támogatás" [ref=f42e25] [cursor=pointer]
+      - generic [ref=f42e26]:
+        - generic [ref=f42e27]:
+          - button "HU" [ref=f42e28] [cursor=pointer]
+          - button "EN" [ref=f42e29] [cursor=pointer]
+        - button "Belépés" [ref=f42e30] [cursor=pointer]
+        - button "Játssz ingyen" [ref=f42e31] [cursor=pointer]
+  - generic [ref=f42e34]:
+    - generic [ref=f42e35]:
+      - generic [ref=f42e36]: Szöveges kalandjáték · az 1. fejezet ingyen játszható
+      - heading "Csak felfelé!" [level=1] [ref=f42e37]:
+        - generic [ref=f42e38]: Csak
+        - generic [ref=f42e39]: felfelé!
+      - paragraph [ref=f42e40]: Izgalmas történet arról, hogyan leszel politikus. A döntéseid mind befolyásolják a cselekmény kimenetelét. Bölcsen válassz!
+      - generic [ref=f42e41]:
+        - button "Játszd az 1. fejezetet" [ref=f42e42] [cursor=pointer]
+        - button "Teljes játék letöltése" [ref=f42e45] [cursor=pointer]
+      - paragraph [ref=f42e47]: A kezdéshez nem kell fiók. A böngésződben fut.
+    - generic [ref=f42e48]:
+      - generic [ref=f42e49]: Kiinduló helyzet
+      - generic [ref=f42e50]:
+        - generic [ref=f42e51]:
+          - generic [ref=f42e52]: "3"
+          - generic [ref=f42e53]: kifli
+        - generic [ref=f42e54]:
+          - generic [ref=f42e55]: 380 Ft
+          - generic [ref=f42e56]: készpénz
+        - generic [ref=f42e57]:
+          - generic [ref=f42e58]: adósság
+          - generic [ref=f42e59]: −4 000 000 Ft
+      - generic [ref=f42e60]: A bank már keres.
+  - generic [ref=f42e62]:
+    - generic [ref=f42e63]:
+      - generic [ref=f42e64]:
+        - generic [ref=f42e65]: ★
+        - generic [ref=f42e66]: Az országért mindenkinek tenni kell, nem csak beszélni róla.
+      - generic [ref=f42e67]:
+        - generic [ref=f42e68]: ★
+        - generic [ref=f42e69]: Aki nincs ellenünk, az velünk van.
+      - generic [ref=f42e70]:
+        - generic [ref=f42e71]: ★
+        - generic [ref=f42e72]: Ha nincs semmi gond, csinálunk valamit, hogy legyen.
+      - generic [ref=f42e73]:
+        - generic [ref=f42e74]: ★
+        - generic [ref=f42e75]: A diplomácia nem arról szól, hogy mindig igent mondunk.
+      - generic [ref=f42e76]:
+        - generic [ref=f42e77]: ★
+        - generic [ref=f42e78]: Egyetlen forint közpénzt sem hagyunk kárba veszni.
+    - generic [aria-hidden] [ref=f42e79]:
+      - generic [ref=f42e80]:
+        - generic [ref=f42e81]: ★
+        - generic [ref=f42e82]: Az országért mindenkinek tenni kell, nem csak beszélni róla.
+      - generic [ref=f42e83]:
+        - generic [ref=f42e84]: ★
+        - generic [ref=f42e85]: Aki nincs ellenünk, az velünk van.
+      - generic [ref=f42e86]:
+        - generic [ref=f42e87]: ★
+        - generic [ref=f42e88]: Ha nincs semmi gond, csinálunk valamit, hogy legyen.
+      - generic [ref=f42e89]:
+        - generic [ref=f42e90]: ★
+        - generic [ref=f42e91]: A diplomácia nem arról szól, hogy mindig igent mondunk.
+      - generic [ref=f42e92]:
+        - generic [ref=f42e93]: ★
+        - generic [ref=f42e94]: Egyetlen forint közpénzt sem hagyunk kárba veszni.
+  - generic [ref=f42e96]:
+    - generic [ref=f42e97]: "Prológus: A mélyPont"
+    - generic [ref=f42e99]:
+      - paragraph [ref=f42e100]: Volt középiskolai tanár vagy.
+      - paragraph [ref=f42e101]: A havi 180 ezres fizetésből nem jött ki a matek.
+      - paragraph [ref=f42e102]: Van 3 kiflid, 380 Forintod és 4 millió forint adósságod.
+      - paragraph [ref=f42e103]: A bank már keres.
+      - paragraph [ref=f42e104]: Ezért politikusnak állsz.
+      - generic [ref=f42e105]:
+        - generic [ref=f42e106]:
+          - generic [ref=f42e107]: Csörög a telefonod
+          - generic [ref=f42e110]: „Van egy ajánlatom, amit nem fog tudni visszautasítani.”
+        - button "Vedd fel" [ref=f42e111] [cursor=pointer]
+  - generic [ref=f42e114]:
+    - generic [ref=f42e115]:
+      - generic [ref=f42e116]:
+        - heading "A szereplők" [level=2] [ref=f42e117]
+        - paragraph [ref=f42e118]: Akikkel a ranglétrán találkozol.
+      - button "Összes szereplő →" [ref=f42e119] [cursor=pointer]
+    - button "01 Lipóti Dezső A toborzó 1. fejezet" [ref=f42e120] [cursor=pointer]:
+      - generic [ref=f42e121]: "01"
+      - generic [ref=f42e122]:
+        - generic [ref=f42e123]: Lipóti Dezső
+        - generic [ref=f42e124]: A toborzó
+      - generic [ref=f42e125]: 1. fejezet
+    - button "02 Lakatos Ervin Kerületi pártember 2. fejezet BOSSFIGHT" [ref=f42e127] [cursor=pointer]:
+      - generic [ref=f42e128]: "02"
+      - generic [ref=f42e129]:
+        - generic [ref=f42e130]: Lakatos Ervin
+        - generic [ref=f42e131]: Kerületi pártember
+      - generic [ref=f42e132]:
+        - generic [ref=f42e133]: 2. fejezet
+        - generic [ref=f42e134]: BOSSFIGHT
+    - button "03 Kapzs Imre Miniszterelnök, a Nemzet Megmentője 3. fejezet BOSSFIGHT" [ref=f42e135] [cursor=pointer]:
+      - generic [ref=f42e136]: "03"
+      - generic [ref=f42e137]:
+        - generic [ref=f42e138]: Kapzs Imre
+        - generic [ref=f42e139]: Miniszterelnök, a Nemzet Megmentője
+      - generic [ref=f42e140]:
+        - generic [ref=f42e141]: 3. fejezet
+        - generic [ref=f42e142]: BOSSFIGHT
+    - button "04 Dr. Péteri Katalin Az Országos Választmány tagja 4. fejezet BOSSFIGHT" [ref=f42e143] [cursor=pointer]:
+      - generic [ref=f42e144]: "04"
+      - generic [ref=f42e145]:
+        - generic [ref=f42e146]: Dr. Péteri Katalin
+        - generic [ref=f42e147]: Az Országos Választmány tagja
+      - generic [ref=f42e148]:
+        - generic [ref=f42e149]: 4. fejezet
+        - generic [ref=f42e150]: BOSSFIGHT
+    - button "05 Molnár Gábor A frakció embere 5. fejezet" [ref=f42e151] [cursor=pointer]:
+      - generic [ref=f42e152]: "05"
+      - generic [ref=f42e153]:
+        - generic [ref=f42e154]: Molnár Gábor
+        - generic [ref=f42e155]: A frakció embere
+      - generic [ref=f42e156]: 5. fejezet
+  - generic [ref=f42e159]:
+    - heading "Így működik" [level=2] [ref=f42e160]
+    - generic [ref=f42e161]:
+      - generic [ref=f42e162]:
+        - generic [ref=f42e163]:
+          - generic [ref=f42e164]: "01"
+          - heading "Válassz 1–3" [level=3] [ref=f42e165]
+          - paragraph [ref=f42e166]: A sztori során 1-3 számok közül kell választanod a folytatást.
+        - generic [ref=f42e168]:
+          - generic [ref=f42e169]: Mit válaszolsz?
+          - generic [ref=f42e170]:
+            - generic [ref=f42e171]: "1"
+            - generic [ref=f42e173]: Engem csak a pénz érdekel
+          - generic [ref=f42e174]:
+            - generic [ref=f42e175]: "2"
+            - generic [ref=f42e177]: A nemzet szolgálata érdekel
+          - generic [ref=f42e178]:
+            - generic [ref=f42e179]: "3"
+            - generic [ref=f42e181]: Mi lenne a dolgom?
+      - generic [ref=f42e182]:
+        - generic [ref=f42e183]:
+          - generic [ref=f42e184]: "02"
+          - heading "Figyeld a lebukásmérőt" [level=3] [ref=f42e185]
+          - paragraph [ref=f42e186]: "A kockázatos döntések növelik. Ha eléri a 100-at: „A sajtó mindent kiderített.”"
+        - generic [ref=f42e188]:
+          - generic [ref=f42e189]:
+            - generic [ref=f42e190]: Lebukás
+            - generic [ref=f42e191]: 25 / 100
+          - generic [ref=f42e194]:
+            - generic [ref=f42e195]: "0"
+            - generic [ref=f42e196]: "50"
+            - generic [ref=f42e197]: "100"
+      - generic [ref=f42e198]:
+        - generic [ref=f42e199]:
+          - generic [ref=f42e200]: "03"
+          - heading "Harcolj a csúcsért" [level=3] [ref=f42e201]
+          - paragraph [ref=f42e202]: Három bossfight. Támadj vagy védekezz, és tanuld ki az ellenfeled különleges képességét.
+        - generic [ref=f42e204]:
+          - generic [ref=f42e205]:
+            - generic [ref=f42e206]: Te
+            - generic [ref=f42e209]: 100/100
+          - generic [ref=f42e210]:
+            - generic [ref=f42e211]: Lakatos
+            - generic [ref=f42e214]: 60/80
+          - generic [ref=f42e215]:
+            - generic [ref=f42e216]: 1 · Támadás
+            - generic [ref=f42e217]: 2 · Védekezés
+  - generic [ref=f42e219]:
+    - heading "A döntéseid veled jönnek" [level=2] [ref=f42e220]
+    - generic [ref=f42e221]:
+      - generic [ref=f42e222]:
+        - generic [ref=f42e223]: "01"
+        - paragraph [ref=f42e224]: Játszd végig az 1. fejezetet itt, a böngészőben.
+      - generic [ref=f42e225]:
+        - generic [ref=f42e226]: "02"
+        - paragraph [ref=f42e227]: Regisztrálj, és elmentjük minden döntésedet.
+      - generic [ref=f42e228]:
+        - generic [ref=f42e229]: "03"
+        - paragraph [ref=f42e230]: Töltsd le a teljes játékot Windowsra, macOS-re vagy Linuxra.
+      - generic [ref=f42e231]:
+        - generic [ref=f42e232]: "04"
+        - paragraph [ref=f42e233]: Lépj be a játékban, és a 2. fejezettől folytatod.
+    - button "Kezdjük" [ref=f42e235] [cursor=pointer]
+  - generic [ref=f42e239]:
+    - generic [ref=f42e240]:
+      - heading "Támogasd az alkotókat" [level=2] [ref=f42e241]
+      - paragraph [ref=f42e242]: A Fityesz Krónikát ketten készítik. Ha tetszett, meghívhatod őket egy kávéra a Ko-fin.
+    - generic [ref=f42e243]:
+      - 'link "Ko-fi: hamarosan" [ref=f42e244] [cursor=pointer]':
+        - /url: "#"
+      - button "Az alkotók" [ref=f42e246] [cursor=pointer]
+  - contentinfo [ref=f42e247]:
+    - generic [ref=f42e248]:
+      - generic [ref=f42e249]:
+        - generic [ref=f42e250]:
+          - text: Fityesz
+          - generic [ref=f42e251]: Krónika
+        - paragraph [ref=f42e252]: Szöveges kalandjáték magyarul és angolul.
+      - generic [ref=f42e253]:
+        - button "Szereplők" [ref=f42e254] [cursor=pointer]
+        - button "Lexikon" [ref=f42e255] [cursor=pointer]
+        - button "Játék" [ref=f42e256] [cursor=pointer]
+        - button "Letöltés" [ref=f42e257] [cursor=pointer]
+        - button "Támogatás" [ref=f42e258] [cursor=pointer]
+      - generic [ref=f42e259]:
+        - generic [ref=f42e260]: Készítették
+        - generic [ref=f42e261]:
+          - generic [ref=f42e262]: Kukucska Zsombor
+          - link "github.com/Frezzard2" [ref=f42e263] [cursor=pointer]:
+            - /url: https://github.com/Frezzard2
+        - generic [ref=f42e264]:
+          - generic [ref=f42e265]: Dajka Zea
+          - link "github.com/djkzea" [ref=f42e266] [cursor=pointer]:
+            - /url: https://github.com/djkzea
+    - generic [ref=f42e267]:
+      - generic [ref=f42e268]: © 2026 Fityesz Krónika
+      - link "Forráskód a GitHubon" [ref=f42e269] [cursor=pointer]:
+        - /url: https://github.com/djkzea/fityeszthegame

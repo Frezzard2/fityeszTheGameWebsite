@@ -1,0 +1,90 @@
+- generic [ref=f42e8]:
+  - banner [ref=f42e9]:
+    - generic [ref=f42e14]:
+      - button "F Fityesz Krónika" [ref=f42e15] [cursor=pointer]:
+        - generic [ref=f42e16]: F
+        - generic [ref=f42e17]:
+          - generic [ref=f42e18]: Fityesz
+          - generic [ref=f42e19]: Krónika
+      - navigation [ref=f42e351]:
+        - button "Szereplők" [ref=f42e352] [cursor=pointer]
+        - button "Lexikon" [active] [ref=f42e353] [cursor=pointer]
+        - button "Játék" [ref=f42e354] [cursor=pointer]
+        - button "Letöltés" [ref=f42e355] [cursor=pointer]
+        - button "Támogatás" [ref=f42e356] [cursor=pointer]
+      - generic [ref=f42e26]:
+        - generic [ref=f42e27]:
+          - button "HU" [ref=f42e28] [cursor=pointer]
+          - button "EN" [ref=f42e29] [cursor=pointer]
+        - button "Belépés" [ref=f42e357] [cursor=pointer]
+        - button "Játssz ingyen" [ref=f42e358] [cursor=pointer]
+  - generic [ref=f42e361]:
+    - generic [ref=f42e362]: A világ
+    - heading "Lexikon" [level=1] [ref=f42e363]
+    - paragraph [ref=f42e364]: Minden, amit a Fityeszről tudni lehet. És amit jobb nem tudni.
+    - generic [ref=f42e365]:
+      - button "A párt" [ref=f42e366] [cursor=pointer]
+      - button "Fejezetek" [ref=f42e367] [cursor=pointer]
+      - button "Helyszínek" [ref=f42e368] [cursor=pointer]
+      - button "Tárgyak" [ref=f42e369] [cursor=pointer]
+      - button "Játékszabályok" [ref=f42e370] [cursor=pointer]
+    - generic [ref=f42e371]:
+      - generic [ref=f42e372]:
+        - generic [ref=f42e374]: Fityesz
+        - generic [ref=f42e375]: Csakfelfelé!
+        - paragraph [ref=f42e376]: "A falon gigantikus Kapzs Imre-portré, alatta a felirat: „CSAK FELFELÉ!”"
+      - generic [ref=f42e377]:
+        - generic [ref=f42e378]:
+          - generic [ref=f42e379]: A Főnök
+          - generic [ref=f42e380]: Kapzs Imre
+          - generic [ref=f42e381]: a Nemzet Megmentője, a Haza Pajzsa
+        - generic [ref=f42e382]:
+          - generic [ref=f42e383]: Jelmondat
+          - generic [ref=f42e384]: Aki nincs ellenünk, az velünk van.
+        - generic [ref=f42e385]:
+          - paragraph [ref=f42e386]: „A Fityesz nem csak egy párt... Család. És a családban mindenkiről gondoskodunk.”
+          - generic [ref=f42e387]: Lipóti Dezső, 1. fejezet
+    - generic [ref=f42e388]:
+      - generic [ref=f42e389]:
+        - generic [ref=f42e390]: A négy szabály
+        - generic [ref=f42e391]: Lakatos Ervin, 2. fejezet
+      - generic [ref=f42e392]:
+        - generic [ref=f42e393]:
+          - generic [ref=f42e394]: "1"
+          - generic [ref=f42e395]: Amit látsz, nem láttad.
+        - generic [ref=f42e396]:
+          - generic [ref=f42e397]: "2"
+          - generic [ref=f42e398]: Amit hallasz, nem hallottad.
+        - generic [ref=f42e399]:
+          - generic [ref=f42e400]: "3"
+          - generic [ref=f42e401]: Amit kapsz, az jutalom a kemény munkáért.
+        - generic [ref=f42e402]:
+          - generic [ref=f42e403]: "4"
+          - generic [ref=f42e404]: Minden a Főnökért.
+  - contentinfo [ref=f42e247]:
+    - generic [ref=f42e248]:
+      - generic [ref=f42e249]:
+        - generic [ref=f42e250]:
+          - text: Fityesz
+          - generic [ref=f42e251]: Krónika
+        - paragraph [ref=f42e252]: Szöveges kalandjáték magyarul és angolul.
+      - generic [ref=f42e253]:
+        - button "Szereplők" [ref=f42e254] [cursor=pointer]
+        - button "Lexikon" [ref=f42e255] [cursor=pointer]
+        - button "Játék" [ref=f42e256] [cursor=pointer]
+        - button "Letöltés" [ref=f42e257] [cursor=pointer]
+        - button "Támogatás" [ref=f42e258] [cursor=pointer]
+      - generic [ref=f42e259]:
+        - generic [ref=f42e260]: Készítették
+        - generic [ref=f42e261]:
+          - generic [ref=f42e262]: Kukucska Zsombor
+          - link "github.com/Frezzard2" [ref=f42e263] [cursor=pointer]:
+            - /url: https://github.com/Frezzard2
+        - generic [ref=f42e264]:
+          - generic [ref=f42e265]: Dajka Zea
+          - link "github.com/djkzea" [ref=f42e266] [cursor=pointer]:
+            - /url: https://github.com/djkzea
+    - generic [ref=f42e267]:
+      - generic [ref=f42e268]: © 2026 Fityesz Krónika
+      - link "Forráskód a GitHubon" [ref=f42e269] [cursor=pointer]:
+        - /url: https://github.com/djkzea/fityeszthegame
