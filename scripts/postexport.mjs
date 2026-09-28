@@ -26,23 +26,6 @@ if (!existsSync(OUT)) {
   process.exit(1)
 }
 
-const html = `<!DOCTYPE html>
-<html lang="${DEFAULT_LOCALE}">
-<head>
-<meta charset="utf-8">
-<title>Fityesz Krónika</title>
-<meta http-equiv="refresh" content="0; url=/${DEFAULT_LOCALE}/">
-<link rel="canonical" href="/${DEFAULT_LOCALE}/">
-<script>location.replace('/${DEFAULT_LOCALE}/' + location.search + location.hash)</script>
-</head>
-<body>
-<p><a href="/${DEFAULT_LOCALE}/">Fityesz Krónika</a></p>
-</body>
-</html>
-`
-
-writeFileSync(join(OUT, 'index.html'), html, 'utf8')
-
 const httpsBlock = FORCE_HTTPS
   ? `# Force https. Requires a certificate to already be installed.
 RewriteCond %{HTTPS} !=on
@@ -87,4 +70,4 @@ ErrorDocument 404 /${DEFAULT_LOCALE}/404.html
 
 writeFileSync(join(OUT, '.htaccess'), htaccess, 'utf8')
 
-console.log('postexport: wrote out/index.html and out/.htaccess')
+console.log('postexport: wrote out/.htaccess')
