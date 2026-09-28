@@ -125,11 +125,9 @@ export default async function SupportPage({
           <div
             style={{
               position: 'relative',
-              fontFamily: 'var(--fD)',
-              fontWeight: 'var(--dW)' as unknown as number,
-              textTransform: 'uppercase',
-              fontSize: 'clamp(40px,4.4cqw,60px)',
-              lineHeight: 1.14,
+              fontSize: 17,
+              fontWeight: 600,
+              lineHeight: 1.4,
             }}
           >
             {t('kofiCardT')}
@@ -204,7 +202,7 @@ export default async function SupportPage({
             <div
               style={{
                 position: 'relative',
-                height: 150,
+                height: 132,
                 overflow: 'hidden',
                 background: 'var(--ink)',
                 color: 'var(--onInk)',
@@ -267,7 +265,7 @@ export default async function SupportPage({
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  marginTop: 'auto',
+                  marginTop: 14,
                   alignSelf: 'flex-start',
                   padding: '11px 16px 10px',
                   border: 'var(--bw) solid var(--ink)',
