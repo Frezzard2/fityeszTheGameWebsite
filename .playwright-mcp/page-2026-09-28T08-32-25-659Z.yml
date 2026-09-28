@@ -1,0 +1,109 @@
+- generic [active] [ref=f9e1]:
+  - generic [ref=f9e3]:
+    - banner [ref=f9e4]:
+      - generic [ref=f9e9]:
+        - link "F Fityesz Krónika" [ref=f9e10] [cursor=pointer]:
+          - /url: /hu/
+          - generic [ref=f9e11]: F
+          - generic [ref=f9e12]:
+            - generic [ref=f9e13]: Fityesz
+            - generic [ref=f9e14]: Krónika
+        - generic [ref=f9e15]:
+          - navigation [ref=f9e16]:
+            - link "Szereplők" [ref=f9e17] [cursor=pointer]:
+              - /url: /hu/szereplok/
+            - link "Lexikon" [ref=f9e18] [cursor=pointer]:
+              - /url: /hu/lexikon/
+            - link "Játék" [ref=f9e19] [cursor=pointer]:
+              - /url: /hu/jatek/
+            - link "Támogatás" [ref=f9e20] [cursor=pointer]:
+              - /url: /hu/tamogatas/
+          - generic [ref=f9e21]:
+            - generic [ref=f9e22]:
+              - generic [ref=f9e23]: HU
+              - link "EN" [ref=f9e24] [cursor=pointer]:
+                - /url: /en/lexikon/
+            - link "Belépés" [ref=f9e25] [cursor=pointer]:
+              - /url: /hu/belepes/
+            - link "Játssz ingyen" [ref=f9e26] [cursor=pointer]:
+              - /url: /hu/jatek/
+    - main [ref=f9e27]:
+      - generic [ref=f9e29]:
+        - generic [ref=f9e30]: A világ
+        - heading "Lexikon" [level=1] [ref=f9e31]
+        - paragraph [ref=f9e32]: Minden, amit a Fityeszről tudni lehet. És amit jobb nem tudni.
+        - generic [ref=f9e33]:
+          - tablist "Lexikon" [ref=f9e34]:
+            - tab "A párt" [selected] [ref=f9e35] [cursor=pointer]
+            - tab "Fejezetek" [ref=f9e36] [cursor=pointer]
+            - tab "Helyszínek" [ref=f9e37] [cursor=pointer]
+            - tab "Tárgyak" [ref=f9e38] [cursor=pointer]
+            - tab "Játékszabályok" [ref=f9e39] [cursor=pointer]
+          - tabpanel "A párt" [ref=f9e40]:
+            - generic [ref=f9e41]:
+              - generic [ref=f9e42]:
+                - generic [ref=f9e44]: Fityesz
+                - generic [ref=f9e45]: Csakfelfelé!
+                - paragraph [ref=f9e46]: "A falon gigantikus Kapzs Imre-portré, alatta a felirat: „CSAK FELFELÉ!”"
+              - generic [ref=f9e47]:
+                - generic [ref=f9e48]:
+                  - generic [ref=f9e49]: A Főnök
+                  - generic [ref=f9e50]: Kapzs Imre
+                  - generic [ref=f9e51]: a Nemzet Megmentője, a Haza Pajzsa
+                - generic [ref=f9e52]:
+                  - generic [ref=f9e53]: Jelmondat
+                  - generic [ref=f9e54]: Aki nincs ellenünk, az velünk van.
+                - generic [ref=f9e55]:
+                  - paragraph [ref=f9e56]: „A Fityesz nem csak egy párt... Család. És a családban mindenkiről gondoskodunk.”
+                  - generic [ref=f9e57]: Lipóti Dezső, 1. fejezet
+              - generic [ref=f9e58]:
+                - generic [ref=f9e59]:
+                  - generic [ref=f9e60]: A négy szabály
+                  - generic [ref=f9e61]: Lakatos Ervin, 2. fejezet
+                - generic [ref=f9e62]:
+                  - generic [ref=f9e63]:
+                    - generic [ref=f9e64]: "1"
+                    - generic [ref=f9e65]: Amit látsz, nem láttad.
+                  - generic [ref=f9e66]:
+                    - generic [ref=f9e67]: "2"
+                    - generic [ref=f9e68]: Amit hallasz, nem hallottad.
+                  - generic [ref=f9e69]:
+                    - generic [ref=f9e70]: "3"
+                    - generic [ref=f9e71]: Amit kapsz, az jutalom a kemény munkáért.
+                  - generic [ref=f9e72]:
+                    - generic [ref=f9e73]: "4"
+                    - generic [ref=f9e74]: Minden a Főnökért.
+    - contentinfo [ref=f9e75]:
+      - generic [ref=f9e76]:
+        - generic [ref=f9e77]:
+          - generic [ref=f9e78]:
+            - text: Fityesz
+            - generic [ref=f9e79]: Krónika
+          - paragraph [ref=f9e80]: Szöveges kalandjáték magyarul és angolul.
+        - generic [ref=f9e81]:
+          - link "Szereplők" [ref=f9e82] [cursor=pointer]:
+            - /url: /hu/szereplok/
+          - link "Lexikon" [ref=f9e83] [cursor=pointer]:
+            - /url: /hu/lexikon/
+          - link "Játék" [ref=f9e84] [cursor=pointer]:
+            - /url: /hu/jatek/
+          - link "Támogatás" [ref=f9e85] [cursor=pointer]:
+            - /url: /hu/tamogatas/
+          - link "Jogi tudnivalók" [ref=f9e86] [cursor=pointer]:
+            - /url: /hu/jogi/
+        - generic [ref=f9e87]:
+          - generic [ref=f9e88]: Készítették
+          - generic [ref=f9e89]:
+            - generic [ref=f9e90]: Kukucska Zsombor
+            - link "github.com/Frezzard2" [ref=f9e91] [cursor=pointer]:
+              - /url: https://github.com/Frezzard2
+          - generic [ref=f9e92]:
+            - generic [ref=f9e93]: Dajka Zea
+            - link "github.com/djkzea" [ref=f9e94] [cursor=pointer]:
+              - /url: https://github.com/djkzea
+      - generic [ref=f9e95]:
+        - generic [ref=f9e96]: © 2026 Fityesz Krónika
+        - link "Forráskód a GitHubon" [ref=f9e97] [cursor=pointer]:
+          - /url: https://github.com/djkzea/fityeszthegame
+  - button "Open Next.js Dev Tools" [ref=f9e103] [cursor=pointer]
+  - alert [ref=f9e107]

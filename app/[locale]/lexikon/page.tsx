@@ -84,7 +84,7 @@ export default async function LorePage({
               }}
             />
             <div style={{ position: 'relative', ...LABEL }}>Fityesz</div>
-            <div style={{ position: 'relative', ...HEAD, fontSize: 'clamp(64px,8cqw,124px)', lineHeight: 1.04 }}>
+            <div style={{ position: 'relative', ...HEAD, fontSize: 'clamp(34px,7cqw,124px)', lineHeight: 1.04, overflowWrap: 'anywhere', hyphens: 'auto' }}>
               {t('slogan1')}
               <br />
               {t('slogan2')}

@@ -355,7 +355,7 @@ export function StoryPlayer({
           }}
         />
 
-        {currentCard && (
+        {name && currentCard && (
           <div
             aria-hidden
             style={{
@@ -371,11 +371,11 @@ export function StoryPlayer({
               pointerEvents: 'none',
             }}
           >
-            {currentCard.title[locale]}
+            {bareTitle(currentCard.title[locale])}
           </div>
         )}
 
-        {currentCard && currentCard.place[locale] && (
+        {name && currentCard && currentCard.place[locale] && (
           <div
             style={{
               position: 'absolute',
@@ -428,7 +428,7 @@ export function StoryPlayer({
           </div>
         )}
 
-        {beat?.kind === 'item' && (
+        {name && beat?.kind === 'item' && (
           <div
             className="fz-stamp"
             style={{
@@ -451,7 +451,7 @@ export function StoryPlayer({
           </div>
         )}
 
-        {beat?.kind === 'chapterCard' && (
+        {name && beat?.kind === 'chapterCard' && (
           <div
             style={{
               position: 'absolute',

@@ -1,0 +1,143 @@
+- generic [active] [ref=f6e1]:
+  - generic [ref=f6e3]:
+    - banner [ref=f6e4]:
+      - generic [ref=f6e9]:
+        - link "F Fityesz Krónika" [ref=f6e10] [cursor=pointer]:
+          - /url: /hu/
+          - generic [ref=f6e11]: F
+          - generic [ref=f6e12]:
+            - generic [ref=f6e13]: Fityesz
+            - generic [ref=f6e14]: Krónika
+        - generic [ref=f6e15]:
+          - navigation [ref=f6e16]:
+            - link "Szereplők" [ref=f6e17] [cursor=pointer]:
+              - /url: /hu/szereplok/
+            - link "Lexikon" [ref=f6e18] [cursor=pointer]:
+              - /url: /hu/lexikon/
+            - link "Játék" [ref=f6e19] [cursor=pointer]:
+              - /url: /hu/jatek/
+            - link "Támogatás" [ref=f6e20] [cursor=pointer]:
+              - /url: /hu/tamogatas/
+          - generic [ref=f6e21]:
+            - generic [ref=f6e22]:
+              - generic [ref=f6e23]: HU
+              - link "EN" [ref=f6e24] [cursor=pointer]:
+                - /url: /en/szereplok/
+            - link "Belépés" [ref=f6e25] [cursor=pointer]:
+              - /url: /hu/belepes/
+            - link "Játssz ingyen" [ref=f6e26] [cursor=pointer]:
+              - /url: /hu/jatek/
+    - main [ref=f6e27]:
+      - generic [ref=f6e28]:
+        - generic [ref=f6e29]: Ki kicsoda a Fityeszben
+        - heading "Szereplők" [level=1] [ref=f6e30]
+        - paragraph [ref=f6e31]: „A Fityesz nem csak egy párt. Család.”
+        - generic [ref=f6e32]:
+          - article [ref=f6e33]:
+            - generic [ref=f6e34]:
+              - generic [aria-hidden] [ref=f6e36]: "?"
+              - generic [ref=f6e37]: Akta 00 · Prológus
+              - generic [ref=f6e38]: Nincs fénykép
+            - generic [ref=f6e39]:
+              - heading "Te" [level=2] [ref=f6e40]
+              - generic [ref=f6e41]: Volt középiskolai tanár
+              - paragraph [ref=f6e42]: „Ezért politikusnak állsz.”
+              - generic [ref=f6e43]:
+                - generic [ref=f6e44]: Első megjelenés
+                - generic [ref=f6e45]: Prológus
+          - article [ref=f6e46]:
+            - generic [ref=f6e47]:
+              - generic [aria-hidden] [ref=f6e49]: LD
+              - generic [ref=f6e50]: Akta 01 · 1. fejezet
+              - generic [ref=f6e51]: Nincs fénykép
+            - generic [ref=f6e52]:
+              - heading "Lipóti Dezső" [level=2] [ref=f6e53]
+              - generic [ref=f6e54]: A toborzó
+              - paragraph [ref=f6e55]: „Kávét? Pálinkát? Mindkettőt?”
+              - generic [ref=f6e56]:
+                - generic [ref=f6e57]: Első megjelenés
+                - generic [ref=f6e58]: 1. fejezet
+          - article [ref=f6e59]:
+            - generic [ref=f6e60]:
+              - generic [aria-hidden] [ref=f6e62]: LE
+              - generic [ref=f6e63]: Akta 02 · 2. fejezet
+              - generic [ref=f6e64]: Nincs fénykép
+              - generic [ref=f6e65]: BOSSFIGHT
+            - generic [ref=f6e66]:
+              - heading "Lakatos Ervin" [level=2] [ref=f6e67]
+              - generic [ref=f6e68]: Kerületi pártember
+              - paragraph [ref=f6e69]: „Lebukás? Haha! Mi vagyunk a hatalom, kisfiam!”
+              - generic [ref=f6e70]:
+                - generic [ref=f6e71]: Első megjelenés
+                - generic [ref=f6e72]: 2. fejezet
+          - article [ref=f6e73]:
+            - generic [ref=f6e74]:
+              - generic [aria-hidden] [ref=f6e76]: KI
+              - generic [ref=f6e77]: Akta 03 · 3. fejezet
+              - generic [ref=f6e78]: Nincs fénykép
+              - generic [ref=f6e79]: BOSSFIGHT
+            - generic [ref=f6e80]:
+              - heading "Kapzs Imre" [level=2] [ref=f6e81]
+              - generic [ref=f6e82]: Miniszterelnök, a Nemzet Megmentője
+              - paragraph [ref=f6e83]: „A mászó bármikor leeshet. A csillag... a csillag örökké ragyog.”
+              - generic [ref=f6e84]:
+                - generic [ref=f6e85]: Első megjelenés
+                - generic [ref=f6e86]: 3. fejezet
+          - article [ref=f6e87]:
+            - generic [ref=f6e88]:
+              - generic [aria-hidden] [ref=f6e90]: PK
+              - generic [ref=f6e91]: Akta 04 · 4. fejezet
+              - generic [ref=f6e92]: Nincs fénykép
+              - generic [ref=f6e93]: BOSSFIGHT
+            - generic [ref=f6e94]:
+              - heading "Dr. Péteri Katalin" [level=2] [ref=f6e95]
+              - generic [ref=f6e96]: Az Országos Választmány tagja
+              - paragraph [ref=f6e97]: „Az idő pénz – szó szerint.”
+              - generic [ref=f6e98]:
+                - generic [ref=f6e99]: Első megjelenés
+                - generic [ref=f6e100]: 4. fejezet
+          - article [ref=f6e101]:
+            - generic [ref=f6e102]:
+              - generic [aria-hidden] [ref=f6e104]: MG
+              - generic [ref=f6e105]: Akta 05 · 5. fejezet
+              - generic [ref=f6e106]: Nincs fénykép
+            - generic [ref=f6e107]:
+              - heading "Molnár Gábor" [level=2] [ref=f6e108]
+              - generic [ref=f6e109]: A frakció embere
+              - paragraph [ref=f6e110]: „Vélemény? VÉLEMÉNY?!”
+              - generic [ref=f6e111]:
+                - generic [ref=f6e112]: Első megjelenés
+                - generic [ref=f6e113]: 5. fejezet
+    - contentinfo [ref=f6e114]:
+      - generic [ref=f6e115]:
+        - generic [ref=f6e116]:
+          - generic [ref=f6e117]:
+            - text: Fityesz
+            - generic [ref=f6e118]: Krónika
+          - paragraph [ref=f6e119]: Szöveges kalandjáték magyarul és angolul.
+        - generic [ref=f6e120]:
+          - link "Szereplők" [ref=f6e121] [cursor=pointer]:
+            - /url: /hu/szereplok/
+          - link "Lexikon" [ref=f6e122] [cursor=pointer]:
+            - /url: /hu/lexikon/
+          - link "Játék" [ref=f6e123] [cursor=pointer]:
+            - /url: /hu/jatek/
+          - link "Támogatás" [ref=f6e124] [cursor=pointer]:
+            - /url: /hu/tamogatas/
+          - link "Jogi tudnivalók" [ref=f6e125] [cursor=pointer]:
+            - /url: /hu/jogi/
+        - generic [ref=f6e126]:
+          - generic [ref=f6e127]: Készítették
+          - generic [ref=f6e128]:
+            - generic [ref=f6e129]: Kukucska Zsombor
+            - link "github.com/Frezzard2" [ref=f6e130] [cursor=pointer]:
+              - /url: https://github.com/Frezzard2
+          - generic [ref=f6e131]:
+            - generic [ref=f6e132]: Dajka Zea
+            - link "github.com/djkzea" [ref=f6e133] [cursor=pointer]:
+              - /url: https://github.com/djkzea
+      - generic [ref=f6e134]:
+        - generic [ref=f6e135]: © 2026 Fityesz Krónika
+        - link "Forráskód a GitHubon" [ref=f6e136] [cursor=pointer]:
+          - /url: https://github.com/djkzea/fityeszthegame
+  - button "Open Next.js Dev Tools" [ref=f6e142] [cursor=pointer]
