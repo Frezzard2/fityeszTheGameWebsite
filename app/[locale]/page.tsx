@@ -282,6 +282,37 @@ export default async function HomePage({
         </div>
       </section>
 
+      {/* Quote band — the chapter epigraphs, scrolling. Two copies so the
+          -50% shift lands on the duplicate and the loop never jumps. */}
+      <section style={{ background: 'var(--ink)', color: 'var(--onInk)', overflow: 'hidden', borderBottom: 'var(--bw) solid var(--ink)' }}>
+        <div
+          className="fz-marquee"
+          style={{
+            display: 'flex',
+            width: 'max-content',
+            fontFamily: 'var(--fD)',
+            fontWeight: 'var(--dW)' as never,
+            textTransform: 'uppercase',
+            fontSize: 'clamp(17px,1.7cqw,23px)',
+            lineHeight: 1.15,
+            letterSpacing: '.02em',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {[0, 1].map((copy) => (
+            <div key={copy} aria-hidden={copy === 1} style={{ display: 'flex', gap: 30, padding: '18px 15px' }}>
+              {codex.chapters.map((c) => (
+                <span key={c.number} style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+                  <span style={{ color: 'var(--accent)' }}>&#9733;</span>
+                  <span>{c.quote[l]}</span>
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
+
+
       {/* Chapter descent — a vertical list, one per row */}
       <section
         style={{

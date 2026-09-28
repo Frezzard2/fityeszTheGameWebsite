@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { Antonio, Public_Sans } from 'next/font/google'
 import { routing, localePath } from '@/i18n/routing'
 import { DOWNLOAD_ENABLED } from '@/lib/features'
 import { SITE_TITLE, type Locale } from '@/lib/constants'
@@ -13,27 +12,8 @@ import { LocaleToggleClient } from '@/components/LocaleToggleClient'
 import { NavLink } from '@/components/NavLink'
 
 // Self-hosted via next/font/google: no request ever reaches Google at runtime.
-const antonio = Antonio({
-  subsets: ['latin', 'latin-ext'],
-  weight: '700',
-  display: 'swap',
-  variable: '--font-antonio',
-})
-
-const publicSans = Public_Sans({
-  subsets: ['latin', 'latin-ext'],
-  weight: ['400', '500', '600', '700', '800'],
-  style: ['normal', 'italic'],
-  display: 'swap',
-  variable: '--font-public-sans',
-})
-
 // Saira Stencil One isn't in next/font/google's bundled catalogue (only the
 // unrelated variable "Saira Stencil" family is). Self-hosted locally instead;
-const fontVariables = [
-  antonio.variable,
-  publicSans.variable,
-].join(' ')
 
 const LEGAL_ITEM = { href: '/jogi', labelKey: 'navLegal' } as const
 
@@ -192,7 +172,7 @@ export default async function LocaleLayout({
   const li = locale === 'en' ? 1 : 0
 
   return (
-    <div lang={locale} className={fontVariables}>
+    <div lang={locale}>
         <NextIntlClientProvider>
             <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
               <header

@@ -69,6 +69,10 @@
 .fz-drift { animation: fzDrift 32s linear infinite; }
 .fz-pulse { animation: fzPulse 2.4s ease-out infinite; }
 .fz-caret { animation: fzCaret 1s step-end infinite; }
+/* Two identical copies of the list sit side by side; shifting by half the
+   width lands exactly on the second copy, so the loop is seamless. */
+.fz-marquee { animation: fzMarquee 70s linear infinite; }
+.fz-marquee:hover { animation-play-state: paused; }
 
 /* --- interaction ----------------------------------------------------- */
 
@@ -90,7 +94,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .fz-in, .fz-fade, .fz-slam, .fz-stamp, .fz-tab,
-  .fz-drift, .fz-pulse, .fz-caret {
+  .fz-drift, .fz-pulse, .fz-caret, .fz-marquee {
     animation: none !important;
   }
   .fz-btn, .fz-lift, .fz-meter {
