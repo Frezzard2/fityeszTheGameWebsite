@@ -35,6 +35,8 @@ const fontVariables = [
   publicSans.variable,
 ].join(' ')
 
+const LEGAL_ITEM = { href: '/jogi', labelKey: 'navLegal' } as const
+
 const NAV_ITEMS = [
   { href: '/szereplok', labelKey: 'navChars' },
   { href: '/lexikon', labelKey: 'navLore' },
@@ -351,7 +353,7 @@ export default async function LocaleLayout({
                   </div>
 
                   <div style={{ flex: '0 1 200px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 10 }}>
-                    {NAV_ITEMS.map((item) => (
+                    {[...NAV_ITEMS, LEGAL_ITEM].map((item) => (
                       <Link
                         key={item.href}
                         href={localePath(item.href, locale)}

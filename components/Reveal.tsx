@@ -63,21 +63,40 @@ export function Reveal({
       return
     }
 
+    // Reveal as soon as the element has reached the viewport, and re-check on
+    // scroll: an element jumped past instantly — anchor link, restored scroll
+    // position, scripted scroll — never gets an intersecting callback and
+    // would stay invisible for good.
+    const reached = () => el.getBoundingClientRect().top < window.innerHeight
+    const show = () => {
+      setShown(true)
+      io.disconnect()
+      window.removeEventListener('scroll', onScroll)
+    }
+    const onScroll = () => {
+      if (reached()) show()
+    }
+
     const io = new IntersectionObserver(
       (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            setShown(true)
-            io.disconnect()
-          }
-        }
+        for (const e of entries) if (e.isIntersecting) show()
       },
       // Fire slightly before the element reaches the viewport edge, so the
       // motion reads as the page arriving rather than as a late reaction.
       { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
     )
+
+    if (reached()) {
+      setShown(true)
+      return
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
     io.observe(el)
-    return () => io.disconnect()
+    return () => {
+      io.disconnect()
+      window.removeEventListener('scroll', onScroll)
+    }
   }, [])
 
   return (
