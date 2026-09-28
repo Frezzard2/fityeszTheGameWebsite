@@ -267,5 +267,13 @@
   "legalIpT": "Szerzői jog",
   "legalIp": "A Fityesz Krónika szövegét és a weboldalt az alkotók készítették. A Saira Stencil One betűtípus SIL Open Font License 1.1 alatt érhető el.",
   "legalSatire": "A Fityesz Krónika szatirikus fikció. Nem valós személyeket vagy szervezeteket ábrázol, és nem használja egyetlen létező párt logóját, névjegyét vagy arculatát sem.",
-  "legalTodo": "KITÖLTENDŐ"
+  "legalTodo": "KITÖLTENDŐ",
+  "authNotConfigured": "A bejelentkezés még nincs beállítva",
+  "authNotConfiguredD": "A fiókok Supabase-en futnak. Add meg a NEXT_PUBLIC_SUPABASE_URL és NEXT_PUBLIC_SUPABASE_ANON_KEY értékeket, majd építsd újra az oldalt.",
+  "authBusy": "Egy pillanat…",
+  "authSignOut": "Kilépés",
+  "authCheckEmail": "Elküldtünk egy megerősítő e-mailt. Kattints a benne lévő linkre, és már be is léphetsz.",
+  "authSavedRun": "A mentésed átkerült a fiókodba.",
+  "authNoSave": "Jelenleg nincs böngészőben tárolt mentésed.",
+  "authWelcome": "Belépve"
 }

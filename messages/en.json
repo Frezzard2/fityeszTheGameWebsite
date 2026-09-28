@@ -267,5 +267,13 @@
   "legalIpT": "Copyright",
   "legalIp": "The text of Fityesz Krónika and this website were made by the creators. The Saira Stencil One typeface is available under the SIL Open Font License 1.1.",
   "legalSatire": "Fityesz Krónika is a work of satire. It depicts no real person or organisation and uses no existing party's logo, wordmark or branding.",
-  "legalTodo": "TO BE FILLED IN"
+  "legalTodo": "TO BE FILLED IN",
+  "authNotConfigured": "Sign-in is not set up yet",
+  "authNotConfiguredD": "Accounts run on Supabase. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY, then rebuild the site.",
+  "authBusy": "One moment…",
+  "authSignOut": "Sign out",
+  "authCheckEmail": "We sent you a confirmation email. Click the link in it and you can sign in.",
+  "authSavedRun": "Your save has been moved into your account.",
+  "authNoSave": "You have no run saved in this browser right now.",
+  "authWelcome": "Signed in"
 }
