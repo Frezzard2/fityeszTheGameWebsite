@@ -281,7 +281,10 @@ export function StoryPlayer({
           borderBottom: 0,
         }}
       >
-        <div style={{ ...DISPLAY, fontSize: 24 }}>{chapterLabel}</div>
+        <div style={{ ...DISPLAY, fontSize: 24 }}>
+          {chapterLabel}
+          {currentCard ? ' · ' + bareTitle(currentCard.title[locale]) : ''}
+        </div>
         <div
           style={{
             display: 'flex',
@@ -302,6 +305,7 @@ export function StoryPlayer({
             <div style={{ width: 100, height: 10, border: '1px solid var(--ink)', background: 'var(--paper2)' }}>
               <div className="fz-meter" style={{ height: '100%', width: exposurePct + '%', background: 'var(--danger)' }} />
             </div>
+            <span>{state.lebukas}/{EXPOSURE_LIMIT}</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
             {labels.itemsWord} <span data-testid="status-items" style={{ fontSize: 18 }}>{state.items.length}</span>
@@ -486,7 +490,7 @@ export function StoryPlayer({
               {bareTitle(beat.title[locale])}
             </div>
             <div className="fz-in fz-d4" style={{ position: 'relative', maxWidth: '30em', fontSize: 'clamp(16px,1.6cqw,21px)', fontStyle: 'italic' }}>
-              &bdquo;{beat.quote[locale]}&rdquo;
+              {beat.quote[locale]}
             </div>
             <div style={{ position: 'relative', marginTop: 14, font: '600 12px/1 var(--fL)', letterSpacing: '.06em' }}>{labels.enterHint}</div>
           </div>

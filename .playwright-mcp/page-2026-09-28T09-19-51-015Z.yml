@@ -1,0 +1,70 @@
+- generic [ref=f46e8]:
+  - banner [ref=f46e9]:
+    - generic [ref=f46e14]:
+      - button "F Fityesz Krónika" [ref=f46e15] [cursor=pointer]:
+        - generic [ref=f46e16]: F
+        - generic [ref=f46e17]:
+          - generic [ref=f46e18]: Fityesz
+          - generic [ref=f46e19]: Krónika
+      - navigation [ref=f46e20]:
+        - button "Szereplők" [ref=f46e21] [cursor=pointer]
+        - button "Lexikon" [ref=f46e22] [cursor=pointer]
+        - button "Játék" [active] [ref=f46e23] [cursor=pointer]
+        - button "Letöltés" [ref=f46e24] [cursor=pointer]
+        - button "Támogatás" [ref=f46e25] [cursor=pointer]
+      - generic [ref=f46e26]:
+        - generic [ref=f46e27]:
+          - button "HU" [ref=f46e28] [cursor=pointer]
+          - button "EN" [ref=f46e29] [cursor=pointer]
+        - button "Belépés" [ref=f46e30] [cursor=pointer]
+        - button "Játssz ingyen" [ref=f46e31] [cursor=pointer]
+  - generic [ref=f46e90]:
+    - generic [ref=f46e91]:
+      - generic [ref=f46e92]: Prológus · A mélyPont
+      - generic [ref=f46e93]:
+        - generic [ref=f46e94]:
+          - text: XP
+          - generic [ref=f46e95]: "0"
+        - generic [ref=f46e96]:
+          - generic [ref=f46e97]: Lebukás
+          - generic [ref=f46e99]: 0/100
+        - generic [ref=f46e100]:
+          - generic [ref=f46e101]: Tárgyak
+          - generic [ref=f46e102]: "0"
+        - button "Újrakezdés" [ref=f46e103] [cursor=pointer]
+    - generic [ref=f46e105] [cursor=pointer]:
+      - generic: Mélypont
+      - generic [ref=f46e107]: Prológus
+      - generic [ref=f46e110]:
+        - generic [ref=f46e112]: Prológus
+        - generic [ref=f46e113]: A mélyPont
+        - generic [ref=f46e114]: Aki a múltat nem ismeri, az a jövőt sem érti.
+        - generic [ref=f46e115]: "[ Nyomj Enter-t a folytatáshoz... ]"
+    - paragraph [ref=f46e116]: Kattints vagy nyomj Entert a továbblépéshez, a válaszokhoz használd az 1–3 billentyűket. A játék automatikusan ment.
+  - contentinfo [ref=f46e66]:
+    - generic [ref=f46e67]:
+      - generic [ref=f46e68]:
+        - generic [ref=f46e69]:
+          - text: Fityesz
+          - generic [ref=f46e70]: Krónika
+        - paragraph [ref=f46e71]: Szöveges kalandjáték magyarul és angolul.
+      - generic [ref=f46e72]:
+        - button "Szereplők" [ref=f46e73] [cursor=pointer]
+        - button "Lexikon" [ref=f46e74] [cursor=pointer]
+        - button "Játék" [ref=f46e75] [cursor=pointer]
+        - button "Letöltés" [ref=f46e76] [cursor=pointer]
+        - button "Támogatás" [ref=f46e77] [cursor=pointer]
+      - generic [ref=f46e78]:
+        - generic [ref=f46e79]: Készítették
+        - generic [ref=f46e80]:
+          - generic [ref=f46e81]: Kukucska Zsombor
+          - link "github.com/Frezzard2" [ref=f46e82] [cursor=pointer]:
+            - /url: https://github.com/Frezzard2
+        - generic [ref=f46e83]:
+          - generic [ref=f46e84]: Dajka Zea
+          - link "github.com/djkzea" [ref=f46e85] [cursor=pointer]:
+            - /url: https://github.com/djkzea
+    - generic [ref=f46e86]:
+      - generic [ref=f46e87]: © 2026 Fityesz Krónika
+      - link "Forráskód a GitHubon" [ref=f46e88] [cursor=pointer]:
+        - /url: https://github.com/djkzea/fityeszthegame
