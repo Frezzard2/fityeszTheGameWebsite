@@ -10,3 +10,16 @@
 [   36176ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:776
 [   36901ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:776
 [   37613ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:776
+[  730243ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:776
+[  730303ms] [LOG] [Fast Refresh] done in 56ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:776
+[  736070ms] [LOG] [Fast Refresh] done in 56ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:776
+[  743033ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/hmr?id=6cTzxHV-20Bwze4gCJJop' failed:  @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_0_90u2t._.js:16348
+[  743036ms] [ERROR] Failed to fetch RSC payload for http://localhost:3000/hu/jatek/. Falling back to browser navigation. TypeError: Failed to fetch
+    at fetchInternal (http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_0_90u2t._.js:10831:12)
+    at createFetch (http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_0_90u2t._.js:4909:38)
+    at async fetchServerResponse (http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_0_90u2t._.js:4601:21)
+    at async fetchMissingDynamicData (http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_0_90u2t._.js:6190:24) @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:1052
+[  743041ms] [ERROR] WebSocket is already in CLOSING or CLOSED state. @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:1559
+[  743315ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/__nextjs_original-stack-frames:0
+[  745066ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:776
+[  745099ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1e8vcs8._.js:776

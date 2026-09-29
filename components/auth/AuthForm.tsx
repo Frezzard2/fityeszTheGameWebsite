@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { CSSProperties } from 'react'
 import type { Session } from '@supabase/supabase-js'
+import { Reveal } from '@/components/Reveal'
 import { supabase, isAuthConfigured } from '@/lib/supabase'
 import { loadLocalSave, clearLocalSave } from '@/lib/story/localSave'
 import type { PlayerState } from '@/lib/story/types'
@@ -155,9 +156,9 @@ export function AuthForm({ labels, locale }: { labels: AuthLabels; locale: strin
       <div style={{ flex: '1 1 440px', minWidth: 0 }}>
         {session ? (
           <>
-            <h1 style={{ ...DISPLAY, fontSize: 'clamp(40px,6cqw,88px)', margin: 0 }}>
+            <Reveal kind="rise" as="h1" style={{ ...DISPLAY, fontSize: 'clamp(40px,6cqw,88px)', margin: 0 }}>
               {labels.hello.replace('%s', displayName)}
-            </h1>
+            </Reveal>
             <p style={{ margin: '14px 0 0', fontSize: 17 }}>{labels.authWelcome}</p>
             <button
               className="fz-btn"
@@ -169,7 +170,7 @@ export function AuthForm({ labels, locale }: { labels: AuthLabels; locale: strin
           </>
         ) : (
           <>
-            <div style={{ display: 'inline-flex', border: 'var(--bw) solid var(--ink)', maxWidth: '100%' }}>
+            <Reveal kind="fade" style={{ display: 'inline-flex', border: 'var(--bw) solid var(--ink)', maxWidth: '100%' }}>
               {(['register', 'login'] as const).map((m) => (
                 <button
                   key={m}
@@ -188,20 +189,22 @@ export function AuthForm({ labels, locale }: { labels: AuthLabels; locale: strin
                   {m === 'register' ? labels.tabReg : labels.tabLogin}
                 </button>
               ))}
-            </div>
+            </Reveal>
 
-            <h1 style={{ ...DISPLAY, fontSize: 'clamp(40px,6cqw,88px)', margin: '26px 0 0' }}>
+            <Reveal kind="rise" delay={80} as="h1" style={{ ...DISPLAY, fontSize: 'clamp(40px,6cqw,88px)', margin: '26px 0 0' }}>
               {mode === 'register' ? labels.authRegTitle : labels.authLoginTitle}
-            </h1>
-            <p style={{ margin: '14px 0 0', fontSize: 17, lineHeight: 1.5, maxWidth: '30em' }}>{labels.authSub}</p>
+            </Reveal>
+            <Reveal kind="up" delay={200} as="p" style={{ margin: '14px 0 0', fontSize: 17, lineHeight: 1.5, maxWidth: '30em' }}>
+              {labels.authSub}
+            </Reveal>
 
             {save && (
-              <p style={{ margin: '18px 0 0', padding: '12px 14px', border: 'var(--bw) solid var(--ink)', background: 'var(--paper2)', fontSize: 15, lineHeight: 1.4 }}>
+              <Reveal kind="up" delay={280} as="p" style={{ margin: '18px 0 0', padding: '12px 14px', border: 'var(--bw) solid var(--ink)', background: 'var(--paper2)', fontSize: 15, lineHeight: 1.4 }}>
                 {labels.saveMove.replace('%n', String(save.history.length))}
-              </p>
+              </Reveal>
             )}
 
-            <form onSubmit={submit} style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <form key={mode} onSubmit={submit} className="fz-in" style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 16, animationDelay: '320ms' }}>
               {mode === 'register' ? (
                 <>
                   <Field label={labels.fUser} value={user} onChange={(e) => setUser(e.target.value)} required maxLength={32} autoComplete="nickname" />
@@ -215,7 +218,7 @@ export function AuthForm({ labels, locale }: { labels: AuthLabels; locale: strin
               <button
                 type="submit"
                 disabled={busy}
-                className="fz-btn"
+                className={busy ? 'fz-btn fz-pulse' : 'fz-btn'}
                 style={{ marginTop: 6, padding: '16px 22px 15px', background: 'var(--accent)', color: 'var(--onAccent)', border: 'var(--bw) solid var(--ink)', boxShadow: 'var(--shS)', ...DISPLAY, fontSize: 22, cursor: busy ? 'progress' : 'pointer' }}
               >
                 {busy ? labels.authBusy : mode === 'register' ? labels.submitReg : labels.submitLogin}
@@ -239,7 +242,20 @@ export function AuthForm({ labels, locale }: { labels: AuthLabels; locale: strin
 
       {/* Pártigazolvány */}
       <div style={{ flex: '0 1 420px', minWidth: 280 }}>
-        <div style={{ background: 'var(--sheet)', border: 'var(--bw) solid var(--ink)', boxShadow: 'var(--sh)', transform: 'rotate(-1.5deg)', overflow: 'hidden' }}>
+        <Reveal
+          kind="swing"
+          delay={200}
+          style={{
+            // fzRevSwing settles on --swing, so the card keeps its tilt
+            // instead of the animation fighting an inline transform.
+            ['--swing' as string]: '-1.5deg',
+            rotate: '-1.5deg',
+            background: 'var(--sheet)',
+            border: 'var(--bw) solid var(--ink)',
+            boxShadow: 'var(--sh)',
+            overflow: 'hidden',
+          }}
+        >
           <div style={{ display: 'flex', height: 10 }}>
             <div style={{ flex: 1, background: 'var(--accent)' }} />
             <div style={{ flex: 1, background: 'var(--paper2)' }} />
@@ -277,7 +293,7 @@ export function AuthForm({ labels, locale }: { labels: AuthLabels; locale: strin
             </div>
           </div>
           <div style={{ padding: '12px 24px', background: 'var(--ink)', color: 'var(--onInk)', font: '600 12px/1.4 var(--fL)' }}>{labels.cardNote}</div>
-        </div>
+        </Reveal>
         <span hidden>{locale}</span>
       </div>
     </div>
