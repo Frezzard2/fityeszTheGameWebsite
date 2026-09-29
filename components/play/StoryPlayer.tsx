@@ -7,6 +7,7 @@ import type { Locale } from '@/lib/constants'
 import { applyChoice, initialState, EXPOSURE_LIMIT } from '@/lib/story/engine'
 import type { Beat, Decision, PlayerState, Scene } from '@/lib/story/types'
 import { CHARACTERS, speakerName } from '@/lib/design/characters'
+import { chapterBackdrop, stageArt } from '@/lib/design/art'
 import { loadSave, persist } from '@/lib/story/save'
 import { supabase } from '@/lib/supabase'
 import codex from '@/lib/story/content/codex.json'
@@ -258,6 +259,8 @@ export function StoryPlayer({
 
   const speakerCard =
     beat?.kind === 'dialogue' ? CHARACTERS.find((c) => c.id === beat.speaker) : undefined
+  const sprite = beat?.kind === 'dialogue' ? stageArt(beat.speaker) : null
+  const backdrop = name && currentCard ? chapterBackdrop(currentCard.number) : null
 
   const decisionLog = state.history.map((h) => {
     const source = allBeats.find((b) => b.kind === 'choice' && b.id === h.choicePointId)
@@ -441,6 +444,30 @@ export function StoryPlayer({
           userSelect: 'none',
         }}
       >
+        {backdrop && (
+          <div aria-hidden style={{ position: 'absolute', inset: 0 }}>
+            {/* There is no image optimiser on a static export (`images.unoptimized`),
+                and the file is already sized by scripts/art.mjs. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              key={backdrop}
+              src={backdrop}
+              alt=""
+              className="fz-in"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }}
+            />
+            {/* The panels are read against ink, so the room fades into it. */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background:
+                  'linear-gradient(to bottom,color-mix(in srgb,var(--ink) 55%,transparent),color-mix(in srgb,var(--ink) 25%,transparent) 38%,var(--ink))',
+              }}
+            />
+          </div>
+        )}
+
         <div
           aria-hidden
           style={{
@@ -454,7 +481,9 @@ export function StoryPlayer({
           }}
         />
 
-        {name && currentCard && (
+        {/* The oversized chapter title stands in for a room. With the room
+            drawn, it only muddies it. */}
+        {name && currentCard && !backdrop && (
           <div
             aria-hidden
             style={{
@@ -494,9 +523,33 @@ export function StoryPlayer({
           </div>
         )}
 
+        {sprite && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={sprite}
+            src={sprite}
+            alt=""
+            aria-hidden
+            className="fz-in"
+            style={{
+              position: 'absolute',
+              right: 'clamp(4px,3cqw,48px)',
+              bottom: 0,
+              height: '76%',
+              maxWidth: '56%',
+              objectFit: 'contain',
+              objectPosition: 'bottom right',
+              pointerEvents: 'none',
+              filter: 'drop-shadow(0 0 24px color-mix(in srgb,var(--ink) 70%,transparent))',
+            }}
+          />
+        )}
+
         {speakerCard && (
           <div className="fz-in" style={{ position: 'absolute', right: 'clamp(20px,4cqw,56px)', top: 60, width: 230, maxWidth: '38%' }}>
             <div style={{ background: 'var(--accent)', color: 'var(--onAccent)', border: 'var(--bw) solid var(--onInk)' }}>
+              {/* Without a drawn face, the card carries the initials instead. */}
+              {!sprite && (
               <div style={{ position: 'relative', height: 210, overflow: 'hidden' }}>
                 <div
                   style={{
@@ -517,6 +570,7 @@ export function StoryPlayer({
                   {speakerCard.initials}
                 </div>
               </div>
+              )}
               <div style={{ padding: '12px 14px', borderTop: 'var(--bw) solid var(--onInk)', background: 'var(--ink)', color: 'var(--onInk)' }}>
                 <div style={{ ...DISPLAY, fontSize: 24 }}>{speakerCard.name[locale]}</div>
                 <div style={{ marginTop: 6, font: '600 11px/1.3 var(--fL)', letterSpacing: '.1em', textTransform: 'uppercase', opacity: 0.85 }}>

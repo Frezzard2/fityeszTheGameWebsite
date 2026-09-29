@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
 import { CHARACTERS } from '@/lib/design/characters'
+import { castArt } from '@/lib/design/art'
 import { Reveal } from '@/components/Reveal'
 
 /** Cycles the card header colour per card, ported from the prototype's `cols` array. */
@@ -80,6 +81,7 @@ export default async function CharactersPage({
       >
         {CHARACTERS.map((c, n) => {
           const { bg, fg } = HEADER_COLORS[n % HEADER_COLORS.length]
+          const portrait = castArt(c.id)
           const num = String(n).padStart(2, '0')
           const first = c.chapter === 0 ? t('prologue') : t('chapterN').replace('%n', String(c.chapter))
 
@@ -121,26 +123,49 @@ export default async function CharactersPage({
                     maskImage: 'linear-gradient(200deg,#000 10%,transparent 70%)',
                   }}
                 />
-                <div
-                  aria-hidden
-                  style={{
-                    position: 'absolute',
-                    right: -6,
-                    bottom: 10,
-                    fontFamily: 'var(--fD)',
-                    fontWeight: 'var(--dW)' as unknown as number,
-                    fontSize: 200,
-                    lineHeight: 1,
-                    letterSpacing: '-.03em',
-                    backgroundImage: `radial-gradient(circle,${fg} 2.4px,transparent 3px)`,
-                    backgroundSize: '7px 7px',
-                    WebkitBackgroundClip: 'text',
-                    backgroundClip: 'text',
-                    color: 'transparent',
-                  }}
-                >
-                  {c.initials}
-                </div>
+                {portrait ? (
+                  /* There is no image optimiser on a static export
+                     (`images.unoptimized`), and scripts/art.mjs already sized
+                     the file. */
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={portrait}
+                    alt=""
+                    aria-hidden
+                    loading="lazy"
+                    style={{
+                      position: 'absolute',
+                      right: 0,
+                      bottom: 0,
+                      // A little air above the head, none under the feet.
+                      height: '92%',
+                      width: '66%',
+                      objectFit: 'contain',
+                      objectPosition: 'bottom right',
+                    }}
+                  />
+                ) : (
+                  <div
+                    aria-hidden
+                    style={{
+                      position: 'absolute',
+                      right: -6,
+                      bottom: 10,
+                      fontFamily: 'var(--fD)',
+                      fontWeight: 'var(--dW)' as unknown as number,
+                      fontSize: 200,
+                      lineHeight: 1,
+                      letterSpacing: '-.03em',
+                      backgroundImage: `radial-gradient(circle,${fg} 2.4px,transparent 3px)`,
+                      backgroundSize: '7px 7px',
+                      WebkitBackgroundClip: 'text',
+                      backgroundClip: 'text',
+                      color: 'transparent',
+                    }}
+                  >
+                    {c.initials}
+                  </div>
+                )}
                 <div
                   style={{
                     position: 'absolute',
