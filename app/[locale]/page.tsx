@@ -6,11 +6,26 @@ import { localePath } from '@/i18n/routing'
 import { CHARACTERS } from '@/lib/design/characters'
 import { DOWNLOAD_ENABLED } from '@/lib/features'
 import { kofiUrl } from '@/lib/creators'
+import { lineupArt } from '@/lib/design/art'
 import codex from '@/lib/story/content/codex.json'
 import { Reveal } from '@/components/Reveal'
 
 // The prototype's `--dW` design token, cast the same way the layout does.
 const DW = 'var(--dW)' as unknown as number
+
+/**
+ * The cover's composition: who stands where, and how tall.
+ *
+ * Height is rank — the Prime Minister towers in the middle, the recruiter and
+ * the district man flank him, the errand men stand at the ends.
+ */
+const LINEUP = [
+  { id: 'molnar', scale: 0.86 },
+  { id: 'lakatos', scale: 0.94 },
+  { id: 'kapzs', scale: 1 },
+  { id: 'lipoti', scale: 0.92 },
+  { id: 'peteri', scale: 0.88 },
+] as const
 
 const HALFTONE: CSSProperties = {
   position: 'absolute',
@@ -354,7 +369,7 @@ export default async function HomePage({
         </div>
       </section>
 
-      {/* Cast — a numbered ledger, one row per character */}
+      {/* Cast — the line-up from the Ko-fi cover */}
       <section style={{ borderBottom: 'var(--bw) solid var(--ink)', padding: 'clamp(36px,5cqw,80px) clamp(16px,3cqw,40px)', background: 'var(--sheet)' }}>
         <div style={{ maxWidth: 1320, margin: '0 auto' }}>
           <Reveal kind="rise" as="h2" style={{ margin: 0, fontFamily: 'var(--fD)', fontWeight: DW, textTransform: 'uppercase', fontSize: 'clamp(34px,6cqw,72px)', lineHeight: 1 }}>
@@ -367,31 +382,131 @@ export default async function HomePage({
             </Link>
           </div>
 
-          <div style={{ marginTop: 26, borderTop: '1px solid var(--line)' }}>
-            {CHARACTERS.filter((c) => c.id !== 'you').map((c, n) => (
-              <Reveal
-                key={c.id}
-                kind="up"
-                delay={n * 70}
-                style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '6px 20px', padding: '18px 0', borderBottom: '1px solid var(--line)' }}
+          {/* The line-up, in the order and the hierarchy of the Ko-fi cover:
+              the Prime Minister tallest and centre, the rest ranged either
+              side. It scrolls sideways rather than shrinking to nothing. */}
+          <div
+            style={{
+              marginTop: 30,
+              border: 'var(--bw) solid var(--ink)',
+              background: 'var(--paper2)',
+              boxShadow: 'var(--sh)',
+              overflow: 'hidden',
+            }}
+          >
+            <div aria-hidden style={{ display: 'flex', height: 8 }}>
+              <div style={{ flex: 1, background: 'var(--accent)' }} />
+              <div style={{ flex: 1, background: 'var(--paper)' }} />
+              <div style={{ flex: 1, background: 'var(--second)' }} />
+            </div>
+
+            <div style={{ overflowX: 'auto' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'center',
+                  gap: 'clamp(4px,1.5cqw,20px)',
+                  padding: 'clamp(24px,4cqw,44px) clamp(12px,2cqw,28px) 0',
+                  minWidth: 'min-content',
+                }}
               >
-                <span style={{ flex: '0 0 2.5em', font: '700 13px/1 var(--fL)', letterSpacing: '.1em', color: 'var(--inkSoft)' }}>
-                  {String(n + 1).padStart(2, '0')}
-                </span>
-                <span style={{ flex: '1 1 18em', minWidth: 0 }}>
-                  <span style={{ display: 'block', fontFamily: 'var(--fD)', fontWeight: DW, textTransform: 'uppercase', fontSize: 'clamp(22px,2.6cqw,34px)', lineHeight: 1.1 }}>
-                    {c.name[l]}
-                  </span>
-                  <span style={{ display: 'block', marginTop: 4, fontSize: 14, color: 'var(--inkSoft)' }}>{c.title[l]}</span>
-                </span>
-                <span style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', gap: 10, font: '700 12px/1 var(--fL)', letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--inkSoft)' }}>
-                  {t('chapterN').replace('%n', String(c.chapter))}
-                  {c.boss && (
-                    <span style={{ background: 'var(--accent)', color: 'var(--onAccent)', padding: '4px 8px' }}>{t('bossfight')}</span>
-                  )}
-                </span>
-              </Reveal>
-            ))}
+                {LINEUP.map(({ id, scale }, n) => {
+                  const c = CHARACTERS.find((x) => x.id === id)!
+                  return (
+                    <Reveal
+                      key={id}
+                      kind="up"
+                      delay={n * 110}
+                      className="fz-lift"
+                      style={{ flex: '0 0 auto', width: 'clamp(104px,15cqw,210px)' }}
+                    >
+                      <Link
+                        href={href('/szereplok')}
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          color: 'var(--ink)',
+                          textDecoration: 'none',
+                        }}
+                      >
+                        {/* One floor for everyone: the box is the same height
+                            in every column, so a long name underneath cannot
+                            lift its figure off the line. */}
+                        <div style={{ width: '100%', height: 'clamp(190px,26cqw,380px)', display: 'flex', alignItems: 'flex-end' }}>
+                          {/* There is no image optimiser on a static export
+                              (`images.unoptimized`), and scripts/art.mjs already
+                              sized the file. */}
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={lineupArt(id)!}
+                            alt=""
+                            aria-hidden
+                            loading="lazy"
+                            style={{
+                              display: 'block',
+                              width: '100%',
+                              height: `${scale * 100}%`,
+                              objectFit: 'contain',
+                              objectPosition: 'bottom center',
+                            }}
+                          />
+                        </div>
+                        <div
+                          style={{
+                            width: '100%',
+                            marginTop: 10,
+                            paddingTop: 10,
+                            borderTop: '1px solid var(--ink)',
+                            textAlign: 'center',
+                          }}
+                        >
+                          <span
+                            style={{
+                              display: 'block',
+                              fontFamily: 'var(--fD)',
+                              fontWeight: DW,
+                              textTransform: 'uppercase',
+                              fontSize: 'clamp(14px,1.5cqw,22px)',
+                              lineHeight: 1.1,
+                            }}
+                          >
+                            {c.name[l]}
+                          </span>
+                          <span
+                            style={{
+                              display: 'block',
+                              marginTop: 4,
+                              // Two lines' worth, always: a longer title would
+                              // otherwise push its figure off the shared floor.
+                              minHeight: '2.6em',
+                              font: '600 11px/1.3 var(--fL)',
+                              letterSpacing: '.06em',
+                              textTransform: 'uppercase',
+                              color: 'var(--inkSoft)',
+                            }}
+                          >
+                            {c.title[l]}
+                          </span>
+                        </div>
+                        <div style={{ width: '100%', padding: '8px 0 14px', textAlign: 'center' }}>
+                          {c.boss ? (
+                            <span style={{ background: 'var(--accent)', color: 'var(--onAccent)', padding: '4px 7px', font: '700 10px/1 var(--fL)', letterSpacing: '.1em', textTransform: 'uppercase' }}>
+                              {t('bossfight')}
+                            </span>
+                          ) : (
+                            <span style={{ font: '700 10px/1 var(--fL)', letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--inkSoft)' }}>
+                              {t('chapterN').replace('%n', String(c.chapter))}
+                            </span>
+                          )}
+                        </div>
+                      </Link>
+                    </Reveal>
+                  )
+                })}
+              </div>
+            </div>
           </div>
         </div>
       </section>

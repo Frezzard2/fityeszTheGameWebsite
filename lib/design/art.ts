@@ -18,6 +18,11 @@ export function stageArt(id: CharacterId): string | null {
   return DRAWN.includes(id) ? `/art/stage/${id}.webp` : null
 }
 
+/** The full-body cutout, for the landing page line-up. */
+export function lineupArt(id: CharacterId): string | null {
+  return DRAWN.includes(id) ? `/art/line/${id}.webp` : null
+}
+
 /** The room a chapter plays out in. Only chapter one is playable on the web. */
 export function chapterBackdrop(chapter: number): string | null {
   return chapter === 1 ? '/art/bg/ch1.webp' : null

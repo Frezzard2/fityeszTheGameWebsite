@@ -31,10 +31,74 @@ const CAST = {
 /** Chapter number → background master. Only chapter 1 is playable on the web. */
 const BACKDROPS = { 1: 'ch1_cafe' }
 
+/**
+ * Story id → full-body master, for the landing page line-up.
+ *
+ * These masters are drawn on white rather than transparency, so the white has
+ * to come off before they can stand on the page.
+ */
+const LINEUP = {
+  molnar: 'molnar_fullbody',
+  lakatos: 'lakatoservin_fullbody',
+  kapzs: 'kapzsimre_fullbody',
+  lipoti: 'lipoti_fullbody',
+  peteri: 'drpeterikatalin_fullbody',
+}
+
+/** Anything brighter than this in every channel counts as the backdrop. */
+const WHITE = 228
+
+/**
+ * Clears the white *around* the figure.
+ *
+ * A plain colour key would punch holes in shirts and pocket squares, which are
+ * just as white. Flooding inward from the border only reaches white the figure
+ * does not enclose.
+ */
+async function cutout(from) {
+  const { data, info } = await sharp(from).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  const { width, height, channels } = info
+  const seen = new Uint8Array(width * height)
+  const stack = []
+
+  const isBackdrop = (n) => {
+    const at = n * channels
+    return data[at] >= WHITE && data[at + 1] >= WHITE && data[at + 2] >= WHITE
+  }
+  const push = (n) => {
+    if (!seen[n] && isBackdrop(n)) {
+      seen[n] = 1
+      stack.push(n)
+    }
+  }
+
+  for (let x = 0; x < width; x++) {
+    push(x)
+    push((height - 1) * width + x)
+  }
+  for (let y = 0; y < height; y++) {
+    push(y * width)
+    push(y * width + width - 1)
+  }
+
+  while (stack.length > 0) {
+    const n = stack.pop()
+    data[n * channels + 3] = 0
+    const x = n % width
+    if (x > 0) push(n - 1)
+    if (x < width - 1) push(n + 1)
+    if (n >= width) push(n - width)
+    if (n < width * (height - 1)) push(n + width)
+  }
+
+  return sharp(data, { raw: { width, height, channels } })
+}
+
 async function main() {
   await mkdir(join(OUT, 'cast'), { recursive: true })
   await mkdir(join(OUT, 'stage'), { recursive: true })
   await mkdir(join(OUT, 'bg'), { recursive: true })
+  await mkdir(join(OUT, 'line'), { recursive: true })
 
   for (const [id, file] of Object.entries(CAST)) {
     // The calm pose introduces the character; the second, talking pose is the
@@ -48,6 +112,14 @@ async function main() {
       .resize({ height: 1000, withoutEnlargement: true })
       .webp({ quality: 80 })
       .toFile(join(OUT, 'stage', `${id}.webp`))
+  }
+
+  for (const [id, file] of Object.entries(LINEUP)) {
+    const figure = await cutout(join(SRC, 'characters', `${file}.png`))
+    await figure
+      .trim({ background: { r: 0, g: 0, b: 0, alpha: 0 }, threshold: 0 })
+      .webp({ quality: 82, alphaQuality: 90 })
+      .toFile(join(OUT, 'line', `${id}.webp`))
   }
 
   for (const [chapter, file] of Object.entries(BACKDROPS)) {
