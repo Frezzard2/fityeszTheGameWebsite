@@ -394,12 +394,6 @@ export default async function HomePage({
               overflow: 'hidden',
             }}
           >
-            <div aria-hidden style={{ display: 'flex', height: 8 }}>
-              <div style={{ flex: 1, background: 'var(--accent)' }} />
-              <div style={{ flex: 1, background: 'var(--paper)' }} />
-              <div style={{ flex: 1, background: 'var(--second)' }} />
-            </div>
-
             <div style={{ overflowX: 'auto' }}>
               <div
                 style={{
