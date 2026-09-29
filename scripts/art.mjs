@@ -6,6 +6,10 @@
  * a roster portrait, a stage sprite and a chapter background. Run it again
  * after adding art — it overwrites, and nothing else reads the masters.
  *
+ * Only the masters this script reads are kept locally. The full set, including
+ * the backgrounds for chapters two to seven, is committed in the game repo
+ * (djkzea/fityeszthegame, fityesz_art/) — copy one back before adding it below.
+ *
  *   node scripts/art.mjs
  */
 import { mkdir } from 'node:fs/promises'
