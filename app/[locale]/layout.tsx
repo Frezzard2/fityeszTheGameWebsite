@@ -10,6 +10,7 @@ import { SITE_TITLE, type Locale } from '@/lib/constants'
 import { FlagRail } from '@/components/FlagRail'
 import { LocaleToggleClient } from '@/components/LocaleToggleClient'
 import { NavLink } from '@/components/NavLink'
+import { AccountLink } from '@/components/auth/AccountLink'
 
 // Self-hosted via next/font/google: no request ever reaches Google at runtime.
 // Saira Stencil One isn't in next/font/google's bundled catalogue (only the
@@ -259,9 +260,13 @@ export default async function LocaleLayout({
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                       <LocaleToggleClient current={locale} />
-                      <Link href={localePath('/belepes', locale)} className="fz-hdr-wide" style={loginLinkStyle}>
-                        {t('login')}
-                      </Link>
+                      <AccountLink
+                        className="fz-hdr-wide"
+                        style={loginLinkStyle}
+                        signedOutLabel={t('login')}
+                        signInHref={localePath('/belepes', locale)}
+                        dashboardHref={localePath('/vezerlopult', locale)}
+                      />
                       <Link href={localePath('/jatek', locale)} className="fz-hdr-wide fz-btn" style={ctaStyle}>
                         {t('playFree')}
                       </Link>
@@ -288,9 +293,12 @@ export default async function LocaleLayout({
                             </Link>
                           ))}
                           <div style={{ display: 'flex', gap: 10, marginTop: 18, flexWrap: 'wrap' }}>
-                            <Link href={localePath('/belepes', locale)} style={mobileLoginStyle}>
-                              {t('login')}
-                            </Link>
+                            <AccountLink
+                              style={mobileLoginStyle}
+                              signedOutLabel={t('login')}
+                              signInHref={localePath('/belepes', locale)}
+                              dashboardHref={localePath('/vezerlopult', locale)}
+                            />
                             <Link href={localePath('/jatek', locale)} className="fz-btn" style={mobileCtaStyle}>
                               {t('playFree')}
                             </Link>
