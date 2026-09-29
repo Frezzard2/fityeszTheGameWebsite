@@ -1,12 +1,13 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import type { Locale } from '@/lib/constants'
 import { applyChoice, initialState, EXPOSURE_LIMIT } from '@/lib/story/engine'
 import type { Beat, Decision, PlayerState, Scene } from '@/lib/story/types'
 import { CHARACTERS, speakerName } from '@/lib/design/characters'
-import { loadLocalSave, saveLocalSave, clearLocalSave } from '@/lib/story/localSave'
+import { loadSave, persist } from '@/lib/story/save'
 import { supabase } from '@/lib/supabase'
 import codex from '@/lib/story/content/codex.json'
 
@@ -41,6 +42,8 @@ export type PlayLabels = {
   enterHint: string
   /** Reopens the name prompt for a player the account name does not fit. */
   notYou: string
+  /** Sends a finished run on to the full game. */
+  dlCta: string
 }
 
 /**
@@ -166,11 +169,13 @@ export function StoryPlayer({
   scenes,
   labels,
   locale,
+  downloadHref,
   startName,
 }: {
   scenes: Scene[]
   labels: PlayLabels
   locale: Locale
+  downloadHref: string
   /** Test hook: skips the name prompt. Production never passes it. */
   startName?: string
 }) {
@@ -183,32 +188,37 @@ export function StoryPlayer({
   const [state, setState] = useState<PlayerState>(() => initialState(startName ?? ''))
   const [restored, setRestored] = useState(false)
 
-  // localStorage does not exist during SSR, so a persisted run can only be
-  // restored after mount. Seeding useState from it would desync hydration.
-  /* eslint-disable react-hooks/set-state-in-effect */
+  // Storage does not exist during SSR and the account row is a fetch away, so
+  // a persisted run can only be restored after mount. Seeding useState from it
+  // would desync hydration.
   useEffect(() => {
     if (restored || startName) return
     let cancelled = false
 
-    const saved = loadLocalSave()
-    if (saved && saved.name) {
-      setState(saved)
-      setName(saved.name)
-      const { queue: q, index } = resume(allBeats, saved.history)
-      setQueue(q)
-      setI(index)
-      setRestored(true)
-      return
-    }
+    void (async () => {
+      const saved = await loadSave()
+      if (cancelled) return
 
-    // No run in this browser. A signed-in player already told us what to call
-    // them when they registered, so don't ask again.
-    const sb = supabase()
-    if (!sb) {
-      setRestored(true)
-      return
-    }
-    sb.auth.getSession().then(({ data }) => {
+      if (saved && saved.name) {
+        setState(saved)
+        setName(saved.name)
+        const { queue: q, index } = resume(allBeats, saved.history)
+        setQueue(q)
+        // A finished run reopens on its end screen; replaying the tail would
+        // make the chapter look unfinished again.
+        setI(saved.status === 'demoComplete' ? q.length : index)
+        setRestored(true)
+        return
+      }
+
+      // No run anywhere. A signed-in player already told us what to call them
+      // when they registered, so don't ask again.
+      const sb = supabase()
+      if (!sb) {
+        setRestored(true)
+        return
+      }
+      const { data } = await sb.auth.getSession()
       if (cancelled) return
       const accountName = data.session?.user.user_metadata?.display_name as string | undefined
       if (accountName) {
@@ -216,13 +226,12 @@ export function StoryPlayer({
         setState(initialState(accountName))
       }
       setRestored(true)
-    })
+    })()
 
     return () => {
       cancelled = true
     }
   }, [restored, startName, allBeats])
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   const beat = queue[i]
   const finished = i >= queue.length
@@ -267,7 +276,14 @@ export function StoryPlayer({
     if (beat?.kind === 'choice') return
     if (finish()) return // the first press completes the typing
     setI((n) => n + 1)
-  }, [beat, finished, exposed, finish])
+    // This press was the last beat: the chapter is done, and the account has
+    // to know, or the dashboard keeps offering to continue a finished run.
+    if (i + 1 >= queue.length && state.status === 'playing') {
+      const done: PlayerState = { ...state, status: 'demoComplete' }
+      setState(done)
+      persist(done)
+    }
+  }, [beat, finished, exposed, finish, i, queue.length, state])
 
   const choose = useCallback(
     (optionIndex: number) => {
@@ -276,7 +292,7 @@ export function StoryPlayer({
       if (!option) return
       const next = applyChoice(state, beat.id, optionIndex, option)
       setState(next)
-      saveLocalSave(next)
+      persist(next)
       setQueue((q) => [...q.slice(0, i + 1), ...option.response, ...q.slice(i + 1)])
       setI((n) => n + 1)
     },
@@ -284,8 +300,9 @@ export function StoryPlayer({
   )
 
   const restart = useCallback(() => {
-    clearLocalSave()
-    setState(initialState(name ?? ''))
+    const fresh = initialState(name ?? '')
+    setState(fresh)
+    persist(fresh) // clears the account row too, not just this browser
     setQueue(allBeats)
     setI(0)
   }, [allBeats, name])
@@ -711,7 +728,7 @@ export function StoryPlayer({
                 // exposure and decisions — only what to call the player changes.
                 setState((prev) => {
                   const next = { ...prev, name: v }
-                  if (next.history.length > 0) saveLocalSave(next)
+                  if (next.history.length > 0) persist(next)
                   return next
                 })
               }}
@@ -803,6 +820,13 @@ export function StoryPlayer({
                 <div style={{ marginTop: 16, fontSize: 15 }}>{labels.endNext}</div>
 
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 22, alignItems: 'center' }}>
+                  <Link
+                    href={downloadHref}
+                    className="fz-btn"
+                    style={{ padding: '14px 20px 13px', background: 'var(--accent)', color: 'var(--onAccent)', border: 'var(--bw) solid var(--ink)', ...DISPLAY, fontSize: 21, textDecoration: 'none' }}
+                  >
+                    {labels.dlCta}
+                  </Link>
                   <button
                     onClick={restart}
                     className="fz-btn"

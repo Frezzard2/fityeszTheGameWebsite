@@ -14,8 +14,8 @@ const KEYS = [
   'dashContinue', 'replay', 'progress', 'pDone', 'pNext', 'pLock',
   'statsT', 'statsSub', 'levelW', 'rankW', 'rankNone', 'rankLocal',
   'exposure', 'expWarn', 'itemsWord', 'tlT', 'decisions', 'prologue',
-  'contNoteDone', 'authNotConfigured', 'authNotConfiguredD', 'found',
-  'notFound', 'authBusy',
+  'contNoteDone', 'contCh1', 'contNoteProg', 'authNotConfigured',
+  'authNotConfiguredD', 'found', 'notFound', 'authBusy',
 ] as const
 
 export default async function DashboardPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -34,6 +34,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
           locale={l}
           playHref={localePath('/jatek', l)}
           authHref={localePath('/belepes', l)}
+          downloadHref={localePath('/letoltes', l)}
           scenes={SCENES}
         />
       </div>

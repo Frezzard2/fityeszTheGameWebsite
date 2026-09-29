@@ -232,6 +232,8 @@
   "dlLinux": "AppImage",
   "dlBtn": "Download",
   "dlLockedBtn": "Account required",
+  "dlSoon": "Coming soon",
+  "dlSoonNote": "The installers are still being built. They land here as soon as they are ready — your web save keeps until then.",
   "dlStarted": "Download started ✓",
   "dlHowT": "How your save carries over",
   "dlStep1": "Install and launch the game.",

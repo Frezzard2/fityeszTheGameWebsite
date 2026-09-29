@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
+import { localePath } from '@/i18n/routing'
 import { StoryPlayer, type PlayLabels } from '@/components/play/StoryPlayer'
 import type { Scene } from '@/lib/story/types'
 import prologus from '@/lib/story/content/prologus.json'
@@ -44,6 +45,7 @@ export default async function PlayPage({
     replay: t('replay'),
     enterHint: t('enterHint'),
     notYou: t('notYou'),
+    dlCta: t('cta2'),
   }
 
   return (
@@ -55,7 +57,12 @@ export default async function PlayPage({
           minHeight: '70vh',
         }}
       >
-        <StoryPlayer scenes={SCENES} labels={labels} locale={locale as Locale} />
+        <StoryPlayer
+          scenes={SCENES}
+          labels={labels}
+          locale={locale as Locale}
+          downloadHref={localePath('/letoltes', locale as Locale)}
+        />
       </div>
   )
 }

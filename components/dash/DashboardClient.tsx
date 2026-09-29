@@ -16,8 +16,8 @@ export type DashLabels = Record<
   | 'dashContinue' | 'replay' | 'progress' | 'pDone' | 'pNext' | 'pLock'
   | 'statsT' | 'statsSub' | 'levelW' | 'rankW' | 'rankNone' | 'rankLocal'
   | 'exposure' | 'expWarn' | 'itemsWord' | 'tlT' | 'decisions' | 'prologue'
-  | 'contNoteDone' | 'authNotConfigured' | 'authNotConfiguredD' | 'found'
-  | 'notFound' | 'authBusy',
+  | 'contNoteDone' | 'contCh1' | 'contNoteProg' | 'authNotConfigured'
+  | 'authNotConfiguredD' | 'found' | 'notFound' | 'authBusy',
   string
 >
 
@@ -29,6 +29,8 @@ type SaveRow = {
   items: string[]
   history: Decision[]
   updated_at: string
+  /** 2 once chapter one has been finished — see lib/story/save.ts. */
+  chapter: number
 }
 
 const DISPLAY: CSSProperties = {
@@ -65,12 +67,14 @@ export function DashboardClient({
   locale,
   playHref,
   authHref,
+  downloadHref,
   scenes,
 }: {
   labels: DashLabels
   locale: 'hu' | 'en'
   playHref: string
   authHref: string
+  downloadHref: string
   /** Prologue + Chapter 1, so a decision can be shown as its question and answer. */
   scenes: Scene[]
 }) {
@@ -99,7 +103,7 @@ export function DashboardClient({
       return
     }
     sb.from('saves')
-      .select('player_name,xp,lebukas,szint,items,history,updated_at')
+      .select('player_name,xp,lebukas,szint,items,history,updated_at,chapter')
       .eq('slot', 1)
       .maybeSingle()
       .then(({ data }) => {
@@ -193,9 +197,16 @@ export function DashboardClient({
     }
   })
 
-  // Chapter 1 is the only playable chapter, so one segment is done and the
-  // next is the one the full game picks up from.
-  const done = 2
+  // Chapter 1 is the only playable chapter. Finishing it is as far as the web
+  // version goes, so from there "continue" means the downloadable game.
+  //
+  // Answering every choice counts as finished too: runs saved before the play
+  // screen started recording the chapter have no marker of their own, and only
+  // a few closing lines follow the last decision.
+  const choicePoints = allBeats.filter((b) => b.kind === 'choice').length
+  const complete = save.chapter >= 2 || save.history.length >= choicePoints
+  const done = complete ? 2 : 1
+  const continueHref = complete ? downloadHref : playHref
 
   return (
     <>
@@ -205,10 +216,10 @@ export function DashboardClient({
       <Reveal kind="up" delay={120} style={{ marginTop: 32, background: 'var(--ink)', color: 'var(--onInk)', border: 'var(--bw) solid var(--ink)', display: 'flex', flexWrap: 'wrap' }}>
         <div style={{ flex: '1 1 460px', minWidth: 0, padding: 'clamp(22px,3cqw,36px)' }}>
           <p style={{ ...CAP, color: 'var(--accent)', letterSpacing: '.16em', margin: 0 }}>{labels.slotLabel}</p>
-          <p style={{ ...DISPLAY, fontSize: 'clamp(30px,4cqw,56px)', margin: '12px 0 0' }}>{labels.nextCh2}</p>
-          <p style={{ margin: '12px 0 0', fontSize: 15, lineHeight: 1.5, opacity: 0.88 }}>{labels.contNoteDone}</p>
+          <p style={{ ...DISPLAY, fontSize: 'clamp(30px,4cqw,56px)', margin: '12px 0 0' }}>{complete ? labels.nextCh2 : labels.contCh1}</p>
+          <p style={{ margin: '12px 0 0', fontSize: 15, lineHeight: 1.5, opacity: 0.88 }}>{complete ? labels.contNoteDone : labels.contNoteProg}</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 22 }}>
-            <Link href={playHref} className="fz-btn" style={{ padding: '14px 22px 13px', background: 'var(--accent)', color: 'var(--onAccent)', border: 'var(--bw) solid var(--ink)', ...DISPLAY, fontSize: 20, textDecoration: 'none' }}>
+            <Link href={continueHref} className="fz-btn" style={{ padding: '14px 22px 13px', background: 'var(--accent)', color: 'var(--onAccent)', border: 'var(--bw) solid var(--ink)', ...DISPLAY, fontSize: 20, textDecoration: 'none' }}>
               ▶ {labels.dashContinue}
             </Link>
             <Link href={playHref} className="fz-btn" style={{ padding: '14px 20px 13px', background: 'transparent', color: 'var(--onInk)', border: 'var(--bw) solid var(--onInk)', ...DISPLAY, fontSize: 20, textDecoration: 'none' }}>

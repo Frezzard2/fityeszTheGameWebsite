@@ -232,6 +232,8 @@
   "dlLinux": "AppImage",
   "dlBtn": "Letöltés",
   "dlLockedBtn": "Fiók szükséges",
+  "dlSoon": "Hamarosan",
+  "dlSoonNote": "A telepítők még készülnek. Amint elkészülnek, itt tölthetők le — a webes mentésed addig is megmarad.",
   "dlStarted": "Letöltés elindult ✓",
   "dlHowT": "Így viszed át a mentésed",
   "dlStep1": "Telepítsd és indítsd el a játékot.",

@@ -222,7 +222,7 @@ export function AuthForm({ labels, locale }: { labels: AuthLabels; locale: strin
               {labels.authSub}
             </Reveal>
 
-            {save && (
+            {save && save.history.length > 0 && (
               <Reveal kind="up" delay={280} as="p" style={{ margin: '18px 0 0', padding: '12px 14px', border: 'var(--bw) solid var(--ink)', background: 'var(--paper2)', fontSize: 15, lineHeight: 1.4 }}>
                 {labels.saveMove.replace('%n', String(save.history.length))}
               </Reveal>

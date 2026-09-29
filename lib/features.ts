@@ -5,11 +5,10 @@
  */
 
 /**
- * The download page needs the installer pipeline and an account gate, neither
- * of which exists yet. While this is false, every route into it is hidden
- * rather than left pointing at a 404.
+ * The download page exists; the installers do not, so its buttons are disabled
+ * and the page says so. Flip this back to false to hide every route into it.
  */
-export const DOWNLOAD_ENABLED = false
+export const DOWNLOAD_ENABLED = true
 
 /** Accounts, save sync and the player dashboard. Needs a backend. */
 export const ACCOUNTS_ENABLED = false
