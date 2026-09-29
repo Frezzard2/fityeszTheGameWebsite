@@ -5,6 +5,7 @@ import type { Locale } from '@/lib/constants'
 import { localePath } from '@/i18n/routing'
 import { CHARACTERS } from '@/lib/design/characters'
 import { DOWNLOAD_ENABLED } from '@/lib/features'
+import { kofiUrl } from '@/lib/creators'
 import codex from '@/lib/story/content/codex.json'
 import { Reveal } from '@/components/Reveal'
 
@@ -48,6 +49,7 @@ export default async function HomePage({
   const t = await getTranslations()
   const l = locale as Locale
   const href = (p: string) => localePath(p, l)
+  const kofi = kofiUrl()
 
   return (
     // container-type establishes the query container the cqw units below need.
@@ -504,9 +506,21 @@ export default async function HomePage({
             <p style={{ margin: '12px 0 0', maxWidth: '34em', lineHeight: 1.5 }}>{t('supSub')}</p>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-            <span style={{ padding: '13px 20px 12px', background: 'var(--ink)', color: 'var(--onInk)', fontFamily: 'var(--fD)', fontWeight: DW, fontSize: 18, textTransform: 'uppercase' }}>
-              {t('kofiSoon')}
-            </span>
+            {kofi ? (
+              <a
+                href={kofi}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="fz-btn"
+                style={{ padding: '13px 20px 12px', background: 'var(--ink)', color: 'var(--onInk)', border: 'var(--bw) solid var(--ink)', fontFamily: 'var(--fD)', fontWeight: DW, fontSize: 18, textTransform: 'uppercase', textDecoration: 'none' }}
+              >
+                {t('kofi')}
+              </a>
+            ) : (
+              <span style={{ padding: '13px 20px 12px', background: 'var(--ink)', color: 'var(--onInk)', fontFamily: 'var(--fD)', fontWeight: DW, fontSize: 18, textTransform: 'uppercase' }}>
+                {t('kofiSoon')}
+              </span>
+            )}
             <Link href={href('/tamogatas')} className="fz-btn" style={{ padding: '13px 20px 12px', background: 'var(--onAccent)', color: 'var(--ink)', border: 'var(--bw) solid var(--ink)', fontFamily: 'var(--fD)', fontWeight: DW, fontSize: 18, textTransform: 'uppercase', textDecoration: 'none' }}>
               {t('meet')}
             </Link>
