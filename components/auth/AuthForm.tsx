@@ -1,9 +1,12 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import type { CSSProperties } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { Reveal } from '@/components/Reveal'
+import { localePath } from '@/i18n/routing'
+import type { Locale } from '@/lib/constants'
 import { supabase, isAuthConfigured } from '@/lib/supabase'
 import { loadLocalSave, clearLocalSave } from '@/lib/story/localSave'
 import type { PlayerState } from '@/lib/story/types'
@@ -67,16 +70,24 @@ export function AuthForm({ labels, locale }: { labels: AuthLabels; locale: strin
   const [error, setError] = useState<string | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [save, setSave] = useState<PlayerState | null>(null)
+  const router = useRouter()
+  // Signing in belongs on the dashboard, not on a "you are signed in" panel.
+  const dashboard = localePath('/vezerlopult', locale as Locale)
 
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     setSave(loadLocalSave())
     const sb = supabase()
     if (!sb) return
-    sb.auth.getSession().then(({ data }) => setSession(data.session))
+    // Only the already-signed-in case redirects here; submit() redirects
+    // itself, after the browser save has been moved into the account.
+    sb.auth.getSession().then(({ data }) => {
+      setSession(data.session)
+      if (data.session) router.replace(dashboard)
+    })
     const { data: sub } = sb.auth.onAuthStateChange((_e, s) => setSession(s))
     return () => sub.subscription.unsubscribe()
-  }, [])
+  }, [router, dashboard])
   /* eslint-enable react-hooks/set-state-in-effect */
 
   /** Move the browser save into the account, once, after signing in. */
@@ -123,8 +134,9 @@ export function AuthForm({ labels, locale }: { labels: AuthLabels; locale: strin
         if (error) throw error
         if (!data.session) {
           setNote(labels.authCheckEmail) // email confirmation is on
-        } else if (await migrate(data.session.user.id, user)) {
-          setNote(labels.authSavedRun)
+        } else {
+          await migrate(data.session.user.id, user)
+          router.replace(dashboard)
         }
       } else {
         // Supabase signs in on email. Anything without an @ is treated as a
@@ -141,7 +153,8 @@ export function AuthForm({ labels, locale }: { labels: AuthLabels; locale: strin
         const { data, error } = await sb.auth.signInWithPassword({ email, password: pass })
         if (error) throw error
         const name = (data.user.user_metadata?.display_name as string) || data.user.email || ''
-        if (await migrate(data.user.id, name)) setNote(labels.authSavedRun)
+        await migrate(data.user.id, name)
+        router.replace(dashboard)
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
