@@ -9,7 +9,7 @@ import type { Beat, Decision, PlayerState, Scene } from '@/lib/story/types'
 import { CHARACTERS, speakerName } from '@/lib/design/characters'
 import { chapterBackdrop, stageArt } from '@/lib/design/art'
 import { loadSave, persist } from '@/lib/story/save'
-import { saveLocalSave } from '@/lib/story/localSave'
+import { saveLocalSave, isGateDismissed, dismissGate } from '@/lib/story/localSave'
 import { supabase } from '@/lib/supabase'
 import codex from '@/lib/story/content/codex.json'
 
@@ -172,12 +172,14 @@ export function StoryPlayer({
   labels,
   locale,
   downloadHref,
+  authHref,
   startName,
 }: {
   scenes: Scene[]
   labels: PlayLabels
   locale: Locale
   downloadHref: string
+  authHref: string
   /** Test hook: skips the name prompt. Production never passes it. */
   startName?: string
 }) {
@@ -189,6 +191,22 @@ export function StoryPlayer({
   const [i, setI] = useState(0)
   const [state, setState] = useState<PlayerState>(() => initialState(startName ?? ''))
   const [restored, setRestored] = useState(false)
+  const [signedIn, setSignedIn] = useState(false)
+  const [gateSkipped, setGateSkipped] = useState(true)
+
+  // Who is playing decides how the chapter ends: an account keeps the run,
+  // a guest is offered one. Both start false so the server and the first
+  // client render agree.
+  useEffect(() => {
+    // localStorage does not exist during SSR, so this can only be read here.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setGateSkipped(isGateDismissed())
+    const sb = supabase()
+    if (!sb) return
+    void sb.auth.getSession().then(({ data }) => setSignedIn(!!data.session))
+    const { data: sub } = sb.auth.onAuthStateChange((_e, session) => setSignedIn(!!session))
+    return () => sub.subscription.unsubscribe()
+  }, [])
 
   // Storage does not exist during SSR and the account row is a fetch away, so
   // a persisted run can only be restored after mount. Seeding useState from it
@@ -884,23 +902,58 @@ export function StoryPlayer({
 
                 <div style={{ marginTop: 16, fontSize: 15 }}>{labels.endNext}</div>
 
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 22, alignItems: 'center' }}>
-                  <Link
-                    href={downloadHref}
-                    className="fz-btn"
-                    style={{ padding: '14px 20px 13px', background: 'var(--accent)', color: 'var(--onAccent)', border: 'var(--bw) solid var(--ink)', ...DISPLAY, fontSize: 21, textDecoration: 'none' }}
+                {/* A guest has a chapter's worth of decisions living in one
+                    browser. Offering the download first would walk them past
+                    the only thing that keeps it. */}
+                {!signedIn && !gateSkipped ? (
+                  <div
+                    className="fz-in"
+                    style={{ marginTop: 22, padding: 'clamp(18px,2.4cqw,26px)', background: 'var(--ink)', color: 'var(--onInk)', border: 'var(--bw) solid var(--ink)' }}
                   >
-                    {labels.dlCta}
-                  </Link>
-                  <button
-                    onClick={restart}
-                    className="fz-btn"
-                    style={{ padding: '14px 20px 13px', background: 'transparent', color: 'var(--ink)', border: 'var(--bw) solid var(--ink)', ...DISPLAY, fontSize: 21, cursor: 'pointer' }}
-                  >
-                    {labels.replay}
-                  </button>
-                  <span style={{ fontSize: 13, color: 'var(--inkSoft)' }}>{labels.savedLocal}</span>
-                </div>
+                    <div style={{ ...DISPLAY, fontSize: 'clamp(26px,3.4cqw,40px)' }}>{labels.gateTitle}</div>
+                    <p style={{ margin: '10px 0 0', fontSize: 16, lineHeight: 1.5, maxWidth: '34em', opacity: 0.9 }}>
+                      {labels.gateSub}
+                    </p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 20, alignItems: 'center' }}>
+                      <Link
+                        href={authHref}
+                        className="fz-btn"
+                        style={{ padding: '16px 24px 15px', background: 'var(--accent)', color: 'var(--onAccent)', border: 'var(--bw) solid var(--accent)', ...DISPLAY, fontSize: 24, textDecoration: 'none' }}
+                      >
+                        {labels.gateCta}
+                      </Link>
+                      <button
+                        onClick={() => {
+                          dismissGate()
+                          setGateSkipped(true)
+                        }}
+                        style={{ border: 0, background: 'none', padding: 0, cursor: 'pointer', font: '600 14px/1.3 var(--fL)', color: 'var(--onInk)', textDecoration: 'underline', textUnderlineOffset: 4 }}
+                      >
+                        {labels.gateSkip}
+                      </button>
+                    </div>
+                    <p style={{ margin: '14px 0 0', fontSize: 13, opacity: 0.75 }}>{labels.gateSkipNote}</p>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 22, alignItems: 'center' }}>
+                    <Link
+                      href={downloadHref}
+                      className="fz-btn"
+                      style={{ padding: '14px 20px 13px', background: 'var(--accent)', color: 'var(--onAccent)', border: 'var(--bw) solid var(--ink)', ...DISPLAY, fontSize: 21, textDecoration: 'none' }}
+                    >
+                      {labels.dlCta}
+                    </Link>
+                    <button
+                      onClick={restart}
+                      className="fz-btn"
+                      style={{ padding: '14px 20px 13px', background: 'transparent', color: 'var(--ink)', border: 'var(--bw) solid var(--ink)', ...DISPLAY, fontSize: 21, cursor: 'pointer' }}
+                    >
+                      {labels.replay}
+                    </button>
+                    {/* Signed in, the run is in the account, not just here. */}
+                    {!signedIn && <span style={{ fontSize: 13, color: 'var(--inkSoft)' }}>{labels.savedLocal}</span>}
+                  </div>
+                )}
               </div>
             </div>
           </div>

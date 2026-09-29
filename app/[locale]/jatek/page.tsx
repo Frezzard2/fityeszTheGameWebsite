@@ -62,6 +62,7 @@ export default async function PlayPage({
           labels={labels}
           locale={locale as Locale}
           downloadHref={localePath('/letoltes', locale as Locale)}
+          authHref={localePath('/belepes', locale as Locale)}
         />
       </div>
   )
