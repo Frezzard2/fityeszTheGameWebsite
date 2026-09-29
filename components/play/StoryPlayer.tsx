@@ -7,6 +7,7 @@ import { applyChoice, initialState, EXPOSURE_LIMIT } from '@/lib/story/engine'
 import type { Beat, Decision, PlayerState, Scene } from '@/lib/story/types'
 import { CHARACTERS, speakerName } from '@/lib/design/characters'
 import { loadLocalSave, saveLocalSave, clearLocalSave } from '@/lib/story/localSave'
+import { supabase } from '@/lib/supabase'
 import codex from '@/lib/story/content/codex.json'
 
 export type PlayLabels = {
@@ -185,6 +186,8 @@ export function StoryPlayer({
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (restored || startName) return
+    let cancelled = false
+
     const saved = loadLocalSave()
     if (saved && saved.name) {
       setState(saved)
@@ -192,8 +195,30 @@ export function StoryPlayer({
       const { queue: q, index } = resume(allBeats, saved.history)
       setQueue(q)
       setI(index)
+      setRestored(true)
+      return
     }
-    setRestored(true)
+
+    // No run in this browser. A signed-in player already told us what to call
+    // them when they registered, so don't ask again.
+    const sb = supabase()
+    if (!sb) {
+      setRestored(true)
+      return
+    }
+    sb.auth.getSession().then(({ data }) => {
+      if (cancelled) return
+      const accountName = data.session?.user.user_metadata?.display_name as string | undefined
+      if (accountName) {
+        setName(accountName)
+        setState(initialState(accountName))
+      }
+      setRestored(true)
+    })
+
+    return () => {
+      cancelled = true
+    }
   }, [restored, startName, allBeats])
   /* eslint-enable react-hooks/set-state-in-effect */
 
@@ -646,7 +671,9 @@ export function StoryPlayer({
           </div>
         )}
 
-        {name === null && (
+        {/* held back until the session check finishes, so a signed-in
+            player never sees the prompt flash before their name arrives */}
+        {restored && name === null && (
           <div onClick={(e) => e.stopPropagation()} style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
             <form
               className="fz-in"
