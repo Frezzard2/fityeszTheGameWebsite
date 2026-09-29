@@ -302,7 +302,7 @@ export function StoryPlayer({
   const restart = useCallback(() => {
     const fresh = initialState(name ?? '')
     setState(fresh)
-    persist(fresh) // clears the account row too, not just this browser
+    persist(fresh, true) // clears the account row too, not just this browser
     setQueue(allBeats)
     setI(0)
   }, [allBeats, name])

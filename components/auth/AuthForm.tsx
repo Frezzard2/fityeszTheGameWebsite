@@ -90,7 +90,13 @@ export function AuthForm({ labels, locale }: { labels: AuthLabels; locale: strin
   }, [router, dashboard])
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  /** Move the browser save into the account, once, after signing in. */
+  /**
+   * Move the browser save into the account, once, after signing in.
+   *
+   * `display_name` is the account's name, not the run's: the guest name was
+   * typed before the site knew who was playing, so the game switches to the
+   * account name until the player accepts one. See lib/story/save.ts.
+   */
   const migrate = useCallback(async (userId: string, displayName: string) => {
     const sb = supabase()
     const local = loadLocalSave()
