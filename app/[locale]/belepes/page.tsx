@@ -4,7 +4,7 @@ import { AuthForm, type AuthLabels } from '@/components/auth/AuthForm'
 
 const KEYS = [
   'tabReg', 'tabLogin', 'authRegTitle', 'authLoginTitle', 'authSub',
-  'fUser', 'fEmail', 'fPass', 'fId', 'submitReg', 'submitLogin',
+  'fUser', 'fEmail', 'fPass', 'submitReg', 'submitLogin',
   'haveAcc', 'noAcc', 'authSkip', 'saveMove', 'cardTitle', 'cardNo',
   'cardName', 'cardRank', 'cardJoined', 'cardNamePh', 'cardNote',
   'rankNone', 'authNotConfigured', 'authNotConfiguredD', 'authBusy',

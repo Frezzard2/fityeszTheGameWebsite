@@ -10,7 +10,7 @@ import type { PlayerState } from '@/lib/story/types'
 
 export type AuthLabels = Record<
   | 'tabReg' | 'tabLogin' | 'authRegTitle' | 'authLoginTitle' | 'authSub'
-  | 'fUser' | 'fEmail' | 'fPass' | 'fId' | 'submitReg' | 'submitLogin'
+  | 'fUser' | 'fEmail' | 'fPass' | 'submitReg' | 'submitLogin'
   | 'haveAcc' | 'noAcc' | 'authSkip' | 'saveMove' | 'cardTitle' | 'cardNo'
   | 'cardName' | 'cardRank' | 'cardJoined' | 'cardNamePh' | 'cardNote'
   | 'rankNone' | 'authNotConfigured' | 'authNotConfiguredD' | 'authBusy'
@@ -211,7 +211,9 @@ export function AuthForm({ labels, locale }: { labels: AuthLabels; locale: strin
                   <Field label={labels.fEmail} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
                 </>
               ) : (
-                <Field label={labels.fId} type="email" value={user} onChange={(e) => setUser(e.target.value)} required autoComplete="email" />
+                // Supabase authenticates on email; the design's "email or
+                // username" label promised a lookup this app cannot do.
+                <Field label={labels.fEmail} type="email" value={user} onChange={(e) => setUser(e.target.value)} required autoComplete="email" />
               )}
               <Field label={labels.fPass} type="password" value={pass} onChange={(e) => setPass(e.target.value)} required minLength={8} autoComplete={mode === 'register' ? 'new-password' : 'current-password'} />
 
