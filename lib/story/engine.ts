@@ -15,6 +15,7 @@ export function initialState(name: string): PlayerState {
     items: [],
     history: [],
     status: 'playing',
+    beat: 0,
   }
 }
 

@@ -9,6 +9,7 @@ import type { Beat, Decision, PlayerState, Scene } from '@/lib/story/types'
 import { CHARACTERS, speakerName } from '@/lib/design/characters'
 import { chapterBackdrop, stageArt } from '@/lib/design/art'
 import { loadSave, persist } from '@/lib/story/save'
+import { saveLocalSave } from '@/lib/story/localSave'
 import { supabase } from '@/lib/supabase'
 import codex from '@/lib/story/content/codex.json'
 
@@ -206,8 +207,13 @@ export function StoryPlayer({
         const { queue: q, index } = resume(allBeats, saved.history)
         setQueue(q)
         // A finished run reopens on its end screen; replaying the tail would
-        // make the chapter look unfinished again.
-        setI(saved.status === 'demoComplete' ? q.length : index)
+        // make the chapter look unfinished again. Otherwise pick up on the
+        // line they were reading, never before their last decision.
+        setI(
+          saved.status === 'demoComplete'
+            ? q.length
+            : Math.min(Math.max(saved.beat, index), q.length),
+        )
         setRestored(true)
         return
       }
@@ -279,13 +285,18 @@ export function StoryPlayer({
     if (beat?.kind === 'choice') return
     if (finish()) return // the first press completes the typing
     setI((n) => n + 1)
+    const at = i + 1
     // This press was the last beat: the chapter is done, and the account has
     // to know, or the dashboard keeps offering to continue a finished run.
-    if (i + 1 >= queue.length && state.status === 'playing') {
-      const done: PlayerState = { ...state, status: 'demoComplete' }
+    if (at >= queue.length && state.status === 'playing') {
+      const done: PlayerState = { ...state, status: 'demoComplete', beat: at }
       setState(done)
       persist(done)
+      return
     }
+    // Reading on is not worth a round trip to the account, but losing the page
+    // on the way to the dashboard and back is worth avoiding.
+    if (state.name) saveLocalSave({ ...state, beat: at })
   }, [beat, finished, exposed, finish, i, queue.length, state])
 
   const choose = useCallback(
@@ -295,7 +306,7 @@ export function StoryPlayer({
       if (!option) return
       const next = applyChoice(state, beat.id, optionIndex, option)
       setState(next)
-      persist(next)
+      persist({ ...next, beat: i + 1 })
       setQueue((q) => [...q.slice(0, i + 1), ...option.response, ...q.slice(i + 1)])
       setI((n) => n + 1)
     },
@@ -781,7 +792,7 @@ export function StoryPlayer({
                 // Rename in place: a run already under way keeps its XP,
                 // exposure and decisions — only what to call the player changes.
                 setState((prev) => {
-                  const next = { ...prev, name: v }
+                  const next = { ...prev, name: v, beat: i }
                   if (next.history.length > 0) persist(next)
                   return next
                 })

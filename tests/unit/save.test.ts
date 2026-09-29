@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { chapterOf, nameFor, rowToState, type SaveRow } from '@/lib/story/save'
+import { beatFor, chapterOf, nameFor, rowToState, type SaveRow } from '@/lib/story/save'
+import { initialState } from '@/lib/story/engine'
 import { EXPOSURE_LIMIT } from '@/lib/story/engine'
 
 const row = (over: Partial<SaveRow> = {}): SaveRow => ({
@@ -41,5 +42,23 @@ describe('what the game calls the player', () => {
 
   it('leaves a guest run alone', () => {
     expect(nameFor(row({ player_name: 'Anna', display_name: 'Zsombi' }), undefined)).toBe('Anna')
+  })
+})
+
+describe('where to reopen a run', () => {
+  const decision = { choicePointId: 'ch1.q1', optionIndex: 0 }
+
+  it('keeps the line this browser was on', () => {
+    const local = { ...initialState('Zsombi'), history: [decision], beat: 12 }
+    expect(beatFor(local, [decision])).toBe(12)
+  })
+
+  it('ignores a bookmark from a different run', () => {
+    const local = { ...initialState('Zsombi'), history: [], beat: 12 }
+    expect(beatFor(local, [decision])).toBe(0)
+  })
+
+  it('starts at the top with nothing saved here', () => {
+    expect(beatFor(null, [])).toBe(0)
   })
 })

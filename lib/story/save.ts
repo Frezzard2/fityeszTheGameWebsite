@@ -50,6 +50,9 @@ export function rowToState(row: SaveRow): PlayerState {
     items: row.items ?? [],
     history: row.history ?? [],
     status: statusOf(row),
+    // The row has no column for the reading position; loadSave takes it from
+    // this browser, which is the only place that knows it.
+    beat: 0,
   }
 }
 
@@ -63,6 +66,18 @@ export function rowToState(row: SaveRow): PlayerState {
 export function nameFor(row: SaveRow, account: string | undefined): string {
   if (account && row.player_name !== row.display_name) return account
   return row.player_name ?? account ?? ''
+}
+
+/**
+ * The line to reopen on.
+ *
+ * The account row has no column for the reading position, so it lives in this
+ * browser — and only counts when it belongs to the same run. A different number
+ * of decisions means the account moved on somewhere else, and starting from its
+ * last decision is the honest answer.
+ */
+export function beatFor(local: PlayerState | null, history: Decision[]): number {
+  return local && local.history.length === history.length ? (local.beat ?? 0) : 0
 }
 
 /** The account's run when signed in, otherwise this browser's. */
@@ -81,6 +96,7 @@ export async function loadSave(): Promise<PlayerState | null> {
   const state = rowToState(row)
   const account = auth.session.user.user_metadata?.display_name as string | undefined
   state.name = nameFor(row, account)
+  state.beat = beatFor(local, state.history)
   return state
 }
 

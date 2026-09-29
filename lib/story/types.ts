@@ -71,4 +71,13 @@ export type PlayerState = {
   items: ItemId[]
   history: Decision[]
   status: RunStatus
+  /**
+   * How far the reader has got, as an index into the beat queue that
+   * `resume()` rebuilds from `history`.
+   *
+   * Decisions alone cannot say this: a player who reads half a chapter without
+   * reaching a choice has moved, and every line since their last decision would
+   * otherwise be replayed.
+   */
+  beat: number
 }
