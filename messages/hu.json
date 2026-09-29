@@ -275,5 +275,6 @@
   "authCheckEmail": "Elküldtünk egy megerősítő e-mailt. Kattints a benne lévő linkre, és már be is léphetsz.",
   "authSavedRun": "A mentésed átkerült a fiókodba.",
   "authNoSave": "Jelenleg nincs böngészőben tárolt mentésed.",
-  "authWelcome": "Belépve"
+  "authWelcome": "Belépve",
+  "authNoSuchUser": "Nincs ilyen felhasználónév. Próbáld az e-mail-címeddel."
 }

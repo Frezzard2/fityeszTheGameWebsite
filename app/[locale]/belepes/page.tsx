@@ -4,12 +4,12 @@ import { AuthForm, type AuthLabels } from '@/components/auth/AuthForm'
 
 const KEYS = [
   'tabReg', 'tabLogin', 'authRegTitle', 'authLoginTitle', 'authSub',
-  'fUser', 'fEmail', 'fPass', 'submitReg', 'submitLogin',
+  'fUser', 'fEmail', 'fPass', 'fId', 'submitReg', 'submitLogin',
   'haveAcc', 'noAcc', 'authSkip', 'saveMove', 'cardTitle', 'cardNo',
   'cardName', 'cardRank', 'cardJoined', 'cardNamePh', 'cardNote',
   'rankNone', 'authNotConfigured', 'authNotConfiguredD', 'authBusy',
   'authSignOut', 'authCheckEmail', 'authSavedRun', 'authNoSave',
-  'authWelcome', 'hello', 'exposure', 'itemsWord',
+  'authWelcome', 'hello', 'exposure', 'itemsWord', 'authNoSuchUser',
 ] as const
 
 export default async function AuthPage({ params }: { params: Promise<{ locale: string }> }) {

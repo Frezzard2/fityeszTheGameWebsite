@@ -10,12 +10,12 @@ import type { PlayerState } from '@/lib/story/types'
 
 export type AuthLabels = Record<
   | 'tabReg' | 'tabLogin' | 'authRegTitle' | 'authLoginTitle' | 'authSub'
-  | 'fUser' | 'fEmail' | 'fPass' | 'submitReg' | 'submitLogin'
+  | 'fUser' | 'fEmail' | 'fPass' | 'fId' | 'submitReg' | 'submitLogin'
   | 'haveAcc' | 'noAcc' | 'authSkip' | 'saveMove' | 'cardTitle' | 'cardNo'
   | 'cardName' | 'cardRank' | 'cardJoined' | 'cardNamePh' | 'cardNote'
   | 'rankNone' | 'authNotConfigured' | 'authNotConfiguredD' | 'authBusy'
   | 'authSignOut' | 'authCheckEmail' | 'authSavedRun' | 'authNoSave'
-  | 'authWelcome' | 'hello' | 'exposure' | 'itemsWord',
+  | 'authWelcome' | 'hello' | 'exposure' | 'itemsWord' | 'authNoSuchUser',
   string
 >
 
@@ -127,7 +127,18 @@ export function AuthForm({ labels, locale }: { labels: AuthLabels; locale: strin
           setNote(labels.authSavedRun)
         }
       } else {
-        const { data, error } = await sb.auth.signInWithPassword({ email: user, password: pass })
+        // Supabase signs in on email. Anything without an @ is treated as a
+        // username and resolved first; the lookup returns only an email.
+        let email = user.trim()
+        if (!email.includes('@')) {
+          const { data: found, error: lookupError } = await sb.rpc('email_for_username', {
+            p_username: email,
+          })
+          if (lookupError) throw lookupError
+          if (!found) throw new Error(labels.authNoSuchUser)
+          email = found as string
+        }
+        const { data, error } = await sb.auth.signInWithPassword({ email, password: pass })
         if (error) throw error
         const name = (data.user.user_metadata?.display_name as string) || data.user.email || ''
         if (await migrate(data.user.id, name)) setNote(labels.authSavedRun)
@@ -211,9 +222,7 @@ export function AuthForm({ labels, locale }: { labels: AuthLabels; locale: strin
                   <Field label={labels.fEmail} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
                 </>
               ) : (
-                // Supabase authenticates on email; the design's "email or
-                // username" label promised a lookup this app cannot do.
-                <Field label={labels.fEmail} type="email" value={user} onChange={(e) => setUser(e.target.value)} required autoComplete="email" />
+                <Field label={labels.fId} type="text" value={user} onChange={(e) => setUser(e.target.value)} required autoComplete="username" spellCheck={false} autoCapitalize="none" />
               )}
               <Field label={labels.fPass} type="password" value={pass} onChange={(e) => setPass(e.target.value)} required minLength={8} autoComplete={mode === 'register' ? 'new-password' : 'current-password'} />
 

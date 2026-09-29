@@ -275,5 +275,6 @@
   "authCheckEmail": "We sent you a confirmation email. Click the link in it and you can sign in.",
   "authSavedRun": "Your save has been moved into your account.",
   "authNoSave": "You have no run saved in this browser right now.",
-  "authWelcome": "Signed in"
+  "authWelcome": "Signed in",
+  "authNoSuchUser": "No such username. Try your email address instead."
 }
