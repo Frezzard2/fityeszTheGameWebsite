@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import type { Locale } from '@/lib/constants'
 import { applyChoice, initialState, EXPOSURE_LIMIT } from '@/lib/story/engine'
-import type { Beat, PlayerState, Scene } from '@/lib/story/types'
+import type { Beat, Decision, PlayerState, Scene } from '@/lib/story/types'
 import { CHARACTERS, speakerName } from '@/lib/design/characters'
 import { loadLocalSave, saveLocalSave, clearLocalSave } from '@/lib/story/localSave'
 import codex from '@/lib/story/content/codex.json'
@@ -69,6 +69,31 @@ const DISPLAY: CSSProperties = {
   fontWeight: 'var(--dW)' as unknown as number,
   textTransform: 'uppercase',
   lineHeight: 1.14,
+}
+
+/**
+ * Rebuilds the beat queue and the cursor from a save's decision history.
+ *
+ * `history` records which option was taken at each choice point, but not where
+ * the reader had got to. Without replaying it, a restored save resumes at the
+ * first beat with the old XP still on the clock — so the player walks the
+ * chapter again and scores it twice.
+ */
+function resume(allBeats: Beat[], history: Decision[]): { queue: Beat[]; index: number } {
+  const queue = [...allBeats]
+  let index = 0
+
+  for (const step of history) {
+    const at = queue.findIndex(
+      (b, n) => n >= index && b.kind === 'choice' && b.id === step.choicePointId,
+    )
+    if (at === -1) break // the story changed under an old save; stop where we are
+    const beat = queue[at]
+    const option = beat.kind === 'choice' ? beat.options[step.optionIndex] : undefined
+    if (option) queue.splice(at + 1, 0, ...option.response)
+    index = at + 1
+  }
+  return { queue, index }
 }
 
 /**
@@ -164,9 +189,12 @@ export function StoryPlayer({
     if (saved && saved.name) {
       setState(saved)
       setName(saved.name)
+      const { queue: q, index } = resume(allBeats, saved.history)
+      setQueue(q)
+      setI(index)
     }
     setRestored(true)
-  }, [restored, startName])
+  }, [restored, startName, allBeats])
   /* eslint-enable react-hooks/set-state-in-effect */
 
   const beat = queue[i]
