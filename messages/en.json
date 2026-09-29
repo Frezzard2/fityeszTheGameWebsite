@@ -276,5 +276,6 @@
   "authSavedRun": "Your save has been moved into your account.",
   "authNoSave": "You have no run saved in this browser right now.",
   "authWelcome": "Signed in",
-  "authNoSuchUser": "No such username. Try your email address instead."
+  "authNoSuchUser": "No such username. Try your email address instead.",
+  "notYou": "Not you?"
 }

@@ -276,5 +276,6 @@
   "authSavedRun": "A mentésed átkerült a fiókodba.",
   "authNoSave": "Jelenleg nincs böngészőben tárolt mentésed.",
   "authWelcome": "Belépve",
-  "authNoSuchUser": "Nincs ilyen felhasználónév. Próbáld az e-mail-címeddel."
+  "authNoSuchUser": "Nincs ilyen felhasználónév. Próbáld az e-mail-címeddel.",
+  "notYou": "Nem te vagy?"
 }

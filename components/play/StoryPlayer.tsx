@@ -39,6 +39,8 @@ export type PlayLabels = {
   replay: string
   /** `ui.enter` from the game — the "press Enter to continue" hint. */
   enterHint: string
+  /** Reopens the name prompt for a player the account name does not fit. */
+  notYou: string
 }
 
 /**
@@ -334,9 +336,32 @@ export function StoryPlayer({
           borderBottom: 0,
         }}
       >
-        <div style={{ ...DISPLAY, fontSize: 24 }}>
-          {chapterLabel}
-          {currentCard ? ' · ' + bareTitle(currentCard.title[locale]) : ''}
+        <div style={{ minWidth: 0 }}>
+          <div style={{ ...DISPLAY, fontSize: 24 }}>
+            {chapterLabel}
+            {currentCard ? ' · ' + bareTitle(currentCard.title[locale]) : ''}
+          </div>
+          {name && (
+            <button
+              onClick={() => {
+                setDraft(name)
+                setName(null)
+              }}
+              style={{
+                marginTop: 4,
+                border: 0,
+                background: 'none',
+                padding: 0,
+                cursor: 'pointer',
+                font: '600 12px/1.3 var(--fL)',
+                color: 'var(--inkSoft)',
+                textDecoration: 'underline',
+                textUnderlineOffset: 3,
+              }}
+            >
+              {name} — {labels.notYou}
+            </button>
+          )}
         </div>
         <div
           style={{
@@ -682,7 +707,13 @@ export function StoryPlayer({
                 const v = draft.trim()
                 if (!v) return
                 setName(v)
-                setState(initialState(v))
+                // Rename in place: a run already under way keeps its XP,
+                // exposure and decisions — only what to call the player changes.
+                setState((prev) => {
+                  const next = { ...prev, name: v }
+                  if (next.history.length > 0) saveLocalSave(next)
+                  return next
+                })
               }}
               style={{
                 width: '100%',
