@@ -9,6 +9,7 @@ import type { Beat, Decision, PlayerState, Scene } from '@/lib/story/types'
 import { CHARACTERS, speakerName } from '@/lib/design/characters'
 import { chapterBackdrop, stageArt } from '@/lib/design/art'
 import { loadSave, persist } from '@/lib/story/save'
+import { revealedCount, type Revealed } from '@/lib/story/typewriter'
 import { saveLocalSave, isGateDismissed, dismissGate } from '@/lib/story/localSave'
 import { supabase } from '@/lib/supabase'
 import codex from '@/lib/story/content/codex.json'
@@ -107,16 +108,24 @@ function resume(allBeats: Beat[], history: Decision[]): { queue: Beat[]; index: 
 /**
  * Reveals `text` a character at a time.
  *
- * The count is the state, and the component slices the CURRENT text with it,
- * so a stale count can only ever render a prefix — never the wrong string and
- * never nothing. The timer lives in a ref so skipping can stop it; an earlier
- * version set the text to complete without clearing the interval, and the next
- * tick overwrote the finished line with a short prefix.
+ * The count is stored together with the line it was counted against, and
+ * `revealedCount` refuses to apply one line's count to another. Without that
+ * pairing the component renders one frame of the new sentence sliced by the
+ * old count — a whole line flashing up and vanishing before it types itself
+ * out, which is exactly what it looked like from the outside.
  */
 function useTypewriter(text: string, enabled: boolean) {
-  const [count, setCount] = useState(text.length)
+  // Read once, on the first client render: a count is needed during that
+  // render, before any effect has run. The panel never renders on the server.
+  const [reduced] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true,
+  )
+  const typewrite = enabled && !reduced && text.length > 0
+
+  const [revealed, setRevealed] = useState<Revealed>(() => ({ src: text, count: text.length }))
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const textRef = useRef(text)
 
   const stop = useCallback(() => {
     if (timerRef.current !== null) {
@@ -125,45 +134,36 @@ function useTypewriter(text: string, enabled: boolean) {
     }
   }, [])
 
-  /* eslint-disable react-hooks/set-state-in-effect */
+  const count = revealedCount(revealed, text, typewrite)
+
   useEffect(() => {
     // Typing IS the effect: the text arrives over time from a timer, which is
-    // the external-system case useEffect exists for.
-    textRef.current = text
+    // the external-system case useEffect exists for. Nothing is set here
+    // directly — the render above already knows a new line starts empty.
     stop()
+    if (!typewrite) return
 
-    const reduced =
-      typeof window !== 'undefined' &&
-      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-
-    if (!enabled || reduced || text.length === 0) {
-      setCount(text.length)
-      return
-    }
-
-    setCount(0)
     timerRef.current = setInterval(() => {
-      setCount((c) => {
-        const next = c + 1
-        if (next >= textRef.current.length) stop()
-        return next
+      setRevealed((r) => {
+        // The first tick of a line adopts it; a timer for an older line was
+        // cleared above, so `text` here is always the line on screen.
+        const next = (r.src === text ? r.count : 0) + 1
+        if (next >= text.length) stop()
+        return { src: text, count: next }
       })
     }, 18)
 
     return stop
-  }, [text, enabled, stop])
-  /* eslint-enable react-hooks/set-state-in-effect */
+  }, [text, typewrite, stop])
 
   /** Jump to the end. Returns true if there was anything left to reveal. */
   const finish = useCallback(() => {
-    if (count >= text.length) return false
+    if (!typewrite || count >= text.length) return false
     stop()
-    setCount(text.length)
+    setRevealed({ src: text, count: text.length })
     return true
-  }, [count, text.length, stop])
+  }, [typewrite, count, text, stop])
 
-  // Slicing here — rather than storing the sliced string — is what makes a
-  // stale count harmless.
   return { shown: text.slice(0, count), typing: count < text.length, finish }
 }
 
@@ -735,6 +735,7 @@ export function StoryPlayer({
                 </div>
               )}
               <div
+                data-testid="typed"
                 style={{
                   fontSize: 'clamp(17px,1.7cqw,24px)',
                   lineHeight: 1.55,
