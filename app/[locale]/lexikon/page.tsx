@@ -138,7 +138,9 @@ export default async function LorePage({
       id: 'chapters',
       label: t('tabChapters'),
       content: (
-        <div style={{ borderTop: 'var(--bw) solid var(--ink)' }}>
+        <div>
+          {/* No rule of its own: the tab strip already closes with one, and a
+              second heavy line 36px below it read as a mistake. */}
           {codex.chapters.map((c, i) => (
             <Reveal
               key={c.number}
@@ -150,7 +152,9 @@ export default async function LorePage({
                 gap: '10px 32px',
                 padding: '24px 0',
                 borderBottom: '1px solid var(--line)',
-                alignItems: 'baseline',
+                // Not baseline: against a 48px title the 13px number and the
+                // badge hang off its foot with a hand's width of air above.
+                alignItems: 'center',
               }}
             >
               <div style={{ ...LABEL, flex: '0 0 150px', fontSize: 13, lineHeight: 1.2, color: 'var(--accentText)' }}>
