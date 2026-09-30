@@ -283,7 +283,26 @@ export function StoryPlayer({
 
   const speakerCard =
     beat?.kind === 'dialogue' ? CHARACTERS.find((c) => c.id === beat.speaker) : undefined
-  const sprite = beat?.kind === 'dialogue' ? stageArt(beat.speaker) : null
+  const speaker = beat?.kind === 'dialogue' ? beat.speaker : null
+  const sprites = speaker ? stageArt(speaker) : null
+
+  /**
+   * Which of the speaker's two poses to show: their own lines, counted.
+   *
+   * The queue cursor is the obvious choice and the wrong one — narration and
+   * spliced choice responses shift its parity, so a character can deliver two
+   * lines running in the same pose. Counting only their lines makes the figure
+   * move on every one of them.
+   */
+  const pose = useMemo(() => {
+    if (!speaker) return 0
+    let spoken = 0
+    for (let n = 0; n <= i && n < queue.length; n++) {
+      const b = queue[n]
+      if (b?.kind === 'dialogue' && b.speaker === speaker) spoken++
+    }
+    return spoken % 2
+  }, [queue, i, speaker])
   const backdrop = name && currentCard ? chapterBackdrop(currentCard.number) : null
 
   const decisionLog = state.history.map((h) => {
@@ -552,12 +571,11 @@ export function StoryPlayer({
           </div>
         )}
 
-        {sprite && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            key={sprite}
-            src={sprite}
-            alt=""
+        {sprites && (
+          // Keyed on the speaker, so a new character fades in as a whole while
+          // one character's pose change is only the cross-fade underneath.
+          <div
+            key={speaker}
             aria-hidden
             className="fz-in"
             style={{
@@ -565,20 +583,41 @@ export function StoryPlayer({
               right: 'clamp(4px,3cqw,48px)',
               bottom: 0,
               height: '76%',
-              maxWidth: '56%',
-              objectFit: 'contain',
-              objectPosition: 'bottom right',
+              width: '56%',
               pointerEvents: 'none',
-              filter: 'drop-shadow(0 0 24px color-mix(in srgb,var(--ink) 70%,transparent))',
             }}
-          />
+          >
+            {sprites.map((src, n) => (
+              /* There is no image optimiser on a static export
+                 (`images.unoptimized`), and scripts/art.mjs already sized the
+                 file. Both poses stay mounted so the swap never waits on a
+                 download. */
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={src}
+                src={src}
+                alt=""
+                className="fz-sprite"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  objectPosition: 'bottom right',
+                  opacity: n === pose ? 1 : 0,
+                  filter: 'drop-shadow(0 0 24px color-mix(in srgb,var(--ink) 70%,transparent))',
+                }}
+              />
+            ))}
+          </div>
         )}
 
         {speakerCard && (
           <div className="fz-in" style={{ position: 'absolute', right: 'clamp(20px,4cqw,56px)', top: 60, width: 230, maxWidth: '38%' }}>
             <div style={{ background: 'var(--accent)', color: 'var(--onAccent)', border: 'var(--bw) solid var(--onInk)' }}>
               {/* Without a drawn face, the card carries the initials instead. */}
-              {!sprite && (
+              {!sprites && (
               <div style={{ position: 'relative', height: 210, overflow: 'hidden' }}>
                 <div
                   style={{

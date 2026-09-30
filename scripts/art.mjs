@@ -101,17 +101,20 @@ async function main() {
   await mkdir(join(OUT, 'line'), { recursive: true })
 
   for (const [id, file] of Object.entries(CAST)) {
-    // The calm pose introduces the character; the second, talking pose is the
-    // one that belongs on stage mid-sentence.
+    // The calm pose introduces the character on the roster card.
     await sharp(join(SRC, 'characters', `${file}.png`))
       .resize({ width: 560, withoutEnlargement: true })
       .webp({ quality: 80 })
       .toFile(join(OUT, 'cast', `${id}.webp`))
 
-    await sharp(join(SRC, 'characters', `${file}2.png`))
-      .resize({ height: 1000, withoutEnlargement: true })
-      .webp({ quality: 80 })
-      .toFile(join(OUT, 'stage', `${id}.webp`))
+    // The play screen gets BOTH poses at stage size and cross-fades between
+    // them as the character speaks, so a talking figure is not a still image.
+    for (const [n, master] of [`${file}.png`, `${file}2.png`].entries()) {
+      await sharp(join(SRC, 'characters', master))
+        .resize({ height: 1000, withoutEnlargement: true })
+        .webp({ quality: 80 })
+        .toFile(join(OUT, 'stage', `${id}-${n + 1}.webp`))
+    }
   }
 
   for (const [id, file] of Object.entries(LINEUP)) {

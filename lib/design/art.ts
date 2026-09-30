@@ -13,9 +13,14 @@ export function castArt(id: CharacterId): string | null {
   return DRAWN.includes(id) ? `/art/cast/${id}.webp` : null
 }
 
-/** The talking pose, for the play screen. */
-export function stageArt(id: CharacterId): string | null {
-  return DRAWN.includes(id) ? `/art/stage/${id}.webp` : null
+/**
+ * The two poses for the play screen, calm first and talking second.
+ *
+ * Both ship so the stage can cross-fade between them rather than hold one
+ * still frame through a whole conversation.
+ */
+export function stageArt(id: CharacterId): readonly [string, string] | null {
+  return DRAWN.includes(id) ? [`/art/stage/${id}-1.webp`, `/art/stage/${id}-2.webp`] : null
 }
 
 /** The full-body cutout, for the landing page line-up. */

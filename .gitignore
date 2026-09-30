@@ -46,6 +46,9 @@ next-env.d.ts
 shots/
 .playwright-mcp/
 
+# Generated knowledge graph (derived from the code; rebuild with /graphify).
+graphify-out/
+
 # Art masters (34MB of PNG). They live in the game repo; scripts/art.mjs turns
 # them into the webp under public/art, and that is what the site ships.
 fityesz_art/

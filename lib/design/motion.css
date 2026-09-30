@@ -90,6 +90,10 @@
 /* Meters fill rather than jump, so a change in XP or exposure is legible. */
 .fz-meter { transition: width .9s cubic-bezier(.2,.7,.2,1); }
 
+/* A speaker's two poses sit stacked; fading between them reads as the figure
+   shifting its weight mid-sentence rather than as a cut to a new picture. */
+.fz-sprite { transition: opacity .3s ease; }
+
 /* --- reduced motion --------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -97,7 +101,7 @@
   .fz-drift, .fz-pulse, .fz-caret, .fz-marquee {
     animation: none !important;
   }
-  .fz-btn, .fz-lift, .fz-meter {
+  .fz-btn, .fz-lift, .fz-meter, .fz-sprite {
     transition: none !important;
   }
   .fz-btn:hover, .fz-lift:hover {
