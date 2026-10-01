@@ -14,6 +14,5 @@ export default function robots(): MetadataRoute.Robots {
       disallow: LOCALES.flatMap((l) => PRIVATE_ROUTES.map((r) => `/${l}${r}/`)),
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
-    host: SITE_URL,
   }
 }

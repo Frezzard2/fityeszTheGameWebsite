@@ -14,7 +14,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return LOCALES.flatMap((locale) =>
     PUBLIC_ROUTES.map((path) => ({
       url: absolute(path, locale),
-      lastModified: new Date(),
+      // A date, not an instant. Millisecond precision on "when did this page
+      // last change" is noise, and some sitemap parsers object to it.
+      lastModified: new Date().toISOString().slice(0, 10),
       changeFrequency: path === '/' ? ('weekly' as const) : ('monthly' as const),
       priority: path === '/' ? 1 : path === '/jatek' ? 0.9 : 0.6,
       alternates: { languages: languageAlternates(path) },

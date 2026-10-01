@@ -81,6 +81,14 @@ const htaccess = `${httpsBlock}${headerBlock}# Serve the Hungarian site at the d
 # own accord.
 RewriteEngine On
 
+# One host, not two. www and the bare domain both answer, so without this the
+# same page exists at two addresses: search engines split their signals between
+# them, and a Search Console property registered for one host rejects a sitemap
+# listing the other. %1 is the captured domain, so this lands on the apex in a
+# single hop, over https.
+RewriteCond %{HTTP_HOST} ^www\\.(.+)$ [NC]
+RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
 # A browser asking for English first gets the English site; everyone else gets
 # Hungarian, which is the site's own language. \`\\b\` so this matches en, en-GB
 # and "en;q=0.9" but not a tag that merely starts with those letters. Only the
