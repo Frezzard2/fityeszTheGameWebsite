@@ -69,14 +69,31 @@ const headerBlock = `# --- security headers ------------------------------------
 
 const htaccess = `${httpsBlock}${headerBlock}# Serve the Hungarian site at the domain root.
 #
-# The target is relative on purpose, so this works whether the site sits at
-# the document root or inside a subdirectory.
+# The target must be a full URL. A relative one — plain \`${DEFAULT_LOCALE}/\` — looks tidier and
+# was used here at first, but an external redirect has to turn it into an
+# absolute URL, and with no RewriteBase set Apache builds that from the
+# FILESYSTEM path. On the live host that produced
+#   https://fityeszthegame.com/ -> http://fityeszthegame.com/web/serwerNNNNN/.../hu/
+# which is a 404, and leaks the server's directory layout on the way.
+#
+# Naming the scheme explicitly also keeps the hop on https: the host hands
+# Apache something that makes it write http:// into Location headers of its
+# own accord.
 RewriteEngine On
-RewriteRule ^$ ${DEFAULT_LOCALE}/ [R=302,L]
+RewriteRule ^$ https://%{HTTP_HOST}/${DEFAULT_LOCALE}/ [R=302,L]
 
-# Apache's mod_dir (DirectorySlash) already redirects /hu -> /hu/ on its own.
-# Do NOT add a trailing-slash rule here: one that ignores whether the URI
-# already ends in "/" appends another on every pass and loops forever.
+# Add the trailing slash ourselves. mod_dir does it unprompted, but it writes
+# http:// into the Location, so an https visitor asking for /hu is sent out to
+# plain http and only then bounced back — two extra hops, one of them in the
+# clear, on a site with a login form.
+#
+# The guards are what make this safe. An earlier version of this file carried a
+# rule with none, which appended a slash on every pass and looped until the
+# browser gave up. -d fires only for a real directory, and !/$ only when the
+# slash is not already there, so the redirected URL cannot match again.
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteCond %{REQUEST_URI} !/$
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1/ [R=301,L]
 
 ErrorDocument 404 /${DEFAULT_LOCALE}/404.html
 
