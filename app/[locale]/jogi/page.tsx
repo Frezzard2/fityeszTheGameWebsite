@@ -1,7 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
 import { CREATORS } from '@/lib/creators'
-import { CONTACT_EMAIL, HOSTING_PROVIDER } from '@/lib/legal'
+import { CONTACT_EMAIL, DATA_REGION, HOSTING_PROVIDER } from '@/lib/legal'
 
 import type { ReactNode } from 'react'
 
@@ -61,7 +61,23 @@ export default async function LegalPage({ params }: { params: Promise<{ locale: 
         </div>
 
         <H>{t('privacyT')}</H>
-        <P>{t('legalDataNone')}</P>
+        <P>{t('legalData')}</P>
+
+        <h3 style={SUBHEAD}>{t('legalAccountT')}</h3>
+        <P>{t('legalAccount')}</P>
+
+        <h3 style={SUBHEAD}>{t('legalBasisT')}</h3>
+        <P>{t('legalBasis')}</P>
+
+        <h3 style={SUBHEAD}>{t('legalProcessorT')}</h3>
+        <P>{t('legalProcessor')}</P>
+        <div style={{ marginTop: 12, borderTop: '1px solid var(--line)', maxWidth: '42em' }}>
+          <Row k={t('legalProcessorL')} v="Supabase Inc." />
+          <Row k={t('legalRegionL')} v={DATA_REGION || todo} />
+        </div>
+
+        <h3 style={SUBHEAD}>{t('legalRetentionT')}</h3>
+        <P>{t('legalRetention')}</P>
 
         <h3 style={SUBHEAD}>{t('legalLocalT')}</h3>
         <P>{t('legalLocal')}</P>
