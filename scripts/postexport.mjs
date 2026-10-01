@@ -80,6 +80,15 @@ const htaccess = `${httpsBlock}${headerBlock}# Serve the Hungarian site at the d
 # Apache something that makes it write http:// into Location headers of its
 # own accord.
 RewriteEngine On
+
+# A browser asking for English first gets the English site; everyone else gets
+# Hungarian, which is the site's own language. \`\\b\` so this matches en, en-GB
+# and "en;q=0.9" but not a tag that merely starts with those letters. Only the
+# FIRST language counts: someone whose browser prefers Hungarian and lists
+# English second is a Hungarian speaker.
+RewriteCond %{HTTP:Accept-Language} ^en\\b [NC]
+RewriteRule ^$ https://%{HTTP_HOST}/en/ [R=302,L]
+
 RewriteRule ^$ https://%{HTTP_HOST}/${DEFAULT_LOCALE}/ [R=302,L]
 
 # Add the trailing slash ourselves. mod_dir does it unprompted, but it writes
@@ -109,6 +118,12 @@ ErrorDocument 404 /${DEFAULT_LOCALE}/404.html
     Header always set Cache-Control "no-cache"
   </IfModule>
 </FilesMatch>
+
+# The root redirect reads Accept-Language, so a cache in front of the site must
+# key on it too, or the first visitor's language decides everyone else's.
+<IfModule mod_headers.c>
+  Header always set Vary "Accept-Language" "expr=%{REQUEST_URI} =~ m#^/$#"
+</IfModule>
 
 # Everything under _next/static carries a content hash in its filename, so a
 # changed file is a different URL and this can be cached hard and forever.
