@@ -273,7 +273,7 @@
   "legalBasisT": "Why we may store it",
   "legalBasis": "We store it to provide the account you asked for and to keep your progress (GDPR Article 6(1)(b) — performance of a contract). Playing without an account needs none of it: the browser chapter can be played through without signing up.",
   "legalProcessorT": "Who else touches it",
-  "legalProcessor": "Accounts and saves are stored with Supabase Inc., acting as our data processor. Beyond them and the hosting provider, no one else receives your data.",
+  "legalProcessor": "Accounts and saves are stored with Supabase Inc., acting as our data processor. Beyond them and the hosting provider, no one else receives your data. Supabase Inc. is a US company; where it stores the data is given below. Any access from outside the EEA is covered by the standard contractual clauses in our data processing agreement with them.",
   "legalProcessorL": "Processor",
   "legalRegionL": "Where it is stored",
   "legalRetentionT": "How long we keep it",

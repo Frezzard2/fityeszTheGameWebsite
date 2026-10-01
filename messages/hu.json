@@ -273,7 +273,7 @@
   "legalBasisT": "Milyen alapon tároljuk",
   "legalBasis": "Azért tároljuk, hogy a kért fiókot biztosítsuk, és megőrizzük a haladásodat (GDPR 6. cikk (1) bekezdés b) pont – szerződés teljesítése). Fiók nélküli játékhoz minderre nincs szükség: a böngészős fejezet regisztráció nélkül is végigjátszható.",
   "legalProcessorT": "Ki fér még hozzá",
-  "legalProcessor": "A fiókokat és a mentéseket a Supabase Inc. tárolja, adatfeldolgozóként. Rajtuk és a tárhelyszolgáltatón kívül senki nem kapja meg az adataidat.",
+  "legalProcessor": "A fiókokat és a mentéseket a Supabase Inc. tárolja, adatfeldolgozóként. Rajtuk és a tárhelyszolgáltatón kívül senki nem kapja meg az adataidat. A Supabase Inc. egyesült államokbeli vállalat; hogy hol tárolja az adatokat, lentebb olvasható. Az EGT-n kívülről történő esetleges hozzáférést a velük kötött adatfeldolgozói szerződés és az abban foglalt általános adatvédelmi kikötések (SCC) fedik le.",
   "legalProcessorL": "Adatfeldolgozó",
   "legalRegionL": "Adattárolás helye",
   "legalRetentionT": "Meddig őrizzük",
