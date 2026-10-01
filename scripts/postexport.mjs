@@ -80,13 +80,34 @@ RewriteRule ^$ ${DEFAULT_LOCALE}/ [R=302,L]
 
 ErrorDocument 404 /${DEFAULT_LOCALE}/404.html
 
-# The font is immutable; everything else revalidates.
-<IfModule mod_expires.c>
-  ExpiresActive On
-  ExpiresByType font/ttf "access plus 1 year"
-  ExpiresByType text/css "access plus 1 week"
-  ExpiresByType application/javascript "access plus 1 week"
-</IfModule>
+# --- caching -------------------------------------------------------------
+#
+# HTML must revalidate on every visit. Without a Cache-Control header Apache
+# leaves it to the browser's heuristic — roughly a tenth of the file's age —
+# so a page could be served from cache for hours after an upload. The page
+# names the hashed bundle it loads, so a stale page means stale code, and a
+# fix that is live on the server still does not reach anyone looking at it.
+<FilesMatch "\\.(html)$">
+  <IfModule mod_headers.c>
+    Header always set Cache-Control "no-cache"
+  </IfModule>
+</FilesMatch>
+
+# Everything under _next/static carries a content hash in its filename, so a
+# changed file is a different URL and this can be cached hard and forever.
+<FilesMatch "\\.(js|css|woff2)$">
+  <IfModule mod_headers.c>
+    Header always set Cache-Control "public, max-age=31536000, immutable"
+  </IfModule>
+</FilesMatch>
+
+# Artwork keeps stable names, so it revalidates after a day rather than being
+# pinned for a year — replacing a sprite should not need a new filename.
+<FilesMatch "\\.(webp|png|jpg|svg|ico)$">
+  <IfModule mod_headers.c>
+    Header always set Cache-Control "public, max-age=86400"
+  </IfModule>
+</FilesMatch>
 `
 
 writeFileSync(join(OUT, '.htaccess'), htaccess, 'utf8')

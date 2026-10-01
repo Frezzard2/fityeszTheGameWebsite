@@ -8,7 +8,7 @@
  * carries more weight than that here: it is the only route a user has to
  * exercise their rights over account data, which the site really does store.
  */
-export const CONTACT_EMAIL = ''
+export const CONTACT_EMAIL = 'fityeszthegame@gmail.com'
 export const HOSTING_PROVIDER = 'home.pl sp. z o.o. (Poland)'
 
 /**
@@ -16,4 +16,4 @@ export const HOSTING_PROVIDER = 'home.pl sp. z o.o. (Poland)'
  * — e.g. 'EU (Frankfurt)'. Read it off the project's dashboard; outside the
  * EEA the notice needs a transfer basis as well, so say so if that is the case.
  */
-export const DATA_REGION = ''
+export const DATA_REGION = 'Central Europe (Frankfurt)'
