@@ -1,11 +1,19 @@
--- Username sign-in.
+-- Username sign-in. DO NOT APPLY THIS AS IT STANDS.
+--
+-- Held back on purpose after the 2026-10-01 privacy review: email_for_username()
+-- below is a public endpoint that returns a person's e-mail address to anyone
+-- who guesses their username. Shipping it would be handing out personal data by
+-- design, which is hard to square with GDPR Article 5(1)(f) and Article 32.
+--
+-- The sign-in field now asks for an e-mail address, so nothing depends on this.
+-- To revive username sign-in, resolve the username inside a Supabase Edge
+-- Function that signs the user in and returns only a session — never the
+-- address — so the lookup is never exposed to the caller.
 --
 -- Supabase authenticates on email, so signing in with a username needs a
 -- lookup from one to the other before the auth call.
 --
--- READ THIS BEFORE RUNNING: email_for_username() hands the caller an email
--- address in exchange for a username, and anyone can call it. That is the
--- cost of username sign-in on a static site with no server of our own:
+-- The original trade-off, left here for the record:
 --   * usernames become enumerable — a caller can probe which ones exist
 --   * a known username reveals that account's email address
 -- The function returns nothing else, and never returns a password hash or a

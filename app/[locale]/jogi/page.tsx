@@ -88,6 +88,9 @@ export default async function LegalPage({ params }: { params: Promise<{ locale: 
         <h3 style={SUBHEAD}>{t('legalRightsT')}</h3>
         <P>{t('legalRights')}</P>
 
+        <H>{t('legalTermsT')}</H>
+        <P>{t('legalTerms')}</P>
+
         <H>{t('legalIpT')}</H>
         <P>{t('legalIp')}</P>
 

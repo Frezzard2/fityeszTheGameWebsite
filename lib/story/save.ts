@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import { loadLocalSave, saveLocalSave } from './localSave'
+import { loadLocalSave, saveLocalSave, clearLocalSave } from './localSave'
 import { EXPOSURE_LIMIT } from './engine'
 import type { Decision, ItemId, PlayerState, RunStatus } from './types'
 
@@ -138,4 +138,25 @@ export function persist(state: PlayerState, startingOver = false): void {
       { onConflict: 'user_id,slot' },
     )
   })
+}
+
+/**
+ * Erases the run: the account row and this browser's copy.
+ *
+ * The account itself — the e-mail address and username held by Supabase auth —
+ * cannot be removed from the browser, because deleting a user needs a key the
+ * site does not ship. The privacy notice routes that to a written request.
+ */
+export async function eraseSave(): Promise<boolean> {
+  clearLocalSave()
+
+  const sb = supabase()
+  if (!sb) return true
+
+  const { data: auth } = await sb.auth.getSession()
+  const user = auth.session?.user
+  if (!user) return true
+
+  const { error } = await sb.from('saves').delete().eq('user_id', user.id)
+  return !error
 }

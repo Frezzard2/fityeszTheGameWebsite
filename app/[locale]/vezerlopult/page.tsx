@@ -16,6 +16,8 @@ const KEYS = [
   'exposure', 'expWarn', 'itemsWord', 'tlT', 'decisions', 'prologue',
   'contNoteDone', 'contCh1', 'contNoteProg', 'authNotConfigured',
   'authNotConfiguredD', 'found', 'notFound', 'authBusy',
+  'dashDeleteT', 'dashDelete', 'dashDeleteGo', 'dashDeleteAsk',
+  'dashDeleteCancel', 'dashDeleted', 'dashDeleteAcct',
 ] as const
 
 export default async function DashboardPage({ params }: { params: Promise<{ locale: string }> }) {

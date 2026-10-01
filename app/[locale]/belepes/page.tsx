@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
+import { localePath } from '@/i18n/routing'
 import { AuthForm, type AuthLabels } from '@/components/auth/AuthForm'
 
 const KEYS = [
@@ -10,6 +11,7 @@ const KEYS = [
   'rankNone', 'authNotConfigured', 'authNotConfiguredD', 'authBusy',
   'authSignOut', 'authCheckEmail', 'authSavedRun', 'authNoSave',
   'authWelcome', 'hello', 'exposure', 'itemsWord', 'authNoSuchUser',
+  'authPrivacyNote', 'navLegal',
 ] as const
 
 export default async function AuthPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -22,7 +24,7 @@ export default async function AuthPage({ params }: { params: Promise<{ locale: s
   return (
     <div style={{ containerType: 'inline-size' }}>
       <div style={{ maxWidth: 1180, margin: '0 auto', padding: 'clamp(36px,5cqw,80px) clamp(16px,3cqw,40px) clamp(56px,7cqw,104px)' }}>
-        <AuthForm labels={labels} locale={locale} />
+        <AuthForm labels={labels} locale={locale} legalHref={localePath('/jogi', locale as Locale)} />
       </div>
     </div>
   )

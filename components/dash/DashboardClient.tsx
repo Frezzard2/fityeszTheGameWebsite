@@ -5,6 +5,7 @@ import type { CSSProperties } from 'react'
 import Link from 'next/link'
 import type { Session } from '@supabase/supabase-js'
 import { supabase, isAuthConfigured } from '@/lib/supabase'
+import { eraseSave } from '@/lib/story/save'
 import { Reveal } from '@/components/Reveal'
 import { EXPOSURE_LIMIT, LEVEL_UP_XP } from '@/lib/story/engine'
 import type { Decision, Scene } from '@/lib/story/types'
@@ -17,7 +18,9 @@ export type DashLabels = Record<
   | 'statsT' | 'statsSub' | 'levelW' | 'rankW' | 'rankNone' | 'rankLocal'
   | 'exposure' | 'expWarn' | 'itemsWord' | 'tlT' | 'decisions' | 'prologue'
   | 'contNoteDone' | 'contCh1' | 'contNoteProg' | 'authNotConfigured'
-  | 'authNotConfiguredD' | 'found' | 'notFound' | 'authBusy',
+  | 'authNotConfiguredD' | 'found' | 'notFound' | 'authBusy'
+  | 'dashDeleteT' | 'dashDelete' | 'dashDeleteGo' | 'dashDeleteAsk'
+  | 'dashDeleteCancel' | 'dashDeleted' | 'dashDeleteAcct',
   string
 >
 
@@ -81,6 +84,8 @@ export function DashboardClient({
   const [session, setSession] = useState<Session | null>(null)
   const [save, setSave] = useState<SaveRow | null>(null)
   const [loading, setLoading] = useState(true)
+  const [asking, setAsking] = useState(false)
+  const [erased, setErased] = useState(false)
 
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
@@ -114,6 +119,46 @@ export function DashboardClient({
   /* eslint-enable react-hooks/set-state-in-effect */
 
   const signOut = useCallback(() => supabase()?.auth.signOut(), [])
+
+  const erase = useCallback(async () => {
+    await eraseSave()
+    setSave(null)
+    setAsking(false)
+    setErased(true)
+  }, [])
+
+  // Erasure has to be reachable whether or not there is a run to show, so it
+  // sits below every signed-in state rather than inside the one with a save.
+  const eraseBlock = (
+    <Reveal kind="up" delay={320} style={{ ...CARD, marginTop: 24, padding: 'clamp(18px,2.6cqw,28px)' }}>
+      <h2 style={{ margin: 0, ...DISPLAY, fontSize: 24 }}>{labels.dashDeleteT}</h2>
+      <p style={{ margin: '10px 0 0', fontSize: 15, lineHeight: 1.5, color: 'var(--inkSoft)', maxWidth: '40em' }}>
+        {labels.dashDelete}
+      </p>
+      {erased ? (
+        <p role="status" style={{ margin: '14px 0 0', font: '700 13px/1.4 var(--fL)', color: 'var(--good)' }}>
+          {labels.dashDeleted}
+        </p>
+      ) : asking ? (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 16, alignItems: 'center' }}>
+          <span style={{ font: '700 13px/1.4 var(--fL)', color: 'var(--accentText)' }}>{labels.dashDeleteAsk}</span>
+          <button onClick={erase} className="fz-btn" style={{ padding: '11px 16px 10px', background: 'var(--accent)', color: 'var(--onAccent)', border: 'var(--bw) solid var(--ink)', ...DISPLAY, fontSize: 17, cursor: 'pointer' }}>
+            {labels.dashDeleteGo}
+          </button>
+          <button onClick={() => setAsking(false)} style={{ border: 0, background: 'none', padding: 0, cursor: 'pointer', font: '600 14px/1.3 var(--fL)', color: 'var(--ink)', textDecoration: 'underline', textUnderlineOffset: 4 }}>
+            {labels.dashDeleteCancel}
+          </button>
+        </div>
+      ) : (
+        <button onClick={() => setAsking(true)} className="fz-btn" style={{ marginTop: 16, padding: '11px 16px 10px', background: 'transparent', color: 'var(--ink)', border: 'var(--bw) solid var(--ink)', ...DISPLAY, fontSize: 17, cursor: 'pointer' }}>
+          {labels.dashDeleteT}
+        </button>
+      )}
+      <p style={{ margin: '14px 0 0', fontSize: 13, lineHeight: 1.5, color: 'var(--inkSoft)', maxWidth: '40em' }}>
+        {labels.dashDeleteAcct}
+      </p>
+    </Reveal>
+  )
 
   if (!isAuthConfigured()) {
     return (
@@ -176,6 +221,7 @@ export function DashboardClient({
             ▶ {labels.cta1}
           </Link>
         </Reveal>
+        {eraseBlock}
       </>
     )
   }
@@ -360,6 +406,8 @@ export function DashboardClient({
           </div>
         </Reveal>
       )}
+
+      {eraseBlock}
     </>
   )
 }

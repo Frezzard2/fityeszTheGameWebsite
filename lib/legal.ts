@@ -9,7 +9,7 @@
  * exercise their rights over account data, which the site really does store.
  */
 export const CONTACT_EMAIL = ''
-export const HOSTING_PROVIDER = ''
+export const HOSTING_PROVIDER = 'home.pl sp. z o.o. (Poland)'
 
 /**
  * Where the Supabase project keeps accounts and saves, as users should read it

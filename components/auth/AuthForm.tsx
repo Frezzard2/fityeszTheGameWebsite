@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { CSSProperties } from 'react'
 import type { Session } from '@supabase/supabase-js'
+import Link from 'next/link'
 import { Reveal } from '@/components/Reveal'
 import { localePath } from '@/i18n/routing'
 import type { Locale } from '@/lib/constants'
@@ -18,7 +19,8 @@ export type AuthLabels = Record<
   | 'cardName' | 'cardRank' | 'cardJoined' | 'cardNamePh' | 'cardNote'
   | 'rankNone' | 'authNotConfigured' | 'authNotConfiguredD' | 'authBusy'
   | 'authSignOut' | 'authCheckEmail' | 'authSavedRun' | 'authNoSave'
-  | 'authWelcome' | 'hello' | 'exposure' | 'itemsWord' | 'authNoSuchUser',
+  | 'authWelcome' | 'hello' | 'exposure' | 'itemsWord' | 'authNoSuchUser'
+  | 'authPrivacyNote' | 'navLegal',
   string
 >
 
@@ -60,7 +62,7 @@ function memberNo(id: string): string {
   return 'FK-' + String(n).padStart(6, '0')
 }
 
-export function AuthForm({ labels, locale }: { labels: AuthLabels; locale: string }) {
+export function AuthForm({ labels, locale, legalHref }: { labels: AuthLabels; locale: string; legalHref: string }) {
   const [mode, setMode] = useState<'register' | 'login'>('register')
   const [user, setUser] = useState('')
   const [email, setEmail] = useState('')
@@ -145,17 +147,12 @@ export function AuthForm({ labels, locale }: { labels: AuthLabels; locale: strin
           router.replace(dashboard)
         }
       } else {
-        // Supabase signs in on email. Anything without an @ is treated as a
-        // username and resolved first; the lookup returns only an email.
-        let email = user.trim()
-        if (!email.includes('@')) {
-          const { data: found, error: lookupError } = await sb.rpc('email_for_username', {
-            p_username: email,
-          })
-          if (lookupError) throw lookupError
-          if (!found) throw new Error(labels.authNoSuchUser)
-          email = found as string
-        }
+        // Supabase signs in on e-mail, and the username lookup that used to
+        // stand in front of this was withdrawn — it handed out addresses to
+        // anyone who asked. Anything that is not an address is refused here
+        // rather than sent on to fail obscurely.
+        const email = user.trim()
+        if (!email.includes('@')) throw new Error(labels.authNoSuchUser)
         const { data, error } = await sb.auth.signInWithPassword({ email, password: pass })
         if (error) throw error
         const name = (data.user.user_metadata?.display_name as string) || data.user.email || ''
@@ -254,6 +251,15 @@ export function AuthForm({ labels, locale }: { labels: AuthLabels; locale: strin
                 {busy ? labels.authBusy : mode === 'register' ? labels.submitReg : labels.submitLogin}
               </button>
             </form>
+
+            {/* The notice has to be reachable where the data is handed over,
+                not only from the footer. */}
+            <p style={{ margin: '16px 0 0', font: '400 13px/1.5 var(--fL)', color: 'var(--inkSoft)', maxWidth: '34em' }}>
+              {labels.authPrivacyNote}{' '}
+              <Link href={legalHref} style={{ color: 'var(--ink)' }}>
+                {labels.navLegal}
+              </Link>
+            </p>
 
             <div style={{ marginTop: 18, display: 'flex', flexWrap: 'wrap', gap: '10px 22px' }}>
               <button
