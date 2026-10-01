@@ -26,10 +26,11 @@ same numbers. Progress saves to `localStorage`, so a reload picks up where you l
 
 ## Not built yet
 
-Accounts, cross-device save sync, and the gated installer download. All three need server-side code,
-and the site is currently a static export. They're specified in
-[`docs/superpowers/`](docs/superpowers/) — a design spec and a task-by-task implementation plan —
-so the work can resume without re-deciding anything.
+The installer download. The builds do not exist yet, so the page ships with its buttons disabled
+rather than linking to nothing.
+
+Accounts and save sync are built: they run against Supabase from the browser, which is what a static
+export allows. Row-level security is the only thing standing between one player's save and another's.
 
 The download page is hidden behind a flag rather than linking to a 404:
 
@@ -103,8 +104,8 @@ components/            play screen, lore tabs, flag rail, locale toggle
 lib/design/            colour tokens, the two art directions, character roster
 lib/story/             pure game engine + generated content
 scripts/               Lang.java → JSON extractor, post-export redirect
-messages/              hu.json / en.json — 248 keys each
-docs/superpowers/      design spec and implementation plan
+messages/              hu.json / en.json — 301 keys each
+supabase/migrations/   accounts and saves schema, row-level security
 ```
 
 ### Two art directions

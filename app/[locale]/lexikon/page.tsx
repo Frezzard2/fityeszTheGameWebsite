@@ -28,9 +28,9 @@ const HEAD = {
  * picked N — auto-fit collapses the same way and never forces overflow. */
 const GRID_3 = 'repeat(auto-fit,minmax(220px,1fr))'
 
-/** Bossfight XP awards — fityesz1_0.java: xp += 50 / 80 / 120, documented in
- * docs/superpowers/specs/2026-09-24-fityesz-website-design.md §1.1. Not
- * chapter content, so not gated by the spoiler rule below. */
+/** Bossfight XP awards, transcribed from the game's own fityesz1_0.java:
+ * xp += 50 / 80 / 120. Not chapter content, so not gated by the spoiler
+ * rule below. */
 const BOSS_XP: Record<string, number> = { lakatos: 50, peteri: 80, kapzs: 120 }
 
 export default async function LorePage({

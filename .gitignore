@@ -46,6 +46,9 @@ next-env.d.ts
 shots/
 .playwright-mcp/
 
+# Written by `next dev` on every run; not part of the site.
+AGENTS.md
+
 # Generated knowledge graph (derived from the code; rebuild with /graphify).
 graphify-out/
 
