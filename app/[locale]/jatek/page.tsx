@@ -1,5 +1,7 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
+import { pageMetadata } from '@/lib/seo'
 import { localePath } from '@/i18n/routing'
 import { StoryPlayer, type PlayLabels } from '@/components/play/StoryPlayer'
 import type { Scene } from '@/lib/story/types'
@@ -7,6 +9,21 @@ import prologus from '@/lib/story/content/prologus.json'
 import fejezet01 from '@/lib/story/content/fejezet-01.json'
 
 const SCENES = [prologus, fejezet01] as unknown as Scene[]
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale })
+  return pageMetadata({
+    locale: locale as Locale,
+    path: '/jatek',
+    title: t('seoPlayT'),
+    description: t('seoPlayD'),
+  })
+}
 
 export default async function PlayPage({
   params,

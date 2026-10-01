@@ -13,6 +13,7 @@
  *   node scripts/art.mjs
  */
 import { mkdir } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import sharp from 'sharp'
 
@@ -47,6 +48,13 @@ const LINEUP = {
 
 /** Anything brighter than this in every channel counts as the backdrop. */
 const WHITE = 228
+
+/**
+ * The link preview card. Social sites and search engines want 1200x630; the
+ * cover is drawn 1200x400, so it is padded to height with its own background —
+ * which is the --paper token exactly, so the seam does not show.
+ */
+const OG = { width: 1200, height: 630, paper: { r: 244, g: 239, b: 230, alpha: 1 } }
 
 /**
  * Clears the white *around* the figure.
@@ -123,6 +131,19 @@ async function main() {
       .trim({ background: { r: 0, g: 0, b: 0, alpha: 0 }, threshold: 0 })
       .webp({ quality: 82, alphaQuality: 90 })
       .toFile(join(OUT, 'line', `${id}.webp`))
+  }
+
+  const cover = join(SRC, 'CoverImageFityesz.png')
+  if (existsSync(cover)) {
+    const art = await sharp(cover).resize({ width: OG.width, withoutEnlargement: true }).toBuffer()
+    const { height } = await sharp(art).metadata()
+    const pad = Math.max(0, Math.round((OG.height - (height ?? 0)) / 2))
+    await sharp(art)
+      .extend({ top: pad, bottom: OG.height - (height ?? 0) - pad, background: OG.paper })
+      .png()
+      .toFile(join('public', 'og.png'))
+  } else {
+    console.warn('art: no cover image, skipping public/og.png')
   }
 
   for (const [chapter, file] of Object.entries(BACKDROPS)) {

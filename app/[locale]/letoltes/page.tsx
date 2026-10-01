@@ -1,5 +1,7 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
+import { pageMetadata } from '@/lib/seo'
 import { Reveal } from '@/components/Reveal'
 
 /** The three builds in the design. Ported from the prototype's `dl.platforms`. */
@@ -8,6 +10,21 @@ const PLATFORMS = [
   { name: 'macOS', fileKey: 'dlMac' },
   { name: 'Linux', fileKey: 'dlLinux' },
 ] as const
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale })
+  return pageMetadata({
+    locale: locale as Locale,
+    path: '/letoltes',
+    title: t('dlTitle'),
+    description: t('seoDownloadD'),
+  })
+}
 
 export default async function DownloadPage({
   params,

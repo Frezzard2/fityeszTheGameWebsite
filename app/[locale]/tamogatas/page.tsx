@@ -1,5 +1,7 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
+import { pageMetadata } from '@/lib/seo'
 import { CREATORS, GAME_REPO_URL, kofiUrl } from '@/lib/creators'
 import { Reveal } from '@/components/Reveal'
 
@@ -9,6 +11,21 @@ function initialsOf(name: string): string {
     .split(' ')
     .map((w) => w[0])
     .join('')
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale })
+  return pageMetadata({
+    locale: locale as Locale,
+    path: '/tamogatas',
+    title: t('supTitle'),
+    description: t('seoSupportD'),
+  })
 }
 
 export default async function SupportPage({

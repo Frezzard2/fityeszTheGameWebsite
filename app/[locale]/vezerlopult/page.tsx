@@ -1,5 +1,7 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
+import { pageMetadata } from '@/lib/seo'
 import { localePath } from '@/i18n/routing'
 import { DashboardClient, type DashLabels } from '@/components/dash/DashboardClient'
 import type { Scene } from '@/lib/story/types'
@@ -19,6 +21,22 @@ const KEYS = [
   'dashDeleteT', 'dashDelete', 'dashDeleteGo', 'dashDeleteAsk',
   'dashDeleteCancel', 'dashDeleted', 'dashDeleteAcct',
 ] as const
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale })
+  return pageMetadata({
+    locale: locale as Locale,
+    path: '/vezerlopult',
+    title: t('dashKicker'),
+    description: t('seoDashD'),
+    index: false,
+  })
+}
 
 export default async function DashboardPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params

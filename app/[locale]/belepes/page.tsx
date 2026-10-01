@@ -1,5 +1,7 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
+import { pageMetadata } from '@/lib/seo'
 import { localePath } from '@/i18n/routing'
 import { AuthForm, type AuthLabels } from '@/components/auth/AuthForm'
 
@@ -13,6 +15,22 @@ const KEYS = [
   'authWelcome', 'hello', 'exposure', 'itemsWord', 'authNoSuchUser',
   'authPrivacyNote', 'navLegal',
 ] as const
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale })
+  return pageMetadata({
+    locale: locale as Locale,
+    path: '/belepes',
+    title: t('tabLogin'),
+    description: t('seoAuthD'),
+    index: false,
+  })
+}
 
 export default async function AuthPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params

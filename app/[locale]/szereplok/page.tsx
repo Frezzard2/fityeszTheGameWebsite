@@ -1,5 +1,7 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
+import { pageMetadata } from '@/lib/seo'
 import { CHARACTERS } from '@/lib/design/characters'
 import { castArt } from '@/lib/design/art'
 import { Reveal } from '@/components/Reveal'
@@ -10,6 +12,21 @@ const HEADER_COLORS = [
   { bg: 'var(--ink)', fg: 'var(--onInk)' },
   { bg: 'var(--second)', fg: 'var(--onSecond)' },
 ] as const
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale })
+  return pageMetadata({
+    locale: locale as Locale,
+    path: '/szereplok',
+    title: t('navChars'),
+    description: t('seoCharsD'),
+  })
+}
 
 export default async function CharactersPage({
   params,

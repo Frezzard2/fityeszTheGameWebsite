@@ -299,5 +299,17 @@
   "authNoSave": "You have no run saved in this browser right now.",
   "authWelcome": "Signed in",
   "authNoSuchUser": "Please sign in with your e-mail address.",
-  "notYou": "Not you?"
+  "notYou": "Not you?",
+  "seoTagline": "A satirical text adventure about climbing the political ladder",
+  "seoHomeT": "The Fityesz Chronicle – a free text adventure game",
+  "seoHomeD": "A satirical text adventure about Hungarian politics. Chapter 1 is free to play in your browser, in Hungarian and English — make choices, earn XP and try not to get caught.",
+  "seoCharsD": "The cast of The Fityesz Chronicle: the recruiter, the district party man, the Prime Minister and the rest. Who is who, and which chapter you meet them in.",
+  "seoLoreD": "The world of Fityesz: the party, the chapters, the places, the items and how the game works — XP, exposure and the bossfights.",
+  "seoPlayT": "Play Chapter 1 – The Fityesz Chronicle",
+  "seoPlayD": "Play the prologue and Chapter 1 of The Fityesz Chronicle free in your browser, no sign-up needed. Your choices count and your progress is kept.",
+  "seoDownloadD": "Download the full Fityesz Chronicle for Windows, macOS and Linux: a prologue and 7 chapters, 3 bossfights, 3 endings. Installers coming soon.",
+  "seoSupportD": "Support the makers of The Fityesz Chronicle on Ko-fi, and see who wrote the game.",
+  "seoLegalD": "Imprint and privacy notice: who runs The Fityesz Chronicle website, what data we store, and how to have it erased.",
+  "seoAuthD": "Sign in or create an account so your decisions are kept with it.",
+  "seoDashD": "Your saves and your progress."
 }

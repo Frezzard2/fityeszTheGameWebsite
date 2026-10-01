@@ -1,5 +1,7 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
+import { pageMetadata } from '@/lib/seo'
 import { CREATORS } from '@/lib/creators'
 import { CONTACT_EMAIL, DATA_REGION, HOSTING_PROVIDER } from '@/lib/legal'
 
@@ -34,6 +36,21 @@ function Row({ k, v }: { k: string; v: ReactNode }) {
   )
 }
 
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale })
+  return pageMetadata({
+    locale: locale as Locale,
+    path: '/jogi',
+    title: t('legalTitle'),
+    description: t('seoLegalD'),
+  })
+}
 
 export default async function LegalPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params

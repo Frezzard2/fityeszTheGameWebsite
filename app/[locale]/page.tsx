@@ -1,11 +1,15 @@
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
+import { SITE_TITLE } from '@/lib/constants'
+import { pageMetadata } from '@/lib/seo'
+import { SITE_URL, absolute } from '@/lib/site'
 import { localePath } from '@/i18n/routing'
 import { CHARACTERS } from '@/lib/design/characters'
 import { DOWNLOAD_ENABLED } from '@/lib/features'
-import { kofiUrl } from '@/lib/creators'
+import { CREATORS, kofiUrl } from '@/lib/creators'
 import { lineupArt } from '@/lib/design/art'
 import codex from '@/lib/story/content/codex.json'
 import { Reveal } from '@/components/Reveal'
@@ -54,6 +58,21 @@ const LEDGER_VALUE: CSSProperties = {
   lineHeight: 1.14,
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale })
+  return pageMetadata({
+    locale: locale as Locale,
+    path: '/',
+    title: t('seoHomeT'),
+    description: t('seoHomeD'),
+  })
+}
+
 export default async function HomePage({
   params,
 }: {
@@ -69,6 +88,29 @@ export default async function HomePage({
   return (
     // container-type establishes the query container the cqw units below need.
     <div style={{ containerType: 'inline-size' }}>
+      {/* Structured data: without it a search engine has to guess what this
+          page is. Named as a VideoGame so the title, the languages and the
+          fact that it is free to play are all machine-readable. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'VideoGame',
+            name: SITE_TITLE[l],
+            url: absolute('/', l),
+            image: `${SITE_URL}/og.png`,
+            description: t('seoHomeD'),
+            inLanguage: ['hu', 'en'],
+            genre: ['Text adventure', 'Interactive fiction', 'Satire'],
+            gamePlatform: ['Web browser', 'Windows', 'macOS', 'Linux'],
+            applicationCategory: 'Game',
+            playMode: 'SinglePlayer',
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'HUF' },
+            author: CREATORS.map((c) => ({ '@type': 'Person', name: c.name, url: c.url })),
+          }),
+        }}
+      />
       {/* Hero — poster, not a centred marketing block */}
       <section
         data-screen-label="Landing"

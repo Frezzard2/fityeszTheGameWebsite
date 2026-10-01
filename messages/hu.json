@@ -299,5 +299,17 @@
   "authNoSave": "Jelenleg nincs böngészőben tárolt mentésed.",
   "authWelcome": "Belépve",
   "authNoSuchUser": "Jelentkezz be az e-mail-címeddel.",
-  "notYou": "Nem te vagy?"
+  "notYou": "Nem te vagy?",
+  "seoTagline": "Szatirikus szöveges kalandjáték a politikai ranglétráról",
+  "seoHomeT": "Fityesz Krónika – ingyen játszható szöveges kalandjáték",
+  "seoHomeD": "Szatirikus szöveges kalandjáték a magyar politikáról. Az 1. fejezet ingyen játszható a böngészőben, magyarul és angolul – döntesz, XP-t gyűjtesz, és próbálsz nem lebukni.",
+  "seoCharsD": "A Fityesz Krónika szereplői: a toborzó, a kerületi pártember, a miniszterelnök és a többiek. Ki kicsoda a pártban, és melyik fejezetben találkozol vele.",
+  "seoLoreD": "A Fityesz világa: a párt, a fejezetek, a helyszínek, a tárgyak és a játékszabályok – XP, lebukás és a bossfightok működése.",
+  "seoPlayT": "Játszd az 1. fejezetet – Fityesz Krónika",
+  "seoPlayD": "Játszd a Fityesz Krónika prológusát és 1. fejezetét ingyen, regisztráció nélkül, a böngésződben. A döntéseid számítanak, és a haladásod megmarad.",
+  "seoDownloadD": "A teljes Fityesz Krónika letöltése Windowsra, macOS-re és Linuxra: prológus és 7 fejezet, 3 bossfight, 3 befejezés. A telepítők hamarosan.",
+  "seoSupportD": "Támogasd a Fityesz Krónika készítőit Ko-fin, és nézd meg, kik írták a játékot.",
+  "seoLegalD": "Impresszum és adatkezelési tájékoztató: ki üzemelteti a Fityesz Krónika oldalát, milyen adatot tárolunk, és hogyan kérheted a törlésüket.",
+  "seoAuthD": "Jelentkezz be vagy hozz létre fiókot, hogy a döntéseid a fiókodban maradjanak.",
+  "seoDashD": "A mentéseid és a haladásod."
 }

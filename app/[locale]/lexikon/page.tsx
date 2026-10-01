@@ -1,5 +1,7 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
+import { pageMetadata } from '@/lib/seo'
 import { LoreTabs, type TabPanel } from '@/components/lore/LoreTabs'
 import { Reveal } from '@/components/Reveal'
 import { CHARACTERS } from '@/lib/design/characters'
@@ -32,6 +34,21 @@ const GRID_3 = 'repeat(auto-fit,minmax(220px,1fr))'
  * xp += 50 / 80 / 120. Not chapter content, so not gated by the spoiler
  * rule below. */
 const BOSS_XP: Record<string, number> = { lakatos: 50, peteri: 80, kapzs: 120 }
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale })
+  return pageMetadata({
+    locale: locale as Locale,
+    path: '/lexikon',
+    title: t('navLore'),
+    description: t('seoLoreD'),
+  })
+}
 
 export default async function LorePage({
   params,
