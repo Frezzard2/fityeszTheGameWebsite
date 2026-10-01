@@ -112,7 +112,10 @@ RewriteCond %{REQUEST_FILENAME} -d
 RewriteCond %{REQUEST_URI} !/$
 RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1/ [R=301,L]
 
-ErrorDocument 404 /${DEFAULT_LOCALE}/404.html
+# The export writes one 404 page, at the root — not one per locale. Pointing
+# this at /${DEFAULT_LOCALE}/404.html named a file that does not exist, so every wrong URL
+# got Apache's own bare error page instead of the site's.
+ErrorDocument 404 /404.html
 
 # --- caching -------------------------------------------------------------
 #
