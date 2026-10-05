@@ -69,9 +69,15 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
  *
  * The site has no server of its own, so these ride along in the .htaccess.
  * The content policy allows what the site actually loads: its own files, the
- * Supabase project that holds accounts and saves, and inline styles, which the
- * pages are built from. `frame-ancestors 'none'` is what stops the site being
- * framed; X-Frame-Options repeats it for anything too old to read CSP.
+ * Supabase project that holds accounts and saves, Google's tag and analytics
+ * endpoints, and inline styles, which the pages are built from.
+ * `frame-ancestors 'none'` is what stops the site being framed; X-Frame-Options
+ * repeats it for anything too old to read CSP.
+ *
+ * Google is named here whether or not a visitor agrees to analytics. A policy
+ * is a ceiling on what the page MAY load, not a statement that it does: the
+ * script is only ever injected after consent, so a refusal still means no
+ * request leaves the browser.
  */
 const headerBlock = `# --- security headers ---------------------------------------------------
 <IfModule mod_headers.c>
@@ -79,7 +85,7 @@ const headerBlock = `# --- security headers ------------------------------------
   Header always set X-Frame-Options "DENY"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
-  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://*.supabase.co wss://*.supabase.co"
+  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com"
 </IfModule>
 
 `

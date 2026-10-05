@@ -4,6 +4,7 @@ import type { Locale } from '@/lib/constants'
 import { pageMetadata } from '@/lib/seo'
 import { CREATORS } from '@/lib/creators'
 import { CONTACT_EMAIL, DATA_REGION, HOSTING_PROVIDER } from '@/lib/legal'
+import { ConsentChoice } from '@/components/ConsentChoice'
 
 import type { ReactNode } from 'react'
 
@@ -102,6 +103,18 @@ export default async function LegalPage({ params }: { params: Promise<{ locale: 
 
         <h3 style={SUBHEAD}>{t('legalFontsT')}</h3>
         <P>{t('legalFonts')}</P>
+
+        <h3 style={SUBHEAD}>{t('legalAnalyticsT')}</h3>
+        <P>{t('legalAnalytics')}</P>
+        <ConsentChoice
+          labels={{
+            legalConsentState: t('legalConsentState'),
+            legalConsentYes: t('legalConsentYes'),
+            legalConsentNo: t('legalConsentNo'),
+            legalConsentNone: t('legalConsentNone'),
+            legalConsentChange: t('legalConsentChange'),
+          }}
+        />
 
         <h3 style={SUBHEAD}>{t('legalRightsT')}</h3>
         <P>{t('legalRights')}</P>

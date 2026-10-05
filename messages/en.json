@@ -283,7 +283,14 @@
   "legalLocalT": "Save data stored in your browser",
   "legalLocal": "Playing without signing in keeps everything in your own browser's localStorage: the name you give, your choices and your score. That never reaches us. Clearing your browser data removes it, as does the Restart button in the game. If you sign in later, the run in your browser is moved into your account — from that point it is stored on the server as described above.",
   "legalFontsT": "Fonts and external requests",
-  "legalFonts": "Fonts are served from our own host, so viewing the site makes no request to Google or any other third party; we set no tracking cookies and run no analytics. When you sign in, or play while signed in, your browser talks to Supabase to read and write your save and keeps the session token in its own storage — without that the account could not work. GitHub and Ko-fi links only open if you click them.",
+  "legalFonts": "Fonts are served from our own host, so viewing the site makes no request to Google or any other third party for them. When you sign in, or play while signed in, your browser talks to Supabase to read and write your save and keeps the session token in its own storage — without that the account could not work. Visit statistics run only if you have separately agreed to them; see below. GitHub and Ko-fi links only open if you click them.",
+  "legalAnalyticsT": "Visit statistics",
+  "legalAnalytics": "If you agreed on the cookie bar, Google Analytics (Google Ireland Limited) builds anonymous statistics on how many visitors see which page. It sets cookies in your browser and sends data to Google; the basis is your consent (GDPR Article 6(1)(a)), which you can withdraw at any time. Until you agree, not a single request goes to Google.",
+  "legalConsentState": "Your current choice:",
+  "legalConsentYes": "agreed",
+  "legalConsentNo": "refused",
+  "legalConsentNone": "not decided yet",
+  "legalConsentChange": "Change your choice",
   "legalRightsT": "Your rights",
   "legalRights": "You can ask for a copy of the data we hold about you, have it corrected, have it erased, have its use restricted, receive it in a portable form, or object to it being processed. Write to the address above. If you believe we have handled your data wrongly you can complain to the Hungarian data protection authority (NAIH, naih.hu).",
   "legalIpT": "Copyright",
@@ -311,5 +318,10 @@
   "seoSupportD": "Support the makers of The Fityesz Chronicle on Ko-fi, and see who wrote the game.",
   "seoLegalD": "Imprint and privacy notice: who runs The Fityesz Chronicle website, what data we store, and how to have it erased.",
   "seoAuthD": "Sign in or create an account so your decisions are kept with it.",
-  "seoDashD": "Your saves and your progress."
+  "seoDashD": "Your saves and your progress.",
+  "cookieT": "Cookies",
+  "cookieD": "Storage the site needs to work is always used — without it saves and signing in would not function. Beyond that we would like anonymous visit statistics through Google Analytics, and for that we need your agreement. If you say no, nothing reaches Google.",
+  "cookieYes": "I agree",
+  "cookieNo": "No thanks",
+  "cookieMore": "Details"
 }

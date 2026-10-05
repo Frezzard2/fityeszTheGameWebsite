@@ -283,7 +283,14 @@
   "legalLocalT": "Böngészőben tárolt játékmentés",
   "legalLocal": "Ha bejelentkezés nélkül játszol, minden a saját böngésződ localStorage tárolójában marad: a megadott név, a döntéseid és a pontjaid. Ez nem jut el hozzánk. A böngésző adatainak törlésével eltávolítható, ahogy a játékban az Újrakezdés gombbal is. Ha később bejelentkezel, a böngészőben lévő játékmenet átkerül a fiókodba – onnantól a fent leírtak szerint, szerveren tároljuk.",
   "legalFontsT": "Betűtípusok és külső kérések",
-  "legalFonts": "A betűtípusokat saját kiszolgálóról töltjük be, így az oldal megtekintésekor nem indul kérés a Google vagy más külső szolgáltató felé; nyomkövető sütit nem helyezünk el, és analitikát sem futtatunk. Amikor bejelentkezel vagy bejelentkezve játszol, a böngésződ a Supabase-szel kommunikál a mentésed olvasásához és írásához, és a munkamenet-azonosítót a saját tárolójában tartja – e nélkül a fiók nem működne. A GitHub- és Ko-fi-hivatkozások csak akkor nyílnak meg, ha rájuk kattintasz.",
+  "legalFonts": "A betűtípusokat saját kiszolgálóról töltjük be, így az oldal megtekintésekor nem indul kérés a Google vagy más külső szolgáltató felé a betűtípusokért. Amikor bejelentkezel vagy bejelentkezve játszol, a böngésződ a Supabase-szel kommunikál a mentésed olvasásához és írásához, és a munkamenet-azonosítót a saját tárolójában tartja – e nélkül a fiók nem működne. Látogatottsági statisztika csak akkor indul, ha ahhoz külön hozzájárultál; lásd lentebb. A GitHub- és Ko-fi-hivatkozások csak akkor nyílnak meg, ha rájuk kattintasz.",
+  "legalAnalyticsT": "Látogatottsági statisztika",
+  "legalAnalytics": "Ha a sütisávon igent mondtál, a Google Analytics (Google Ireland Limited) névtelen statisztikát készít arról, hány látogató melyik oldalt nézi meg. Ez sütiket helyez el a böngésződben, és adatot küld a Google-nek; a jogalap a te hozzájárulásod (GDPR 6. cikk (1) bekezdés a) pont), amit bármikor visszavonhatsz. Amíg nem járulsz hozzá, a Google felé egyetlen kérés sem indul.",
+  "legalConsentState": "Jelenlegi választásod:",
+  "legalConsentYes": "elfogadva",
+  "legalConsentNo": "elutasítva",
+  "legalConsentNone": "még nem döntöttél",
+  "legalConsentChange": "Választás módosítása",
   "legalRightsT": "Jogaid",
   "legalRights": "Kérheted a rólad tárolt adatok másolatát, azok helyesbítését, törlését, kezelésük korlátozását, hordozható formában való kiadását, és tiltakozhatsz a kezelésük ellen. Írj a fenti címre. Ha úgy látod, hogy helytelenül kezeltük az adataidat, panasszal fordulhatsz a Nemzeti Adatvédelmi és Információszabadság Hatósághoz (NAIH, naih.hu).",
   "legalIpT": "Szerzői jog",
@@ -311,5 +318,10 @@
   "seoSupportD": "Támogasd a Fityesz Krónika készítőit Ko-fin, és nézd meg, kik írták a játékot.",
   "seoLegalD": "Impresszum és adatkezelési tájékoztató: ki üzemelteti a Fityesz Krónika oldalát, milyen adatot tárolunk, és hogyan kérheted a törlésüket.",
   "seoAuthD": "Jelentkezz be vagy hozz létre fiókot, hogy a döntéseid a fiókodban maradjanak.",
-  "seoDashD": "A mentéseid és a haladásod."
+  "seoDashD": "A mentéseid és a haladásod.",
+  "cookieT": "Sütik",
+  "cookieD": "A működéshez szükséges tárolást mindig használjuk – e nélkül a játékmentés és a bejelentkezés nem menne. Ezen felül szeretnénk névtelen látogatottsági statisztikát is gyűjteni a Google Analytics segítségével, ehhez viszont a te beleegyezésed kell. Ha nemet mondasz, semmi nem jut el a Google-höz.",
+  "cookieYes": "Elfogadom",
+  "cookieNo": "Elutasítom",
+  "cookieMore": "Részletek"
 }

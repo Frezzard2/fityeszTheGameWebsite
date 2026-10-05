@@ -6,6 +6,7 @@ import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { routing, localePath } from '@/i18n/routing'
 import { CREATORS } from '@/lib/creators'
+import { ConsentBanner, type ConsentLabels } from '@/components/ConsentBanner'
 import { DOWNLOAD_ENABLED } from '@/lib/features'
 import { SITE_TITLE, type Locale } from '@/lib/constants'
 import { FlagRail } from '@/components/FlagRail'
@@ -399,6 +400,19 @@ export default async function LocaleLayout({
                   </a>
                 </div>
               </footer>
+
+      <ConsentBanner
+        legalHref={localePath('/jogi', locale)}
+        labels={
+          {
+            cookieT: t('cookieT'),
+            cookieD: t('cookieD'),
+            cookieYes: t('cookieYes'),
+            cookieNo: t('cookieNo'),
+            cookieMore: t('cookieMore'),
+          } satisfies ConsentLabels
+        }
+      />
             </div>
         </NextIntlClientProvider>
     </div>
