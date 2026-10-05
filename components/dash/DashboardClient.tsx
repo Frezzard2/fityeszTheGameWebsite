@@ -7,7 +7,7 @@ import type { Session } from '@supabase/supabase-js'
 import { supabase, isAuthConfigured } from '@/lib/supabase'
 import { eraseSave } from '@/lib/story/save'
 import { Reveal } from '@/components/Reveal'
-import { EXPOSURE_LIMIT, LEVEL_UP_XP } from '@/lib/story/engine'
+import { decisions, EXPOSURE_LIMIT, LEVEL_UP_XP } from '@/lib/story/engine'
 import type { Decision, Scene } from '@/lib/story/types'
 import codex from '@/lib/story/content/codex.json'
 
@@ -231,17 +231,7 @@ export function DashboardClient({
   const rank = save.xp >= LEVEL_UP_XP ? labels.rankLocal : labels.rankNone
   const allBeats = scenes.flatMap((s) => s.beats)
 
-  const timeline = save.history.map((h) => {
-    const source = allBeats.find((b) => b.kind === 'choice' && b.id === h.choicePointId)
-    const option = source && source.kind === 'choice' ? source.options[h.optionIndex] : undefined
-    return {
-      id: h.choicePointId,
-      question: source && source.kind === 'choice' ? source.prompt[locale] : '',
-      answer: option ? option.text[locale] : '',
-      xp: option ? option.xp : 0,
-      lebukas: option ? option.lebukas : 0,
-    }
-  })
+  const timeline = decisions(save.history, allBeats, locale)
 
   // Chapter 1 is the only playable chapter. Finishing it is as far as the web
   // version goes, so from there "continue" means the downloadable game.

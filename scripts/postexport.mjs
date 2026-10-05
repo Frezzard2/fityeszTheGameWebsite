@@ -27,6 +27,23 @@ if (!existsSync(OUT)) {
   process.exit(1)
 }
 
+/**
+ * One host, not two.
+ *
+ * www and the bare domain both answer, so without this every page exists at
+ * two addresses and search engines split their signals between them. This runs
+ * BEFORE the https redirect on purpose: it names https itself, so
+ * http://www/... reaches the canonical URL in one hop instead of being sent to
+ * https://www/... first and redirected again. Shorter chains are easier for a
+ * crawler to follow, and Google gives up on a long one.
+ */
+const wwwBlock = `# Send www to the bare domain, over https, in one hop.
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^www\\.(.+)$ [NC]
+RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+`
+
 const httpsBlock = FORCE_HTTPS
   ? `# Force https. Requires a certificate to already be installed.
 RewriteCond %{HTTPS} !=on
@@ -67,7 +84,7 @@ const headerBlock = `# --- security headers ------------------------------------
 
 `
 
-const htaccess = `${httpsBlock}${headerBlock}# Serve the Hungarian site at the domain root.
+const htaccess = `${wwwBlock}${httpsBlock}${headerBlock}# Serve the Hungarian site at the domain root.
 #
 # The target must be a full URL. A relative one — plain \`${DEFAULT_LOCALE}/\` — looks tidier and
 # was used here at first, but an external redirect has to turn it into an
@@ -80,14 +97,6 @@ const htaccess = `${httpsBlock}${headerBlock}# Serve the Hungarian site at the d
 # Apache something that makes it write http:// into Location headers of its
 # own accord.
 RewriteEngine On
-
-# One host, not two. www and the bare domain both answer, so without this the
-# same page exists at two addresses: search engines split their signals between
-# them, and a Search Console property registered for one host rejects a sitemap
-# listing the other. %1 is the captured domain, so this lands on the apex in a
-# single hop, over https.
-RewriteCond %{HTTP_HOST} ^www\\.(.+)$ [NC]
-RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
 
 # A browser asking for English first gets the English site; everyone else gets
 # Hungarian, which is the site's own language. \`\\b\` so this matches en, en-GB

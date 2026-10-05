@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import type { Locale } from '@/lib/constants'
-import { applyChoice, initialState, EXPOSURE_LIMIT } from '@/lib/story/engine'
+import { applyChoice, decisions, fill, initialState, EXPOSURE_LIMIT } from '@/lib/story/engine'
 import type { Beat, Decision, PlayerState, Scene } from '@/lib/story/types'
 import { CHARACTERS, speakerName } from '@/lib/design/characters'
 import { chapterBackdrop, stageArt } from '@/lib/design/art'
@@ -59,11 +59,6 @@ export type PlayLabels = {
 function bareTitle(title: string): string {
   const at = title.indexOf(': ')
   return at === -1 ? title : title.slice(at + 2)
-}
-
-/** The game's text uses printf placeholders; the player's name is the only argument. */
-function fill(text: string, name: string): string {
-  return text.replace(/%s/g, name)
 }
 
 const CAP: CSSProperties = {
@@ -305,17 +300,7 @@ export function StoryPlayer({
   }, [queue, i, speaker])
   const backdrop = name && currentCard ? chapterBackdrop(currentCard.number) : null
 
-  const decisionLog = state.history.map((h) => {
-    const source = allBeats.find((b) => b.kind === 'choice' && b.id === h.choicePointId)
-    const option = source && source.kind === 'choice' ? source.options[h.optionIndex] : undefined
-    return {
-      id: h.choicePointId,
-      question: source && source.kind === 'choice' && name ? fill(source.prompt[locale], name) : '',
-      answer: option ? option.text[locale] : '',
-      xp: option ? option.xp : 0,
-      lebukas: option ? option.lebukas : 0,
-    }
-  })
+  const decisionLog = decisions(state.history, allBeats, locale, name ?? undefined)
 
   const advance = useCallback(() => {
     if (finished || exposed) return

@@ -36,6 +36,7 @@ export default async function SupportPage({
   const { locale } = await params
   setRequestLocale(locale as Locale)
   const t = await getTranslations()
+  const l = locale as Locale
   const kofi = kofiUrl()
 
   return (
@@ -244,7 +245,7 @@ export default async function SupportPage({
                   color: 'transparent',
                 }}
               >
-                {initialsOf(c.name)}
+                {initialsOf(c.name.en)}
               </div>
               <div
                 style={{
@@ -272,7 +273,7 @@ export default async function SupportPage({
                   lineHeight: 1.14,
                 }}
               >
-                {c.name}
+                {c.name[l]}
               </div>
               <div style={{ fontFamily: 'var(--fL)', fontWeight: 600, fontSize: 14, lineHeight: 1.3, color: 'var(--inkSoft)' }}>
                 @{c.handle}

@@ -1,4 +1,5 @@
-import type { ChoiceOption, ChoicePointId, PlayerState } from './types'
+import type { Locale } from '@/lib/constants'
+import type { Beat, ChoiceOption, ChoicePointId, Decision, PlayerState } from './types'
 
 /** Reaching this exposure ends the run — `lebukasEllenorzes()` in fityesz1_0.java. */
 export const EXPOSURE_LIMIT = 100
@@ -41,4 +42,47 @@ export function applyChoice(
     history: [...s.history, { choicePointId, optionIndex }],
     status: lebukas >= EXPOSURE_LIMIT ? 'exposed' : s.status,
   }
+}
+
+/** The game's text uses printf placeholders; the player's name is the only argument. */
+export function fill(text: string, name: string): string {
+  return text.replace(/%s/g, name)
+}
+
+/** One answered choice, ready to show. */
+export type Decided = {
+  id: ChoicePointId
+  question: string
+  answer: string
+  xp: number
+  lebukas: number
+}
+
+/**
+ * Reads a run's history back against the story.
+ *
+ * `history` records which option was taken where, and nothing about what was
+ * asked; recovering the question and the answer means finding the choice beat
+ * again. The play screen and the dashboard both show this list, and each used
+ * to work it out for itself.
+ */
+export function decisions(
+  history: Decision[],
+  beats: Beat[],
+  locale: Locale,
+  /** When given, fills the player's name into the question. */
+  name?: string,
+): Decided[] {
+  return history.map((h) => {
+    const source = beats.find((b) => b.kind === 'choice' && b.id === h.choicePointId)
+    const asked = source?.kind === 'choice' ? source.prompt[locale] : ''
+    const option = source?.kind === 'choice' ? source.options[h.optionIndex] : undefined
+    return {
+      id: h.choicePointId,
+      question: name ? fill(asked, name) : asked,
+      answer: option ? option.text[locale] : '',
+      xp: option ? option.xp : 0,
+      lebukas: option ? option.lebukas : 0,
+    }
+  })
 }

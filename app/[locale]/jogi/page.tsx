@@ -56,6 +56,7 @@ export default async function LegalPage({ params }: { params: Promise<{ locale: 
   const { locale } = await params
   setRequestLocale(locale as Locale)
   const t = await getTranslations()
+  const l = locale as Locale
 
   const todo = (
     <mark style={{ background: 'var(--accent)', color: 'var(--onAccent)', padding: '2px 8px', font: '700 12px/1 var(--fL)', letterSpacing: '.1em' }}>
@@ -72,7 +73,7 @@ export default async function LegalPage({ params }: { params: Promise<{ locale: 
 
         <H>{t('imprintT')}</H>
         <div style={{ marginTop: 12, borderTop: 'var(--bw) solid var(--ink)' }}>
-          <Row k={t('legalOperator')} v={CREATORS.map((c) => c.name).join(' · ')} />
+          <Row k={t('legalOperator')} v={CREATORS.map((c) => c.name[l]).join(' · ')} />
           <Row k={t('legalContact')} v={CONTACT_EMAIL ? <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> : todo} />
           <Row k={t('legalHost')} v={HOSTING_PROVIDER || todo} />
         </div>

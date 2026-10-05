@@ -107,7 +107,7 @@ export default async function HomePage({
             applicationCategory: 'Game',
             playMode: 'SinglePlayer',
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'HUF' },
-            author: CREATORS.map((c) => ({ '@type': 'Person', name: c.name, url: c.url })),
+            author: CREATORS.map((c) => ({ '@type': 'Person', name: c.name[l], url: c.url })),
           }),
         }}
       />

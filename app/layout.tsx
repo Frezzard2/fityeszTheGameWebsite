@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Antonio, Public_Sans } from 'next/font/google'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { DEFAULT_LOCALE } from '@/lib/constants'
 import { SITE_URL } from '@/lib/site'
 import './globals.css'
@@ -29,7 +29,17 @@ const fontVariables = [antonio.variable, publicSans.variable].join(' ')
 // Every route renders through this layout, including the 404 for paths with
 // no locale prefix, so the document tags live here too.
 /** Absolute URLs in page metadata resolve against this. */
-export const metadata: Metadata = { metadataBase: new URL(SITE_URL) }
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  manifest: '/manifest.webmanifest',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
+}
+
+/** The browser chrome colour on a phone: ink, like the header. */
+export const viewport: Viewport = { themeColor: '#161616' }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

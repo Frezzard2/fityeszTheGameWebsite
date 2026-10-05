@@ -1,9 +1,17 @@
-export type Creator = { name: string; handle: string; url: string }
+import type { Bilingual } from '@/lib/story/types'
+
+/**
+ * Hungarian puts the family name first, English does not, so the name is
+ * bilingual like everything else. The header carried its own copy of this list
+ * for that reason; the legal and support pages used a single-language one and
+ * printed Hungarian name order on the English site.
+ */
+export type Creator = { name: Bilingual; handle: string; url: string }
 
 /** Ported from the design prototype's `static CREATORS`. */
 export const CREATORS: Creator[] = [
-  { name: 'Kukucska Zsombor', handle: 'Frezzard2', url: 'https://github.com/Frezzard2' },
-  { name: 'Dajka Zea', handle: 'djkzea', url: 'https://github.com/djkzea' },
+  { name: { hu: 'Kukucska Zsombor', en: 'Zsombor Kukucska' }, handle: 'Frezzard2', url: 'https://github.com/Frezzard2' },
+  { name: { hu: 'Dajka Zea', en: 'Zea Dajka' }, handle: 'djkzea', url: 'https://github.com/djkzea' },
 ]
 
 export const GAME_REPO_URL = 'https://github.com/djkzea/fityeszthegame'

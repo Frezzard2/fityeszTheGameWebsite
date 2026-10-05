@@ -57,6 +57,18 @@ const WHITE = 228
 const OG = { width: 1200, height: 630, paper: { r: 244, g: 239, b: 230, alpha: 1 } }
 
 /**
+ * The F mark, cut out of the cover, for the icons a phone or a browser tab
+ * shows. Its position in the cover is fixed, so the crop is too — if the cover
+ * is ever redrawn, check this still lands on the mark.
+ */
+const MARK = { left: 75, top: 162, width: 80, height: 80 }
+const ICONS = [
+  { file: 'apple-touch-icon.png', size: 180 },
+  { file: 'icon-192.png', size: 192 },
+  { file: 'icon-512.png', size: 512 },
+]
+
+/**
  * Clears the white *around* the figure.
  *
  * A plain colour key would punch holes in shirts and pocket squares, which are
@@ -144,6 +156,16 @@ async function main() {
       .toFile(join('public', 'og.png'))
   } else {
     console.warn('art: no cover image, skipping public/og.png')
+  }
+
+  if (existsSync(cover)) {
+    for (const { file, size } of ICONS) {
+      await sharp(cover)
+        .extract(MARK)
+        .resize(size, size, { kernel: 'nearest' })
+        .png()
+        .toFile(join('public', file))
+    }
   }
 
   for (const [chapter, file] of Object.entries(BACKDROPS)) {

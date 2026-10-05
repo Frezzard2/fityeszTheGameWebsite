@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { routing, localePath } from '@/i18n/routing'
+import { CREATORS } from '@/lib/creators'
 import { DOWNLOAD_ENABLED } from '@/lib/features'
 import { SITE_TITLE, type Locale } from '@/lib/constants'
 import { FlagRail } from '@/components/FlagRail'
@@ -26,11 +27,6 @@ const NAV_ITEMS = [
   ...(DOWNLOAD_ENABLED ? [{ href: '/letoltes', labelKey: 'navDownload' }] : []),
   { href: '/tamogatas', labelKey: 'navSupport' },
 ]
-
-const CREATORS = [
-  { name: { hu: 'Kukucska Zsombor', en: 'Zsombor Kukucska' }, handle: 'Frezzard2', url: 'https://github.com/Frezzard2' },
-  { name: { hu: 'Dajka Zea', en: 'Zea Dajka' }, handle: 'djkzea', url: 'https://github.com/djkzea' },
-] as const
 
 const navLinkStyle: CSSProperties = {
   padding: '10px 12px',

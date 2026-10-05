@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import type { CSSProperties } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import Link from 'next/link'
+import { FlagRail } from '@/components/FlagRail'
 import { Reveal } from '@/components/Reveal'
 import { localePath } from '@/i18n/routing'
 import type { Locale } from '@/lib/constants'
@@ -292,11 +293,7 @@ export function AuthForm({ labels, locale, legalHref }: { labels: AuthLabels; lo
             overflow: 'hidden',
           }}
         >
-          <div style={{ display: 'flex', height: 10 }}>
-            <div style={{ flex: 1, background: 'var(--accent)' }} />
-            <div style={{ flex: 1, background: 'var(--paper2)' }} />
-            <div style={{ flex: 1, background: 'var(--second)' }} />
-          </div>
+          <FlagRail height={10} />
           <div style={{ padding: '22px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, borderBottom: '1px solid var(--line)' }}>
             <div>
               <div style={{ ...DISPLAY, fontSize: 30 }}>Fityesz</div>
