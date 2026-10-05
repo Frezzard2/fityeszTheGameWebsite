@@ -24,6 +24,34 @@ Chapter 1 in the browser** — no account, no download.
 Chapter 1 tracks the same **XP**, **lebukás** (exposure) and items as the desktop game, using the
 same numbers. Progress saves to `localStorage`, so a reload picks up where you left off.
 
+## Supabase Edge Functions
+
+Two things a static site cannot do for itself, because both need the service
+role key and that must never reach a browser:
+
+| function | what it is for |
+| --- | --- |
+| `sign-in` | resolves a username to an account and signs in, returning only a session. The e-mail address never leaves the server, so usernames cannot be turned into addresses. |
+| `delete-account` | deletes the signed-in player's account, profile and save. The user id comes from the caller's access token, never from the request. |
+
+Deploy them with the Supabase CLI:
+
+```bash
+supabase link --project-ref <your-project-ref>
+supabase functions deploy sign-in
+supabase functions deploy delete-account
+```
+
+`SUPABASE_URL`, `SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY` are
+injected by Supabase; nothing needs setting by hand.
+
+Until they are deployed the site stays usable: signing in asks for an e-mail
+address instead of a username, and the dashboard says account deletion goes by
+written request — which is what the privacy notice promises regardless.
+
+Run `supabase/migrations/0002_usernames.sql` before deploying `sign-in`; it
+creates the `profiles` table the lookup reads.
+
 ## Not built yet
 
 The installer download. The builds do not exist yet, so the page ships with its buttons disabled

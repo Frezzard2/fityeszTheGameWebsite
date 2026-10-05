@@ -16,6 +16,8 @@ const eslintConfig = defineConfig([
     // the Next.js app: the static design prototype, and tool scratch dirs.
     "Fityesz Chronicles Website Design/**",
     ".superpowers/**",
+    // Supabase Edge Functions: Deno, with its own globals and jsr: imports.
+    "supabase/functions/**",
     ".remember/**",
     ".idea/**",
   ]),

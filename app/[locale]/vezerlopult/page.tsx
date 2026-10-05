@@ -20,6 +20,7 @@ const KEYS = [
   'authNotConfiguredD', 'found', 'notFound', 'authBusy',
   'dashDeleteT', 'dashDelete', 'dashDeleteGo', 'dashDeleteAsk',
   'dashDeleteCancel', 'dashDeleted', 'dashDeleteAcct',
+  'dashKillT', 'dashKill', 'dashKillGo', 'dashKillAsk', 'dashKillDone', 'dashKillOff',
 ] as const
 
 export async function generateMetadata({

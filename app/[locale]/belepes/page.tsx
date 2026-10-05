@@ -13,7 +13,7 @@ const KEYS = [
   'rankNone', 'authNotConfigured', 'authNotConfiguredD', 'authBusy',
   'authSignOut', 'authCheckEmail', 'authSavedRun', 'authNoSave',
   'authWelcome', 'hello', 'exposure', 'itemsWord', 'authNoSuchUser',
-  'authPrivacyNote', 'navLegal',
+  'authPrivacyNote', 'navLegal', 'authUserLoginOff',
 ] as const
 
 export async function generateMetadata({

@@ -5,7 +5,7 @@ import type { CSSProperties } from 'react'
 import Link from 'next/link'
 import type { Session } from '@supabase/supabase-js'
 import { supabase, isAuthConfigured } from '@/lib/supabase'
-import { eraseSave } from '@/lib/story/save'
+import { eraseAccount, eraseSave, type Erasure } from '@/lib/story/save'
 import { Reveal } from '@/components/Reveal'
 import { decisions, EXPOSURE_LIMIT, LEVEL_UP_XP } from '@/lib/story/engine'
 import type { Decision, Scene } from '@/lib/story/types'
@@ -20,7 +20,8 @@ export type DashLabels = Record<
   | 'contNoteDone' | 'contCh1' | 'contNoteProg' | 'authNotConfigured'
   | 'authNotConfiguredD' | 'found' | 'notFound' | 'authBusy'
   | 'dashDeleteT' | 'dashDelete' | 'dashDeleteGo' | 'dashDeleteAsk'
-  | 'dashDeleteCancel' | 'dashDeleted' | 'dashDeleteAcct',
+  | 'dashDeleteCancel' | 'dashDeleted' | 'dashDeleteAcct'
+  | 'dashKillT' | 'dashKill' | 'dashKillGo' | 'dashKillAsk' | 'dashKillDone' | 'dashKillOff',
   string
 >
 
@@ -86,6 +87,8 @@ export function DashboardClient({
   const [loading, setLoading] = useState(true)
   const [asking, setAsking] = useState(false)
   const [erased, setErased] = useState(false)
+  const [killAsking, setKillAsking] = useState(false)
+  const [killed, setKilled] = useState<Erasure | null>(null)
 
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
@@ -127,6 +130,11 @@ export function DashboardClient({
     setErased(true)
   }, [])
 
+  const kill = useCallback(async () => {
+    setKilled(await eraseAccount())
+    setKillAsking(false)
+  }, [])
+
   // Erasure has to be reachable whether or not there is a run to show, so it
   // sits below every signed-in state rather than inside the one with a save.
   const eraseBlock = (
@@ -154,9 +162,42 @@ export function DashboardClient({
           {labels.dashDeleteT}
         </button>
       )}
-      <p style={{ margin: '14px 0 0', fontSize: 13, lineHeight: 1.5, color: 'var(--inkSoft)', maxWidth: '40em' }}>
-        {labels.dashDeleteAcct}
-      </p>
+      {/* Deleting the account itself. Separate from erasing the run, because
+          one is reversible by playing again and the other is not. */}
+      <div style={{ marginTop: 22, paddingTop: 18, borderTop: '1px solid var(--line)' }}>
+        <h3 style={{ margin: 0, ...DISPLAY, fontSize: 20 }}>{labels.dashKillT}</h3>
+        <p style={{ margin: '8px 0 0', fontSize: 14, lineHeight: 1.5, color: 'var(--inkSoft)', maxWidth: '40em' }}>
+          {labels.dashKill}
+        </p>
+
+        {killed === 'deleted' ? (
+          <p role="status" style={{ margin: '12px 0 0', font: '700 13px/1.4 var(--fL)', color: 'var(--good)' }}>
+            {labels.dashKillDone}
+          </p>
+        ) : killed === 'unavailable' || killed === 'failed' ? (
+          <p role="alert" style={{ margin: '12px 0 0', fontSize: 13, lineHeight: 1.5, color: 'var(--accentText)', maxWidth: '40em' }}>
+            {labels.dashKillOff}
+          </p>
+        ) : killAsking ? (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 14, alignItems: 'center' }}>
+            <span style={{ font: '700 13px/1.4 var(--fL)', color: 'var(--accentText)' }}>{labels.dashKillAsk}</span>
+            <button onClick={kill} className="fz-btn" style={{ padding: '10px 15px 9px', background: 'var(--danger)', color: 'var(--onAccent)', border: 'var(--bw) solid var(--ink)', ...DISPLAY, fontSize: 16, cursor: 'pointer' }}>
+              {labels.dashKillGo}
+            </button>
+            <button onClick={() => setKillAsking(false)} style={{ border: 0, background: 'none', padding: 0, cursor: 'pointer', font: '600 14px/1.3 var(--fL)', color: 'var(--ink)', textDecoration: 'underline', textUnderlineOffset: 4 }}>
+              {labels.dashDeleteCancel}
+            </button>
+          </div>
+        ) : (
+          <button onClick={() => setKillAsking(true)} className="fz-btn" style={{ marginTop: 14, padding: '10px 15px 9px', background: 'transparent', color: 'var(--accentText)', border: '1px solid var(--accentText)', ...DISPLAY, fontSize: 16, cursor: 'pointer' }}>
+            {labels.dashKillT}
+          </button>
+        )}
+
+        <p style={{ margin: '12px 0 0', fontSize: 13, lineHeight: 1.5, color: 'var(--inkSoft)', maxWidth: '40em' }}>
+          {labels.dashDeleteAcct}
+        </p>
+      </div>
     </Reveal>
   )
 

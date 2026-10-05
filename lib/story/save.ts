@@ -143,9 +143,8 @@ export function persist(state: PlayerState, startingOver = false): void {
 /**
  * Erases the run: the account row and this browser's copy.
  *
- * The account itself — the e-mail address and username held by Supabase auth —
- * cannot be removed from the browser, because deleting a user needs a key the
- * site does not ship. The privacy notice routes that to a written request.
+ * This leaves the account standing. Removing that is `eraseAccount` below,
+ * which needs a server.
  */
 export async function eraseSave(): Promise<boolean> {
   clearLocalSave()
@@ -159,4 +158,34 @@ export async function eraseSave(): Promise<boolean> {
 
   const { error } = await sb.from('saves').delete().eq('user_id', user.id)
   return !error
+}
+
+/** What came back from asking for the account to be deleted. */
+export type Erasure = 'deleted' | 'unavailable' | 'failed'
+
+/**
+ * Deletes the account itself — address, username and run.
+ *
+ * Deleting a user needs the service role key, which must never reach a
+ * browser, so this asks the `delete-account` Edge Function to do it. The
+ * function reads who is asking from the access token and nothing else.
+ *
+ * `unavailable` means the function has not been deployed; the dashboard then
+ * falls back to telling the player to write in, which is what the privacy
+ * notice promises anyway.
+ */
+export async function eraseAccount(): Promise<Erasure> {
+  const sb = supabase()
+  if (!sb) return 'unavailable'
+
+  const { data: auth } = await sb.auth.getSession()
+  if (!auth.session) return 'failed'
+
+  const { data, error } = await sb.functions.invoke('delete-account', { method: 'POST' })
+  if (error && !data) return 'unavailable'
+  if (!data?.deleted) return 'failed'
+
+  clearLocalSave()
+  await sb.auth.signOut()
+  return 'deleted'
 }

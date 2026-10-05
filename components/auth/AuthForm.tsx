@@ -21,7 +21,7 @@ export type AuthLabels = Record<
   | 'rankNone' | 'authNotConfigured' | 'authNotConfiguredD' | 'authBusy'
   | 'authSignOut' | 'authCheckEmail' | 'authSavedRun' | 'authNoSave'
   | 'authWelcome' | 'hello' | 'exposure' | 'itemsWord' | 'authNoSuchUser'
-  | 'authPrivacyNote' | 'navLegal',
+  | 'authPrivacyNote' | 'navLegal' | 'authUserLoginOff',
   string
 >
 
@@ -148,14 +148,33 @@ export function AuthForm({ labels, locale, legalHref }: { labels: AuthLabels; lo
           router.replace(dashboard)
         }
       } else {
-        // Supabase signs in on e-mail, and the username lookup that used to
-        // stand in front of this was withdrawn — it handed out addresses to
-        // anyone who asked. Anything that is not an address is refused here
-        // rather than sent on to fail obscurely.
-        const email = user.trim()
-        if (!email.includes('@')) throw new Error(labels.authNoSuchUser)
-        const { data, error } = await sb.auth.signInWithPassword({ email, password: pass })
-        if (error) throw error
+        // Supabase signs in on e-mail. A username is resolved by the `sign-in`
+        // Edge Function, which does the lookup and the sign-in with the service
+        // role and hands back only a session — the address never reaches the
+        // browser, so usernames cannot be turned into e-mail addresses here.
+        const identifier = user.trim()
+        let data: { user: { id: string; email?: string | null; user_metadata?: Record<string, unknown> } }
+
+        if (identifier.includes('@')) {
+          const direct = await sb.auth.signInWithPassword({ email: identifier, password: pass })
+          if (direct.error) throw direct.error
+          data = direct.data
+        } else {
+          const { data: tokens, error: fnError } = await sb.functions.invoke('sign-in', {
+            body: { identifier, password: pass },
+          })
+          // A function that is not deployed yet should read as a missing
+          // feature, not as a wrong password.
+          if (fnError && !tokens) throw new Error(labels.authUserLoginOff)
+          if (!tokens?.access_token) throw new Error(labels.authNoSuchUser)
+
+          const restored = await sb.auth.setSession({
+            access_token: tokens.access_token,
+            refresh_token: tokens.refresh_token,
+          })
+          if (restored.error || !restored.data.user) throw new Error(labels.authNoSuchUser)
+          data = { user: restored.data.user }
+        }
         const name = (data.user.user_metadata?.display_name as string) || data.user.email || ''
         await migrate(data.user.id, name)
         router.replace(dashboard)

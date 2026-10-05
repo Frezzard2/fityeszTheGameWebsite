@@ -1,46 +1,35 @@
--- Username sign-in. DO NOT APPLY THIS AS IT STANDS.
+-- Username sign-in, without handing out e-mail addresses.
 --
--- Held back on purpose after the 2026-10-01 privacy review: email_for_username()
--- below is a public endpoint that returns a person's e-mail address to anyone
--- who guesses their username. Shipping it would be handing out personal data by
--- design, which is hard to square with GDPR Article 5(1)(f) and Article 32.
+-- The first version of this migration exposed email_for_username(), a function
+-- anyone could call to turn a username into that account's e-mail address. It
+-- was never applied, and it is not coming back: the lookup now happens inside
+-- the `sign-in` Edge Function, which holds the service role key, performs the
+-- sign-in itself and returns a session. The address never leaves the server,
+-- and a caller who does not know the password learns nothing — not even
+-- whether the username exists.
 --
--- The sign-in field now asks for an e-mail address, so nothing depends on this.
--- To revive username sign-in, resolve the username inside a Supabase Edge
--- Function that signs the user in and returns only a session — never the
--- address — so the lookup is never exposed to the caller.
---
--- Supabase authenticates on email, so signing in with a username needs a
--- lookup from one to the other before the auth call.
---
--- The original trade-off, left here for the record:
---   * usernames become enumerable — a caller can probe which ones exist
---   * a known username reveals that account's email address
--- The function returns nothing else, and never returns a password hash or a
--- user id. If that trade is not acceptable, drop this migration and keep
--- email-only sign-in.
+-- Safe to run more than once.
 
 create extension if not exists citext;
 
 create table if not exists public.profiles (
-  user_id  uuid primary key references auth.users (id) on delete cascade,
-  username citext not null unique check (char_length(username) between 3 and 32),
+  user_id    uuid primary key references auth.users (id) on delete cascade,
+  username   citext not null unique check (char_length(username) between 3 and 32),
   created_at timestamptz not null default now()
 );
 
 alter table public.profiles enable row level security;
 
--- A player can read and change only their own row. The lookup below runs as
--- the definer precisely so it does not need a public read policy.
+-- A player reads and changes only their own row. Nothing here is public: the
+-- Edge Function reads with the service role, which bypasses RLS entirely.
 drop policy if exists profiles_own on public.profiles;
 create policy profiles_own on public.profiles
   for all
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
--- Create the profile as part of the sign-up transaction, so a duplicate
--- username fails the sign-up itself rather than leaving an account with no
--- username attached.
+-- Create the profile inside the sign-up transaction, so a duplicate username
+-- fails the sign-up itself rather than leaving an account with no username.
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -60,20 +49,6 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
--- The lookup. Returns only the email, only for an exact username match.
-create or replace function public.email_for_username(p_username citext)
-returns text
-language sql
-security definer
-stable
-set search_path = public, auth
-as $$
-  select u.email
-  from public.profiles p
-  join auth.users u on u.id = p.user_id
-  where p.username = p_username
-  limit 1
-$$;
-
-revoke all on function public.email_for_username(citext) from public;
-grant execute on function public.email_for_username(citext) to anon, authenticated;
+-- If an earlier version of this file was ever run, take the leak out.
+drop function if exists public.email_for_username(citext);
+drop function if exists public.email_for_username(text);
