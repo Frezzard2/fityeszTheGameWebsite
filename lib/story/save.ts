@@ -10,7 +10,14 @@ import type { Decision, ItemId, PlayerState, RunStatus } from './types'
  * what it used to do — starts a signed-in player's chapter over from beat one.
  *
  * The row has no status column. `chapter` carries how far the run got: 1 while
- * chapter one is being played, 2 once its end screen has been reached.
+ * chapter one is being played, 2 once its end screen has been reached — and,
+ * for a run saved by the desktop game, the real chapter number up to 7 (0 for
+ * its prologue). This site has only the prologue and chapter one as data, so
+ * anything from 2 up reads as `demoComplete` here: the run exists, and it
+ * continues in the desktop game.
+ *
+ * The desktop game also writes `scene`, `log` and `fight` (migration 0003),
+ * which nothing here selects.
  */
 
 const COLS = 'player_name,display_name,xp,lebukas,szint,items,history,chapter'
