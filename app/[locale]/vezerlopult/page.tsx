@@ -13,6 +13,7 @@ const SCENES = [prologus, fejezet01] as unknown as Scene[]
 const KEYS = [
   'dashKicker', 'hello', 'logout', 'dashOutT', 'dashOutD', 'tabLogin',
   'tabReg', 'dashEmptyT', 'dashEmptyD', 'cta1', 'slotLabel', 'nextCh2',
+  'dashHere', 'dashInChapter',
   'dashContinue', 'replay', 'progress', 'pDone', 'pNext', 'pLock',
   'statsT', 'statsSub', 'levelW', 'rankW', 'rankNone', 'rankLocal',
   'exposure', 'expWarn', 'itemsWord', 'tlT', 'decisions', 'prologue',

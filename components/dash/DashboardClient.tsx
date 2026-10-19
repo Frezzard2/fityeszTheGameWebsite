@@ -14,6 +14,7 @@ import codex from '@/lib/story/content/codex.json'
 export type DashLabels = Record<
   | 'dashKicker' | 'hello' | 'logout' | 'dashOutT' | 'dashOutD' | 'tabLogin'
   | 'tabReg' | 'dashEmptyT' | 'dashEmptyD' | 'cta1' | 'slotLabel' | 'nextCh2'
+  | 'dashHere' | 'dashInChapter'
   | 'dashContinue' | 'replay' | 'progress' | 'pDone' | 'pNext' | 'pLock'
   | 'statsT' | 'statsSub' | 'levelW' | 'rankW' | 'rankNone' | 'rankLocal'
   | 'exposure' | 'expWarn' | 'itemsWord' | 'tlT' | 'decisions' | 'prologue'
@@ -26,6 +27,8 @@ export type DashLabels = Record<
 >
 
 type SaveRow = {
+  /** 1-3; the desktop game keeps three runs apart. */
+  slot: number
   player_name: string | null
   xp: number
   lebukas: number
@@ -33,8 +36,13 @@ type SaveRow = {
   items: string[]
   history: Decision[]
   updated_at: string
-  /** 2 once chapter one has been finished — see lib/story/save.ts. */
+  /**
+   * 1 or 2 for a run played here; the real chapter, up to 7, for one saved by
+   * the desktop game — see lib/story/save.ts.
+   */
   chapter: number
+  /** Only a desktop run has one: the scene it stopped on. */
+  scene: string | null
 }
 
 const DISPLAY: CSSProperties = {
@@ -111,11 +119,13 @@ export function DashboardClient({
       return
     }
     sb.from('saves')
-      .select('player_name,xp,lebukas,szint,items,history,updated_at,chapter')
-      .eq('slot', 1)
-      .maybeSingle()
+      // Every slot, newest first: the desktop game keeps three, and the one
+      // worth showing is the one last played - not whichever is numbered 1.
+      .select('slot,player_name,xp,lebukas,szint,items,history,updated_at,chapter,scene')
+      .order('updated_at', { ascending: false })
+      .limit(1)
       .then(({ data }) => {
-        setSave((data as SaveRow) ?? null)
+        setSave((data?.[0] as SaveRow) ?? null)
         setLoading(false)
       })
   }, [session])
@@ -282,8 +292,28 @@ export function DashboardClient({
   // a few closing lines follow the last decision.
   const choicePoints = allBeats.filter((b) => b.kind === 'choice').length
   const complete = save.chapter >= 2 || save.history.length >= choicePoints
-  const done = complete ? 2 : 1
   const continueHref = complete ? downloadHref : playHref
+
+  // A run saved by the desktop game is the only one that can be past chapter
+  // one, and it says so by carrying the scene it stopped on. Without this the
+  // dashboard reported chapter two to a player who was long past it: `done`
+  // was pinned to 2, because 2 was as far as anything could go when only this
+  // site existed.
+  const onDesktop = Boolean(save.scene)
+
+  // `chapter` counts what is behind the player — the prologue plus every
+  // chapter finished — which is exactly what the bar fills in.
+  const done = Math.min(SEGMENTS, Math.max(0, save.chapter))
+
+  const current = codex.chapters.find((c) => c.number === save.chapter)
+
+  const heading = !complete
+    ? labels.contCh1
+    : onDesktop && current
+      ? labels.dashInChapter
+          .replace('%n', String(save.chapter))
+          .replace('%t', current.title[locale])
+      : labels.nextCh2
 
   return (
     <>
@@ -292,8 +322,8 @@ export function DashboardClient({
       {/* Continue */}
       <Reveal kind="up" delay={120} style={{ marginTop: 32, background: 'var(--ink)', color: 'var(--onInk)', border: 'var(--bw) solid var(--ink)', display: 'flex', flexWrap: 'wrap' }}>
         <div style={{ flex: '1 1 460px', minWidth: 0, padding: 'clamp(22px,3cqw,36px)' }}>
-          <p style={{ ...CAP, color: 'var(--accent)', letterSpacing: '.16em', margin: 0 }}>{labels.slotLabel}</p>
-          <p style={{ ...DISPLAY, fontSize: 'clamp(30px,4cqw,56px)', margin: '12px 0 0' }}>{complete ? labels.nextCh2 : labels.contCh1}</p>
+          <p style={{ ...CAP, color: 'var(--accent)', letterSpacing: '.16em', margin: 0 }}>{(onDesktop ? labels.dashHere : labels.slotLabel).replace('%n', String(save.slot ?? 1))}</p>
+          <p style={{ ...DISPLAY, fontSize: 'clamp(30px,4cqw,56px)', margin: '12px 0 0' }}>{heading}</p>
           <p style={{ margin: '12px 0 0', fontSize: 15, lineHeight: 1.5, opacity: 0.88 }}>{complete ? labels.contNoteDone : labels.contNoteProg}</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 22 }}>
             <Link href={continueHref} className="fz-btn" style={{ padding: '14px 22px 13px', background: 'var(--accent)', color: 'var(--onAccent)', border: 'var(--bw) solid var(--ink)', ...DISPLAY, fontSize: 20, textDecoration: 'none' }}>
