@@ -332,5 +332,6 @@
   "dashKillGo": "Fiók végleges törlése",
   "dashKillAsk": "Biztosan törlöd a fiókod? Ez végleges.",
   "dashKillDone": "A fiókod törölve.",
-  "dashKillOff": "A fiók önkiszolgáló törlése még nincs bekapcsolva. Írj a jogi oldalon megadott címre, és 30 napon belül töröljük."
+  "dashKillOff": "A fiók önkiszolgáló törlése még nincs bekapcsolva. Írj a jogi oldalon megadott címre, és 30 napon belül töröljük.",
+  "chapterShort": "%n. fejezet"
 }

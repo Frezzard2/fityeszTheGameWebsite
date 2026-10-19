@@ -332,5 +332,6 @@
   "dashKillGo": "Delete the account",
   "dashKillAsk": "Delete your account for good? This is permanent.",
   "dashKillDone": "Your account has been deleted.",
-  "dashKillOff": "Deleting the account yourself is not switched on yet. Write to the address on the legal page and we will do it within 30 days."
+  "dashKillOff": "Deleting the account yourself is not switched on yet. Write to the address on the legal page and we will do it within 30 days.",
+  "chapterShort": "Chapter %n"
 }

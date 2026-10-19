@@ -14,7 +14,7 @@ import codex from '@/lib/story/content/codex.json'
 export type DashLabels = Record<
   | 'dashKicker' | 'hello' | 'logout' | 'dashOutT' | 'dashOutD' | 'tabLogin'
   | 'tabReg' | 'dashEmptyT' | 'dashEmptyD' | 'cta1' | 'slotLabel' | 'nextCh2'
-  | 'dashHere' | 'dashInChapter'
+  | 'dashHere' | 'dashInChapter' | 'chapterShort'
   | 'dashContinue' | 'replay' | 'progress' | 'pDone' | 'pNext' | 'pLock'
   | 'statsT' | 'statsSub' | 'levelW' | 'rankW' | 'rankNone' | 'rankLocal'
   | 'exposure' | 'expWarn' | 'itemsWord' | 'tlT' | 'decisions' | 'prologue'
@@ -43,6 +43,20 @@ type SaveRow = {
   chapter: number
   /** Only a desktop run has one: the scene it stopped on. */
   scene: string | null
+  /** Only a desktop run has one: what was said, and every choice with its text. */
+  log: LogEntry[] | null
+}
+
+/** One line of a desktop run's transcript. A choice keeps its question and answer. */
+type LogEntry = {
+  kind: string
+  /** The speaker, or - for a choice - the question that was asked. */
+  speaker: string | null
+  /** What was said, or the answer that was picked. */
+  text: string | null
+  xp: number | null
+  lebukas: number | null
+  chapter: number | null
 }
 
 const DISPLAY: CSSProperties = {
@@ -121,7 +135,7 @@ export function DashboardClient({
     sb.from('saves')
       // Every slot, newest first: the desktop game keeps three, and the one
       // worth showing is the one last played - not whichever is numbered 1.
-      .select('slot,player_name,xp,lebukas,szint,items,history,updated_at,chapter,scene')
+      .select('slot,player_name,xp,lebukas,szint,items,history,updated_at,chapter,scene,log')
       .order('updated_at', { ascending: false })
       .limit(1)
       .then(({ data }) => {
@@ -282,7 +296,26 @@ export function DashboardClient({
   const rank = save.xp >= LEVEL_UP_XP ? labels.rankLocal : labels.rankNone
   const allBeats = scenes.flatMap((s) => s.beats)
 
-  const timeline = decisions(save.history, allBeats, locale)
+  // The choices from chapter two onwards exist as text in one place only: the
+  // transcript the desktop game saves with the run. This site's story data
+  // stops at the end of chapter one, so looking those ids up here finds
+  // nothing and the timeline came out blank.
+  const fromLog = (save.log ?? [])
+    .filter((e) => e.kind === 'choice')
+    .map((e, n) => ({
+      id: e.chapter === 0
+        ? labels.prologue
+        : labels.chapterShort.replace('%n', String(e.chapter ?? 1)),
+      key: `log-${n}`,
+      question: e.speaker ?? '',
+      answer: e.text ?? '',
+      xp: e.xp ?? 0,
+      lebukas: e.lebukas ?? 0,
+    }))
+
+  const timeline = fromLog.length > 0
+    ? fromLog
+    : decisions(save.history, allBeats, locale).map((d, n) => ({ ...d, key: `${d.id}-${n}` }))
 
   // Chapter 1 is the only playable chapter. Finishing it is as far as the web
   // version goes, so from there "continue" means the downloadable game.
@@ -444,7 +477,7 @@ export function DashboardClient({
           <div style={{ padding: '4px 22px 18px' }}>
             {timeline.map((e, n) => (
               <Reveal
-                key={`${e.id}-${n}`}
+                key={e.key}
                 kind="lift"
                 delay={n * 90}
                 style={{ display: 'grid', gridTemplateColumns: '24px minmax(0,1fr)', gap: 14 }}
