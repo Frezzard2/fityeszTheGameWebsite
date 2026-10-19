@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { routing, localePath } from '@/i18n/routing'
+import { SOCIALS, SOCIAL_HANDLE } from '@/lib/social'
 import { CREATORS } from '@/lib/creators'
 import { ConsentBanner, type ConsentLabels } from '@/components/ConsentBanner'
 import { DOWNLOAD_ENABLED } from '@/lib/features'
@@ -336,6 +337,31 @@ export default async function LocaleLayout({
                       </span>
                     </div>
                     <p style={{ margin: '16px 0 0', fontSize: 15, maxWidth: '22em' }}>{t('footTag')}</p>
+
+                    <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+                      {SOCIALS.map((social) => (
+                        <a
+                          key={social.name}
+                          href={social.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`${social.name} — @${SOCIAL_HANDLE}`}
+                          title={`@${SOCIAL_HANDLE}`}
+                          style={{
+                            width: 40,
+                            height: 40,
+                            display: 'grid',
+                            placeItems: 'center',
+                            color: 'var(--onInk)',
+                            border: '1px solid color-mix(in srgb,var(--onInk) 34%,transparent)',
+                          }}
+                        >
+                          <svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor" aria-hidden focusable="false">
+                            <path d={social.icon} />
+                          </svg>
+                        </a>
+                      ))}
+                    </div>
                   </div>
 
                   <div style={{ flex: '0 1 200px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 10 }}>

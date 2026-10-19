@@ -9,7 +9,8 @@ import { SITE_URL, absolute } from '@/lib/site'
 import { localePath } from '@/i18n/routing'
 import { CHARACTERS } from '@/lib/design/characters'
 import { DOWNLOAD_ENABLED } from '@/lib/features'
-import { CREATORS, kofiUrl } from '@/lib/creators'
+import { CREATORS, GAME_REPO_URL, kofiUrl } from '@/lib/creators'
+import { SOCIALS } from '@/lib/social'
 import { lineupArt } from '@/lib/design/art'
 import codex from '@/lib/story/content/codex.json'
 import { Reveal } from '@/components/Reveal'
@@ -108,6 +109,8 @@ export default async function HomePage({
             playMode: 'SinglePlayer',
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'HUF' },
             author: CREATORS.map((c) => ({ '@type': 'Person', name: c.name[l], url: c.url })),
+            // the same game, elsewhere - what tells a search engine the profiles are ours
+            sameAs: [GAME_REPO_URL, ...SOCIALS.map((social) => social.url)],
           }),
         }}
       />
