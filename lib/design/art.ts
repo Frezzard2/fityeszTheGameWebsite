@@ -28,6 +28,18 @@ export function lineupArt(id: CharacterId): string | null {
   return DRAWN.includes(id) ? `/art/line/${id}.webp` : null
 }
 
+/**
+ * The person who made it, drawn in the game's own hand.
+ *
+ * Keyed by GitHub handle, which is what `CREATORS` in lib/creators.ts carries;
+ * whoever has no drawing keeps the initials the card used before.
+ */
+const DRAWN_CREW = ['Frezzard2', 'djkzea']
+
+export function crewArt(handle: string): string | null {
+  return DRAWN_CREW.includes(handle) ? `/art/crew/${handle}.webp` : null
+}
+
 /** The room a chapter plays out in. Only chapter one is playable on the web. */
 export function chapterBackdrop(chapter: number): string | null {
   return chapter === 1 ? '/art/bg/ch1.webp' : null

@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
 import { pageMetadata } from '@/lib/seo'
 import { CREATORS, GAME_REPO_URL, kofiUrl } from '@/lib/creators'
+import { crewArt } from '@/lib/design/art'
 import { Reveal } from '@/components/Reveal'
 
 /** `c.name[1].split(' ').map(w => w[0]).join('')`, ported from the prototype. */
@@ -220,10 +221,12 @@ export default async function SupportPage({
             <div
               style={{
                 position: 'relative',
-                height: 132,
+                height: crewArt(c.handle) ? 232 : 132,
                 overflow: 'hidden',
-                background: 'var(--ink)',
-                color: 'var(--onInk)',
+                // Paper, not ink, where there is a drawing: both of them are
+                // drawn in black, and on the dark panel the figure vanished.
+                background: crewArt(c.handle) ? 'var(--paper)' : 'var(--ink)',
+                color: crewArt(c.handle) ? 'var(--ink)' : 'var(--onInk)',
                 borderBottom: 'var(--bw) solid var(--ink)',
               }}
             >
@@ -238,7 +241,7 @@ export default async function SupportPage({
                   fontSize: 140,
                   lineHeight: 1,
                   letterSpacing: '-.03em',
-                  backgroundImage: 'radial-gradient(circle,var(--onInk) 2.2px,transparent 2.8px)',
+                  backgroundImage: `radial-gradient(circle,${crewArt(c.handle) ? 'var(--ink)' : 'var(--onInk)'} 2.2px,transparent 2.8px)`,
                   backgroundSize: '7px 7px',
                   WebkitBackgroundClip: 'text',
                   backgroundClip: 'text',
@@ -247,6 +250,25 @@ export default async function SupportPage({
               >
                 {initialsOf(c.name.en)}
               </div>
+              {crewArt(c.handle) && (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={crewArt(c.handle)!}
+                  alt=""
+                  aria-hidden
+                  loading="lazy"
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    bottom: 0,
+                    transform: 'translateX(-50%)',
+                    height: '100%',
+                    width: 'auto',
+                    objectFit: 'contain',
+                    objectPosition: 'bottom center',
+                  }}
+                />
+              )}
               <div
                 style={{
                   position: 'absolute',

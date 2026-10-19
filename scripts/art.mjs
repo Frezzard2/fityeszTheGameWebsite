@@ -29,6 +29,23 @@ const CAST = {
   molnar: 'molnar',
 }
 
+/**
+ * The people who made it, by their GitHub handle - the key the support page
+ * knows them by.
+ *
+ * Drawn in the game's own hand, from photographs, and like the line-up they
+ * come on white, so the white has to come off before they can stand on the
+ * card. The masters are not committed here (see the note at the top); the
+ * shipped webp is.
+ */
+/** How much of a standing figure is head to waist. */
+const CREW_WAIST = 0.6
+
+const CREW = {
+  Frezzard2: 'Frezzard2',
+  djkzea: 'djkzea',
+}
+
 /** Chapter number → background master. Only chapter 1 is playable on the web. */
 const BACKDROPS = { 1: 'ch1_cafe' }
 
@@ -119,6 +136,7 @@ async function main() {
   await mkdir(join(OUT, 'stage'), { recursive: true })
   await mkdir(join(OUT, 'bg'), { recursive: true })
   await mkdir(join(OUT, 'line'), { recursive: true })
+  await mkdir(join(OUT, 'crew'), { recursive: true })
 
   for (const [id, file] of Object.entries(CAST)) {
     // The calm pose introduces the character on the roster card.
@@ -143,6 +161,37 @@ async function main() {
       .trim({ background: { r: 0, g: 0, b: 0, alpha: 0 }, threshold: 0 })
       .webp({ quality: 82, alphaQuality: 90 })
       .toFile(join(OUT, 'line', `${id}.webp`))
+  }
+
+  for (const [handle, file] of Object.entries(CREW)) {
+    const master = join(SRC, 'crew', `${file}.png`)
+
+    if (!existsSync(master)) {
+      console.warn(`art: no master for ${handle}, skipping`)
+      continue
+    }
+
+    const figure = await cutout(master)
+
+    // Waist up: the card is a head-and-shoulders space, and a whole standing
+    // figure in it is mostly trousers.
+    const trimmed = await figure
+      .trim({ background: { r: 0, g: 0, b: 0, alpha: 0 }, threshold: 0 })
+      .png()
+      .toBuffer()
+
+    const size = await sharp(trimmed).metadata()
+
+    await sharp(trimmed)
+      .extract({
+        left: 0,
+        top: 0,
+        width: size.width ?? 0,
+        height: Math.round((size.height ?? 0) * CREW_WAIST),
+      })
+      .resize({ height: 420, withoutEnlargement: true })
+      .webp({ quality: 82, alphaQuality: 90 })
+      .toFile(join(OUT, 'crew', `${handle}.webp`))
   }
 
   const cover = join(SRC, 'CoverImageFityesz.png')
