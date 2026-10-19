@@ -10,7 +10,7 @@ import { localePath } from '@/i18n/routing'
 import { CHARACTERS } from '@/lib/design/characters'
 import { DOWNLOAD_ENABLED } from '@/lib/features'
 import { CREATORS, GAME_REPO_URL, kofiUrl } from '@/lib/creators'
-import { SOCIALS } from '@/lib/social'
+import { SOCIALS, SOCIAL_HANDLE } from '@/lib/social'
 import { lineupArt } from '@/lib/design/art'
 import codex from '@/lib/story/content/codex.json'
 import { Reveal } from '@/components/Reveal'
@@ -647,6 +647,52 @@ export default async function HomePage({
           <Link href={href('/jatek')} className="fz-btn" style={{ display: 'inline-block', marginTop: 24, padding: '14px 22px 13px', background: 'var(--accent)', color: 'var(--onAccent)', border: 'var(--bw) solid var(--ink)', boxShadow: 'var(--shS)', fontFamily: 'var(--fD)', fontWeight: DW, fontSize: 20, textTransform: 'uppercase', textDecoration: 'none' }}>
             ▶ {t('saveCta')}
           </Link>
+        </div>
+      </section>
+
+      {/* Follow band — the support band's sibling, in ink so two heavy bands do
+          not stack on top of each other */}
+      <section style={{ background: 'var(--ink)', color: 'var(--onInk)', padding: 'clamp(32px,4cqw,64px) clamp(16px,3cqw,40px)', borderBottom: 'var(--bw) solid var(--ink)' }}>
+        <div style={{ maxWidth: 1320, margin: '0 auto', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '20px 40px' }}>
+          <div style={{ flex: '1 1 420px', minWidth: 0 }}>
+            <div style={{ font: '700 12px/1 var(--fL)', letterSpacing: '.16em', textTransform: 'uppercase', color: 'var(--accent)' }}>
+              @{SOCIAL_HANDLE}
+            </div>
+            <Reveal kind="rise" as="h2" style={{ margin: '12px 0 0', fontFamily: 'var(--fD)', fontWeight: DW, textTransform: 'uppercase', fontSize: 'clamp(30px,5cqw,60px)', lineHeight: 1 }}>
+              {t('followTitle')}
+            </Reveal>
+            <p style={{ margin: '12px 0 0', maxWidth: '34em', lineHeight: 1.5 }}>{t('followSub')}</p>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+            {SOCIALS.map((social) => (
+              <a
+                key={social.name}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="fz-btn"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  padding: '13px 20px 12px',
+                  background: 'var(--onInk)',
+                  color: 'var(--ink)',
+                  border: 'var(--bw) solid var(--onInk)',
+                  fontFamily: 'var(--fD)',
+                  fontWeight: DW,
+                  fontSize: 18,
+                  textTransform: 'uppercase',
+                  textDecoration: 'none',
+                }}
+              >
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden focusable="false">
+                  <path d={social.icon} />
+                </svg>
+                {social.name}
+              </a>
+            ))}
+          </div>
         </div>
       </section>
 
