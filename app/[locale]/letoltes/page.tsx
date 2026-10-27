@@ -3,12 +3,12 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/constants'
 import { pageMetadata } from '@/lib/seo'
 import { Reveal } from '@/components/Reveal'
+import { Builds, type BuildLabels } from '@/components/download/Builds'
 
-/** The three builds in the design. Ported from the prototype's `dl.platforms`. */
-const PLATFORMS = [
-  { name: 'Windows', fileKey: 'dlWin' },
-  { name: 'macOS', fileKey: 'dlMac' },
-  { name: 'Linux', fileKey: 'dlLinux' },
+/** What the cards say. The files themselves are read off the release at load. */
+const LABELS = [
+  'dlKicker', 'dlVersion', 'dlBtn', 'dlWin', 'dlMacArm', 'dlMacIntel', 'dlLinux',
+  'dlYours', 'dlAll', 'dlFallback', 'dlUnsignedT', 'dlUnsigned',
 ] as const
 
 export async function generateMetadata({
@@ -74,94 +74,9 @@ export default async function DownloadPage({
         {t('dlSub')}
       </p>
 
-      {/* Nothing is downloadable yet: the installers are not built. */}
-      <Reveal
-        kind="up"
-        style={{
-          marginTop: 32,
-          background: 'var(--ink)',
-          color: 'var(--onInk)',
-          border: 'var(--bw) solid var(--ink)',
-          padding: 'clamp(20px,3cqw,32px)',
-          maxWidth: '46em',
-        }}
-      >
-        <div
-          style={{
-            fontFamily: 'var(--fD)',
-            fontWeight: 'var(--dW)' as unknown as number,
-            textTransform: 'uppercase',
-            fontSize: 32,
-            lineHeight: 1.14,
-          }}
-        >
-          {t('dlSoon')}
-        </div>
-        <p style={{ margin: '8px 0 0', fontSize: 15, lineHeight: 1.5, opacity: 0.88 }}>{t('dlSoonNote')}</p>
-      </Reveal>
-
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,280px),1fr))',
-          gap: 24,
-          marginTop: 28,
-        }}
-      >
-        {PLATFORMS.map((p, n) => (
-          <Reveal
-            key={p.name}
-            kind="lift"
-            delay={n * 110}
-            style={{
-              background: 'var(--sheet)',
-              border: 'var(--bw) solid var(--ink)',
-              boxShadow: 'var(--shS)',
-              padding: 24,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 12,
-              minHeight: 250,
-              opacity: 0.55,
-            }}
-          >
-            <div style={{ font: '700 12px/1 var(--fL)', letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--inkSoft)' }}>
-              {t('dlKicker')}
-            </div>
-            <div
-              style={{
-                fontFamily: 'var(--fD)',
-                fontWeight: 'var(--dW)' as unknown as number,
-                textTransform: 'uppercase',
-                fontSize: 'clamp(34px,4cqw,56px)',
-                lineHeight: 1.14,
-              }}
-            >
-              {p.name}
-            </div>
-            <div style={{ fontSize: 15 }}>{t(p.fileKey)}</div>
-            <button
-              type="button"
-              disabled
-              style={{
-                marginTop: 'auto',
-                padding: '14px 18px 13px',
-                background: 'transparent',
-                color: 'var(--ink)',
-                border: 'var(--bw) solid var(--ink)',
-                fontFamily: 'var(--fD)',
-                fontWeight: 'var(--dW)' as unknown as number,
-                fontSize: 20,
-                lineHeight: 1.14,
-                textTransform: 'uppercase',
-                cursor: 'not-allowed',
-              }}
-            >
-              {t('dlSoon')}
-            </button>
-          </Reveal>
-        ))}
-      </div>
+      <Builds
+        labels={Object.fromEntries(LABELS.map((key) => [key, t(key)])) as BuildLabels}
+      />
 
       <Reveal
         kind="rise"
