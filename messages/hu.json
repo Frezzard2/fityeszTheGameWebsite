@@ -245,7 +245,6 @@
   "dlBtn": "Letöltés",
   "dlYours": "Ez kell neked",
   "dlAll": "Minden fájl a kiadási oldalon",
-  "dlFallback": "A gombok a kiadási oldalra visznek.",
   "dlUnsignedT": "Az első indításnál rákérdez",
   "dlUnsigned": "A telepítők nincsenek aláírva, mert az évi több száz dollár. Windowson a SmartScreen „További információ → Futtatás mégis”, macOS-en jobb gomb → Megnyitás az első alkalommal. Utána már normálisan indul.",
   "dlHowT": "Így viszed át a mentésed",

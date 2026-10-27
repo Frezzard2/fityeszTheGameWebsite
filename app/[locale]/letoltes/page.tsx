@@ -8,7 +8,7 @@ import { Builds, type BuildLabels } from '@/components/download/Builds'
 /** What the cards say. The files themselves are read off the release at load. */
 const LABELS = [
   'dlKicker', 'dlVersion', 'dlBtn', 'dlWin', 'dlMacArm', 'dlMacIntel', 'dlLinux',
-  'dlYours', 'dlAll', 'dlFallback', 'dlUnsignedT', 'dlUnsigned',
+  'dlYours', 'dlAll', 'dlUnsignedT', 'dlUnsigned',
 ] as const
 
 export async function generateMetadata({

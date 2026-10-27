@@ -5,7 +5,7 @@ import { Reveal } from '@/components/Reveal'
 
 export type BuildLabels = Record<
   | 'dlKicker' | 'dlVersion' | 'dlBtn' | 'dlWin' | 'dlMacArm' | 'dlMacIntel' | 'dlLinux'
-  | 'dlYours' | 'dlAll' | 'dlFallback' | 'dlUnsignedT' | 'dlUnsigned',
+  | 'dlYours' | 'dlAll' | 'dlUnsignedT' | 'dlUnsigned',
   string
 >
 
@@ -15,21 +15,28 @@ const LATEST = 'https://api.github.com/repos/djkzea/fityeszthegame/releases/late
 /** Where every file lives, and what the buttons fall back to. */
 export const RELEASE_PAGE = 'https://github.com/djkzea/fityeszthegame/releases/latest'
 
-type Asset = { name: string; browser_download_url: string; size: number }
+type Asset = { name: string; size: number }
 
 /**
- * The four builds, and how to tell which file is which.
+ * The four builds.
  *
- * The names carry the version, so they cannot be written down here - a link
- * typed out as "...-1.0.0.msi" would quietly keep handing out 1.0.0 long after
- * 1.1.0 came out. They are matched by shape instead.
+ * The links are fixed on purpose. GitHub serves the newest release's file at
+ * /releases/latest/download/<name>, so as long as the name does not change the
+ * link never goes stale - and a click downloads rather than asking a browser
+ * to go and look something up. That matters more than it sounds: this site's
+ * own content policy does not let the page talk to api.github.com, so a page
+ * built on that call handed every visitor a trip to GitHub instead of a file.
+ * The size is the only thing worth asking for, and nothing breaks without it.
  */
 const BUILDS = [
-  { id: 'win', os: 'Windows', note: 'dlWin', is: (n: string) => n.endsWith('.msi') },
-  { id: 'mac-arm', os: 'macOS', note: 'dlMacArm', is: (n: string) => n.endsWith('.dmg') && n.includes('arm64') },
-  { id: 'mac-intel', os: 'macOS', note: 'dlMacIntel', is: (n: string) => n.endsWith('.dmg') && n.includes('x86_64') },
-  { id: 'linux', os: 'Linux', note: 'dlLinux', is: (n: string) => n.endsWith('.deb') },
+  { id: 'win', os: 'Windows', note: 'dlWin', file: 'Fityesz-Kronika-Windows.msi' },
+  { id: 'mac-arm', os: 'macOS', note: 'dlMacArm', file: 'Fityesz-Kronika-macOS-AppleSilicon.dmg' },
+  { id: 'mac-intel', os: 'macOS', note: 'dlMacIntel', file: 'Fityesz-Kronika-macOS-Intel.dmg' },
+  { id: 'linux', os: 'Linux', note: 'dlLinux', file: 'fityesz-kronika-linux-amd64.deb' },
 ] as const
+
+export const downloadOf = (file: string) =>
+  `https://github.com/djkzea/fityeszthegame/releases/latest/download/${file}`
 
 /** Which card to mark as the visitor's. A Mac cannot be asked which chip it has. */
 export function guessOs(agent: string): 'Windows' | 'macOS' | 'Linux' | null {
@@ -41,7 +48,7 @@ export function guessOs(agent: string): 'Windows' | 'macOS' | 'Linux' | null {
 
 export function assetFor(id: string, assets: Asset[]): Asset | undefined {
   const build = BUILDS.find((b) => b.id === id)
-  return build && assets.find((a) => build.is(a.name))
+  return build && assets.find((a) => a.name === build.file)
 }
 
 const megabytes = (bytes: number) => `${Math.round(bytes / 1048576)} MB`
@@ -83,7 +90,7 @@ export function Builds({ labels: t }: { labels: BuildLabels }) {
         }}
       >
         {BUILDS.map((build, n) => {
-          const asset = assetFor(build.id, assets)
+          const asset = assets.find((a) => a.name === build.file)
           const yours = mine === build.os
 
           return (
@@ -131,7 +138,7 @@ export function Builds({ labels: t }: { labels: BuildLabels }) {
               </div>
 
               <a
-                href={asset ? asset.browser_download_url : RELEASE_PAGE}
+                href={downloadOf(build.file)}
                 style={{
                   marginTop: 'auto',
                   padding: '14px 18px 13px',
@@ -155,7 +162,6 @@ export function Builds({ labels: t }: { labels: BuildLabels }) {
       </div>
 
       <p style={{ margin: '18px 0 0', fontSize: 14, color: 'var(--inkSoft)' }}>
-        {assets.length === 0 ? `${t.dlFallback} ` : ''}
         <a href={RELEASE_PAGE} style={{ color: 'var(--accentText)' }}>
           {t.dlAll}
         </a>

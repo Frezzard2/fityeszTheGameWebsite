@@ -1,42 +1,50 @@
 import { describe, expect, it, vi, afterEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
-import { Builds, assetFor, guessOs, RELEASE_PAGE, type BuildLabels } from '@/components/download/Builds'
+import { Builds, assetFor, downloadOf, guessOs, type BuildLabels } from '@/components/download/Builds'
 
 const labels = {
   dlKicker: 'Verzió 1.0', dlVersion: 'Verzió', dlBtn: 'Letöltés', dlWin: 'Telepítő (.msi)',
   dlMacArm: 'Apple Silicon', dlMacIntel: 'Intel', dlLinux: 'Csomag (.deb)',
-  dlYours: 'Ez kell neked', dlAll: 'Minden fájl', dlFallback: 'A kiadási oldalra visznek.',
+  dlYours: 'Ez kell neked', dlAll: 'Minden fájl',
   dlUnsignedT: 'Rákérdez', dlUnsigned: 'Nincs aláírva.',
 } satisfies BuildLabels
 
 const release = {
   tag_name: 'v1.1.0',
   assets: [
-    { name: 'fityesz-kronika_1.1.0_amd64.deb', browser_download_url: 'https://x/deb', size: 105 * 1048576 },
-    { name: 'Fityesz.Kronika-1.1.0-arm64.dmg', browser_download_url: 'https://x/arm', size: 113 * 1048576 },
-    { name: 'Fityesz.Kronika-1.1.0-x86_64.dmg', browser_download_url: 'https://x/intel', size: 116 * 1048576 },
-    { name: 'Fityesz.Kronika-1.1.0.msi', browser_download_url: 'https://x/msi', size: 112 * 1048576 },
+    { name: 'fityesz-kronika-linux-amd64.deb', size: 105 * 1048576 },
+    { name: 'Fityesz-Kronika-macOS-AppleSilicon.dmg', size: 113 * 1048576 },
+    { name: 'Fityesz-Kronika-macOS-Intel.dmg', size: 116 * 1048576 },
+    { name: 'Fityesz-Kronika-Windows.msi', size: 112 * 1048576 },
   ],
 }
+
+/** What a click has to go to, whatever the page managed to look up. */
+const LINKS = [
+  'https://github.com/djkzea/fityeszthegame/releases/latest/download/Fityesz-Kronika-Windows.msi',
+  'https://github.com/djkzea/fityeszthegame/releases/latest/download/Fityesz-Kronika-macOS-AppleSilicon.dmg',
+  'https://github.com/djkzea/fityeszthegame/releases/latest/download/Fityesz-Kronika-macOS-Intel.dmg',
+  'https://github.com/djkzea/fityeszthegame/releases/latest/download/fityesz-kronika-linux-amd64.deb',
+]
 
 afterEach(() => vi.unstubAllGlobals())
 
 describe('which file is which', () => {
-  it('tells the two Macs apart', () => {
-    expect(assetFor('mac-arm', release.assets)?.browser_download_url).toBe('https://x/arm')
-    expect(assetFor('mac-intel', release.assets)?.browser_download_url).toBe('https://x/intel')
+  it('finds each build\'s size by the name it is uploaded under', () => {
+    expect(assetFor('mac-arm', release.assets)?.size).toBe(113 * 1048576)
+    expect(assetFor('mac-intel', release.assets)?.size).toBe(116 * 1048576)
+    expect(assetFor('win', release.assets)?.size).toBe(112 * 1048576)
+    expect(assetFor('linux', release.assets)?.size).toBe(105 * 1048576)
   })
 
-  it('finds Windows and Linux', () => {
-    expect(assetFor('win', release.assets)?.browser_download_url).toBe('https://x/msi')
-    expect(assetFor('linux', release.assets)?.browser_download_url).toBe('https://x/deb')
-  })
-
-  /** The version is in every filename, so nothing may be matched by one. */
-  it('matches by shape, not by version', () => {
-    const next = release.assets.map((a) => ({ ...a, name: a.name.replace('1.1.0', '2.4.7') }))
-    expect(assetFor('win', next)?.browser_download_url).toBe('https://x/msi')
-    expect(assetFor('mac-arm', next)?.browser_download_url).toBe('https://x/arm')
+  /**
+   * The whole point of the fixed names: this URL is what GitHub serves the
+   * newest release from, and it only keeps working while the name does not
+   * carry a version.
+   */
+  it('builds the link that always points at the newest release', () => {
+    expect(downloadOf('Fityesz-Kronika-Windows.msi')).toBe(LINKS[0])
+    expect(downloadOf('Fityesz-Kronika-Windows.msi')).not.toContain('1.0.0')
   })
 })
 
@@ -55,31 +63,33 @@ describe('whose machine is this', () => {
 })
 
 describe('the page', () => {
-  it('hands out the four files the release holds', async () => {
+  it('hands out the four files', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => release }))
 
     render(<Builds labels={labels} />)
 
     await waitFor(() => {
-      const links = screen.getAllByText('Letöltés').map((n) => n.getAttribute('href'))
-      expect(links).toEqual(['https://x/msi', 'https://x/arm', 'https://x/intel', 'https://x/deb'])
+      expect(screen.getByText(/112 MB/)).toBeTruthy()
     })
+
+    expect(screen.getAllByText('Letöltés').map((n) => n.getAttribute('href'))).toEqual(LINKS)
   })
 
   /**
-   * The quiet half: a rate limit or no network must still leave a way to the
-   * game, rather than four buttons that go nowhere.
+   * The one that was actually broken in the wild: this site's content policy
+   * blocked the lookup, and every button became a trip to GitHub. The links
+   * are fixed now, so a blocked or rate-limited lookup costs a file size and
+   * nothing else.
    */
-  it('falls back to the release page when it cannot ask', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')))
+  it('still downloads when it cannot look anything up', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('blocked by CSP')))
 
     render(<Builds labels={labels} />)
 
     await waitFor(() => {
-      const links = screen.getAllByText('Letöltés').map((n) => n.getAttribute('href'))
-      expect(links).toEqual([RELEASE_PAGE, RELEASE_PAGE, RELEASE_PAGE, RELEASE_PAGE])
+      expect(screen.getAllByText('Letöltés')).toHaveLength(4)
     })
 
-    expect(screen.getByText(/kiadási oldalra visznek/)).toBeTruthy()
+    expect(screen.getAllByText('Letöltés').map((n) => n.getAttribute('href'))).toEqual(LINKS)
   })
 })

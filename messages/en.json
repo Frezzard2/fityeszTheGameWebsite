@@ -245,7 +245,6 @@
   "dlBtn": "Download",
   "dlYours": "This is yours",
   "dlAll": "Every file on the release page",
-  "dlFallback": "The buttons go to the release page.",
   "dlUnsignedT": "It will ask the first time",
   "dlUnsigned": "The installers are not signed - that costs hundreds a year. On Windows, SmartScreen: More info, then Run anyway. On macOS, right-click and Open the first time. After that they start normally.",
   "dlHowT": "How your save carries over",
